@@ -1,0 +1,25 @@
+<?php
+
+namespace App\Actions;
+
+use Carbon\CarbonImmutable;
+use Illuminate\Database\Eloquent\Collection;
+use Spatie\Period\Boundaries;
+use Spatie\Period\Period;
+use Spatie\Period\PeriodCollection;
+use Spatie\Period\Precision;
+
+class BuildBookingPeriods
+{
+    public function build(Collection $bookings): PeriodCollection
+    {
+        return new PeriodCollection(...$bookings->map(function ($booking) {
+            return new Period(
+                CarbonImmutable::parse($booking->starts_at),
+                CarbonImmutable::parse($booking->ends_at),
+                precision: Precision::MINUTE(),
+                boundaries: Boundaries::EXCLUDE_NONE()
+            );
+        }));
+    }
+}
