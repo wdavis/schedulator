@@ -11,10 +11,10 @@ use Carbon\CarbonImmutable;
 
 class CreateBooking
 {
-    private GetAvailabilityForDate $getAvailabilityForDate;
+    private GetAllAvailabilityForDate $getAvailabilityForDate;
     private CheckScheduleAvailability $checkScheduleAvailability;
 
-    public function __construct(GetAvailabilityForDate $getAvailabilityForDate, CheckScheduleAvailability $checkScheduleAvailability)
+    public function __construct(GetAllAvailabilityForDate $getAvailabilityForDate, CheckScheduleAvailability $checkScheduleAvailability)
     {
         $this->getAvailabilityForDate = $getAvailabilityForDate;
         $this->checkScheduleAvailability = $checkScheduleAvailability;
@@ -30,22 +30,19 @@ class CreateBooking
         }
 
         // get schedule
-        $resource = Resource::where('id', $resourceId)
+        $resources = Resource::where('id', $resourceId)
             ->where('environment_id', $environmentId)
-            ->firstOrFail();
+            ->get();
 
-        if($resource->active === false) {
+        if($resources->first()->active === false) {
             throw new ResourceNotActiveException('Resource is not active');
         }
 
-        $resource->load('location'); // gets the first location
-
-
-        ray($resource);
+        $resources->load('location'); // gets the first location
 
         $service = Service::where('id', $serviceId)->firstOrFail();
 
-        $availability = $this->getAvailabilityForDate->get($resource, $requestedDate);
+        $availability = $this->getAvailabilityForDate->get($resources, $requestedDate);
 
         $available = $this->checkScheduleAvailability->check(
             $availability,
@@ -64,7 +61,7 @@ class CreateBooking
         return Booking::create([
             'name' => $name, // if in hipaa mode, this needs to be emptied
             'resource_id' => $resourceId,
-            'location_id' => $resource->location->id,
+            'location_id' => $resources->first()->location->id,
             'service_id' => $serviceId,
             'starts_at' => $requestedDate,
             'ends_at' => $requestedDate->addMinutes($service->duration),

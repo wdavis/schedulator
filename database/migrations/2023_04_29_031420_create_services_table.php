@@ -17,11 +17,12 @@ return new class extends Migration
             $table->uuid('environment_id');
             $table->foreign('environment_id')->references('id')->on('environments')->onDelete('cascade');
             $table->integer('duration')->default(15);
-            $table->integer('buffer_before')->default(0);
-            $table->integer('buffer_after')->default(0);
-            $table->integer('booking_window_lead')->default(0); // how early they can schedule - 60 days, or 60 * 24 * 60 minutes
-            $table->integer('booking_window_end')->default(0); // how late they can schedule - 120 minutes before
-            $table->integer('cancellation_lead')->default(1440); // how early they can cancel - 24 hours
+            $table->integer('slots')->default(1);
+            $table->integer('buffer_before')->default(0); // setup time before an booking
+            $table->integer('buffer_after')->default(0); // cleanup time after an booking
+            $table->integer('booking_window_lead')->default(525960); // how early they can schedule booking - 60 days, or 60 * 24 * 60 minutes
+            $table->integer('booking_window_end')->default(1440); // how late they can schedule before booking start time - 120 minutes before
+            $table->integer('cancellation_lead')->default(1440); // how early they can cancel before booking start - 24 hours
 
             $table->timestamps();
         });

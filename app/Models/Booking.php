@@ -24,13 +24,11 @@ class Booking extends Model
         'meta'
     ];
 
-    protected $dates = [
-        'starts_at',
-        'ends_at',
-    ];
-
     protected $casts = [
         'meta' => 'array',
+        'starts_at' => 'immutable_datetime',
+        'ends_at' => 'immutable_datetime',
+//        'cancelled_at' => 'immutable_datetime'
     ];
 
     public function resource()
@@ -45,6 +43,6 @@ class Booking extends Model
 
     public function service()
     {
-        return $this->hasOne(Service::class);
+        return $this->belongsTo(Service::class);
     }
 }

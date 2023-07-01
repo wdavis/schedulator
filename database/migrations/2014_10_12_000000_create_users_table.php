@@ -17,6 +17,9 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->boolean('api_active')->default(false);
+            $table->boolean('hipaa_mode')->default(false);
+            $table->jsonb('meta')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

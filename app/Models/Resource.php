@@ -32,7 +32,6 @@ class Resource extends Model
     public function location()
     {
         return $this->hasOneThrough(Location::class, LocationResource::class, 'resource_id', 'id', 'id', 'location_id');
-//        return $this->hasOne(Location::class)->orderByDesc('created_at');
     }
 
     public function environment()

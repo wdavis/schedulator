@@ -17,11 +17,17 @@ class ApiKey extends Model
     protected $fillable = [
         'key',
         'user_id',
+        'environment_id',
     ];
 
-    public function user()
+    public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function environment(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Environment::class);
     }
 
 }

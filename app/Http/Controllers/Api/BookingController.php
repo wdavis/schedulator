@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Actions\Bookings\CancelBooking;
 use App\Actions\CreateBooking;
 use App\Actions\FormatValidationErrors;
 use App\Exceptions\BookingTimeSlotNotAvailableException;
+use App\Models\Booking;
 use App\Rules\Iso8601Date;
 use App\Rules\NotFromPast;
 use App\Traits\InteractsWithEnvironment;
@@ -16,21 +18,18 @@ class BookingController
     use InteractsWithEnvironment;
 
     private CreateBooking $createBooking;
+    private CancelBooking $cancelBooking;
     private FormatValidationErrors $formatValidationErrors;
 
-    public function __construct(CreateBooking $createBooking, FormatValidationErrors $formatValidationErrors)
+    public function __construct(CreateBooking $createBooking, FormatValidationErrors $formatValidationErrors, \App\Actions\Bookings\CancelBooking $cancelBooking)
     {
         $this->createBooking = $createBooking;
         $this->formatValidationErrors = $formatValidationErrors;
+        $this->cancelBooking = $cancelBooking;
     }
 
     public function post(Request $request, string $resourceId)
     {
-        // todo how do we scope to the proper environment?
-
-        // maybe we create a new class that provides the user, environment and resource/resource id
-        // and then we can use that to scope the query
-
         // validate the request
         $validator = Validator::make($request->all(), [
             'serviceId' => 'required',
@@ -49,5 +48,14 @@ class BookingController
             name: $request->input('name'),
             meta: $request->input('meta', []),
         );
+    }
+
+    public function destroy(string $id)
+    {
+        $booking = Booking::whereHas('resource', function ($query) {
+            $query->where('environment_id', $this->getApiEnvironmentId());
+        })->where('id', $id)->firstOrFail();
+
+        return $this->cancelBooking->cancel($booking, request('force', false));
     }
 }

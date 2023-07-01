@@ -4,12 +4,13 @@ namespace App\Actions;
 
 use App\Models\Resource;
 use Carbon\CarbonImmutable;
+use Illuminate\Database\Eloquent\Collection;
 use Spatie\Period\Boundaries;
 use Spatie\Period\Period;
 use Spatie\Period\PeriodCollection;
 use Spatie\Period\Precision;
 
-class GetCombinedScheduleForDate
+class GetCombinedSchedulesForDate
 {
     private GetScheduleOverrides $getScheduleOverrides;
     private BuildScheduleOverrides $buildScheduleOverrides;
@@ -30,22 +31,30 @@ class GetCombinedScheduleForDate
         $this->buildRecurringSchedule = $buildRecurringSchedule;
     }
 
-    public function get(Resource $resource, CarbonImmutable $startDate, CarbonImmutable $endDate): PeriodCollection
+    /**
+     * @param Collection<Resource> $resources
+     * @param CarbonImmutable $startDate
+     * @param CarbonImmutable $endDate
+     * @return PeriodCollection
+     */
+    public function get(Collection $resources, CarbonImmutable $startDate, CarbonImmutable $endDate): PeriodCollection
     {
         // for now just load all the resources locations and schedules
-        $resource->load('locations.schedules');
+        $resources->load('locations.schedules');
 
-        //
-        $schedules = $resource->locations->pluck('schedules')->flatten();
+        // extract all the schedules from the resources
+        $schedules = $resources->pluck('locations')->flatten()->pluck('schedules')->flatten();
+
+        // get all the resource id's
+        $resourceIds = $resources->pluck('id')->toArray();
 
         // Retrieve the schedule overrides for the given date
-        $availableOverrides = $this->getScheduleOverrides->get([$resource->id], $startDate, $endDate);
+        $availableOverrides = $this->getScheduleOverrides->get($resourceIds, $startDate, $endDate);
 
         // build overrides for the date
         $overrides = $this->buildScheduleOverrides->get($availableOverrides);
 
-        // Retrieve the recurring schedule for the given date
-        // we should be getting a period collection here
+        // Build the recurring schedule for the given date
         $recurring = $this->buildRecurringSchedule->build($schedules, $startDate, $endDate);
 
         return $recurring

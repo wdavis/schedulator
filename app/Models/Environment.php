@@ -33,4 +33,9 @@ class Environment extends Model
     {
         return $this->hasMany(Service::class);
     }
+
+    public function api_keys()
+    {
+        return $this->hasMany(ApiKey::class);
+    }
 }

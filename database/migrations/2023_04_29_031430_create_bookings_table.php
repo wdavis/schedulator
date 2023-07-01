@@ -20,6 +20,7 @@ return new class extends Migration
             $table->jsonb('meta');
             $table->timestamp('starts_at');
             $table->timestamp('ends_at');
+            $table->timestamp('cancelled_at')->nullable();
             $table->timestamps();
 
             $table->foreign('resource_id')->references('id')->on('resources')->onDelete('cascade');

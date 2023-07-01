@@ -22,26 +22,24 @@ class ValidateApiKey
             return response()->json(['message' => 'API Key is required'], 401);
         }
 
-//        $apiKeyRecord = ApiKey::where('key', $apiKey)->with('user.environments')->first();
         // load api key record but only load single environment with matching id for this user
-        $apiKeyRecord = ApiKey::where('key', $apiKey)->with(['user' => function($query) {
-            $query->with(['environments' => function($query) {
-                $query->where('name', request()->header('X-Environment'));
-            }]);
-        }])->first();
-
+        $apiKeyRecord = ApiKey::where('key', $apiKey)
+            ->whereHas('user', function($query) {
+                $query->where('api_active', true);
+            })
+            ->with('user','environment')->first();
 
         if (!$apiKeyRecord) {
             return response()->json(['message' => 'Invalid API Key'], 401);
         }
 
-        $environmentName = $request->header('X-Environment');
+//        $environmentName = $request->header('X-Environment');
+//
+//        if (!$environmentName) {
+//            return response()->json(['message' => 'Environment is required'], 400);
+//        }
 
-        if (!$environmentName) {
-            return response()->json(['message' => 'Environment is required'], 400);
-        }
-
-        $environment = $apiKeyRecord->user->environments->firstWhere('name', $environmentName);
+        $environment = $apiKeyRecord->environment;
 
         if (!$environment) {
             return response()->json(['message' => 'Invalid environment'], 400);

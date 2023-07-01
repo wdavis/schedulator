@@ -6,10 +6,13 @@ use App\Actions\FormatValidationErrors;
 use App\Actions\UpdateSchedule;
 use App\Models\Location;
 use App\Models\Resource;
+use App\Traits\InteractsWithEnvironment;
 use Illuminate\Support\Facades\Validator;
 
 class ScheduleController
 {
+    use InteractsWithEnvironment;
+
     private UpdateSchedule $updateSchedule;
     private FormatValidationErrors $formatValidationErrors;
 
@@ -19,9 +22,12 @@ class ScheduleController
         $this->formatValidationErrors = $formatValidationErrors;
     }
 
-    public function index()
+    public function index(string $resource_id)
     {
-
+        return Resource::where('id', $resource_id)
+            ->where('environment_id', $this->getApiEnvironmentId())
+            ->with('location.schedules')
+            ->firstOrFail();
     }
 
     public function update(Resource $resource)

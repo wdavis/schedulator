@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\Api\ScheduleOpeningsController;
+use App\Http\Controllers\Api\AvailabilityController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -17,17 +17,23 @@ use Illuminate\Support\Facades\Route;
 
 // routes/api.php
 
-Route::get('availability', [ScheduleOpeningsController::class, 'getAvailability'])
+Route::get('environments', [\App\Http\Controllers\Api\EnvironmentController::class, 'index'])
+    ->name('environments.index');
+
+Route::get('api-keys', [\App\Http\Controllers\Api\ApiKeyController::class, 'index'])
+    ->name('api-keys.index');
+
+Route::post('availability', [AvailabilityController::class, 'index'])
     ->name('availability');
 
-Route::get('schedules/{resource}/openings', [ScheduleOpeningsController::class, 'getOpenings'])
-    ->name('schedules.openings');
-
-Route::get('schedules/{resource}/slots', [\App\Http\Controllers\Api\SlotController::class, 'index'])
-    ->name('schedules.slots');
-
-Route::post('bookings/{resource}', [\App\Http\Controllers\Api\BookingController::class, 'post'])
+Route::post('resources/{resource}/bookings', [\App\Http\Controllers\Api\BookingController::class, 'post'])
     ->name('bookings.create');
+
+Route::delete('bookings/{resource}', [\App\Http\Controllers\Api\BookingController::class, 'destroy'])
+    ->name('bookings.destroy');
+
+Route::get('resources/{resource}/schedule', [\App\Http\Controllers\Api\ScheduleController::class, 'index'])
+    ->name('schedules.index');
 
 Route::put('resources/{resource}/schedule', [\App\Http\Controllers\Api\ScheduleController::class, 'update'])
     ->name('schedules.update');
@@ -37,4 +43,7 @@ Route::resource('resources', \App\Http\Controllers\Api\ResourceController::class
 
 Route::put('resources/{resource}/{toggle}', [\App\Http\Controllers\Api\ResourceToggleController::class, 'update'])
     ->name('resource-toggle.update')->where('toggle', 'active|inactive');
+
+Route::resource('services', \App\Http\Controllers\Api\ServiceController::class)
+    ->only(['index', 'store', 'update', 'destroy']);
 

@@ -3,8 +3,10 @@
 namespace App\Exceptions;
 
 use App\Contracts\HttpStatusContract;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -33,13 +35,23 @@ class Handler extends ExceptionHandler
             ray($e);
             if ($request->is('api/*')) {
 
+                $message = $e->getMessage();
+
                 $status = 500;
                 if($e instanceof HttpStatusContract) {
                     $status = $e->getHttpStatusCode();
                 }
 
+                if($e instanceof ModelNotFoundException || $e instanceof NotFoundHttpException) {
+                    $status = 404;
+                    if (preg_match('/No query results for model \[App\\\Models\\\(.*?)]\./', $e->getMessage(), $matches)) {
+                        $modelName = $matches[1]; // This will contain the model name e.g. 'Booking'
+                        $message = "$modelName not found.";
+                    }
+                }
+
                 return response()->json([
-                    'message' => $e->getMessage()
+                    'message' => $message
                 ], $status);
             }
 
