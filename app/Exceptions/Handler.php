@@ -4,6 +4,7 @@ namespace App\Exceptions;
 
 use App\Contracts\HttpStatusContract;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -32,8 +33,7 @@ class Handler extends ExceptionHandler
         });
 
         $this->renderable(function (Throwable $e, Request $request) {
-            ray($e);
-            if ($request->is('api/*')) {
+            if ($request->is('v1/*')) {
 
                 $message = $e->getMessage();
 
@@ -48,6 +48,11 @@ class Handler extends ExceptionHandler
                         $modelName = $matches[1]; // This will contain the model name e.g. 'Booking'
                         $message = "$modelName not found.";
                     }
+                }
+
+                if($e instanceof QueryException) {
+                    $status = 400;
+                    $message = 'Bad request.';
                 }
 
                 return response()->json([

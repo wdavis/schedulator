@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Environment;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -20,6 +21,7 @@ class ApiKeyFactory extends Factory
         return [
             'key' => $this->faker->uuid(),
             'user_id' => User::factory(),
+            'environment_id' => Environment::factory(),
         ];
     }
 }

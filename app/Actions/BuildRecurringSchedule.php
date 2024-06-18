@@ -4,6 +4,7 @@ namespace App\Actions;
 
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Collection;
+use Spatie\Period\Boundaries;
 use Spatie\Period\Period;
 use Spatie\Period\PeriodCollection;
 use Spatie\Period\Precision;
@@ -48,13 +49,12 @@ class BuildRecurringSchedule
                 $start = $currentDate->setTimeFromTimeString($schedule->start_time);
                 $end = $currentDate->setTimeFromTimeString($schedule->end_time);
 
-                $itemsToAdd[] = Period::make($start, $end, Precision::MINUTE());
+                $itemsToAdd[] = Period::make($start, $end, Precision::MINUTE(), Boundaries::EXCLUDE_NONE());
 
                 $currentDate = $currentDate->addWeek();
             }
         }
 
-//        return (new PeriodCollection(...$itemsToAdd))->overlapAll();
         return (new PeriodCollection(...$itemsToAdd))->union();
     }
 

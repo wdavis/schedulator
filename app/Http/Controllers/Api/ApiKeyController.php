@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Actions\ApiKeys\GetApiKeys;
+use App\Http\Resources\ApiKeyCollection;
+use App\Http\Resources\ApiKeyResource;
 use App\Traits\InteractsWithEnvironment;
 
 class ApiKeyController
@@ -21,8 +23,8 @@ class ApiKeyController
 
     public function index()
     {
-        return $this->getApiKeys->get(
+        return ApiKeyResource::collection($this->getApiKeys->get(
             $this->getApiEnvironment()
-        );
+        ));
     }
 }

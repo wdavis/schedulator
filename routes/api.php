@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\Api\AvailabilityController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -17,33 +16,92 @@ use Illuminate\Support\Facades\Route;
 
 // routes/api.php
 
-Route::get('environments', [\App\Http\Controllers\Api\EnvironmentController::class, 'index'])
-    ->name('environments.index');
+Route::group(['middleware' => 'api-key:master'], function () {
 
-Route::get('api-keys', [\App\Http\Controllers\Api\ApiKeyController::class, 'index'])
-    ->name('api-keys.index');
+    Route::get('test-master-api-access', function () {
+        return response('OK', 200);
+    })->name('test-master-api-access');
 
-Route::post('availability', [AvailabilityController::class, 'index'])
-    ->name('availability');
+    Route::post('accounts', [\App\Http\Controllers\Api\Master\AccountCreationController::class, 'store'])
+        ->name('accounts.store');
 
-Route::post('resources/{resource}/bookings', [\App\Http\Controllers\Api\BookingController::class, 'post'])
-    ->name('bookings.create');
+    Route::post('accounts/{userId}/environments', [\App\Http\Controllers\Api\Master\AccountEnvironmentCreationController::class, 'store'])
+        ->name('accounts.environments.store');
 
-Route::delete('bookings/{resource}', [\App\Http\Controllers\Api\BookingController::class, 'destroy'])
-    ->name('bookings.destroy');
+    Route::get('users/{userId}/api-keys', [\App\Http\Controllers\Api\Master\UserApiKeyController::class, 'index'])
+        ->name('users.api-keys.index');
 
-Route::get('resources/{resource}/schedule', [\App\Http\Controllers\Api\ScheduleController::class, 'index'])
-    ->name('schedules.index');
+});
 
-Route::put('resources/{resource}/schedule', [\App\Http\Controllers\Api\ScheduleController::class, 'update'])
-    ->name('schedules.update');
+Route::group(['middleware' => 'api-key'], function () {
 
-Route::resource('resources', \App\Http\Controllers\Api\ResourceController::class)
-    ->only(['index', 'show', 'store', 'update', 'destroy']);
+    Route::get('test-api-access', function () {
+        return response('OK', 200);
+    })->name('test-api-access');
 
-Route::put('resources/{resource}/{toggle}', [\App\Http\Controllers\Api\ResourceToggleController::class, 'update'])
-    ->name('resource-toggle.update')->where('toggle', 'active|inactive');
+    Route::get('environments', [\App\Http\Controllers\Api\EnvironmentController::class, 'index'])
+        ->name('environments.index');
 
-Route::resource('services', \App\Http\Controllers\Api\ServiceController::class)
-    ->only(['index', 'store', 'update', 'destroy']);
+    Route::get('api-keys', [\App\Http\Controllers\Api\ApiKeyController::class, 'index'])
+        ->name('api-keys.index');
 
+    Route::post('availability', [AvailabilityController::class, 'index'])
+        ->name('availability');
+
+    Route::post('first-availability', [\App\Http\Controllers\Api\FirstAvailabilityController::class, 'index'])
+        ->name('first-availability');
+
+    Route::post('calendar', [\App\Http\Controllers\Api\CalendarController::class, 'index'])
+        ->name('calendar.index');
+
+    Route::get('resources/{resource}/bookings', [\App\Http\Controllers\Api\BookingController::class, 'index'])
+        ->name('bookings.index');
+
+    Route::post('resources/{resource}/bookings', [\App\Http\Controllers\Api\BookingController::class, 'post'])
+        ->name('bookings.create');
+
+    Route::delete('bookings/{resource}', [\App\Http\Controllers\Api\BookingController::class, 'destroy'])
+        ->name('bookings.destroy');
+
+    # Resource Schedule
+    Route::get('resources/{resource}/schedule', [\App\Http\Controllers\Api\ScheduleController::class, 'index'])
+        ->name('schedules.index');
+
+    Route::put('resources/{resource}/schedule', [\App\Http\Controllers\Api\ScheduleController::class, 'update'])
+        ->name('schedules.update');
+
+    Route::resource('resources', \App\Http\Controllers\Api\ResourceController::class)
+        ->only(['index', 'show', 'store', 'update', 'destroy']);
+
+    Route::put('resources/{resource}/{toggle}', [\App\Http\Controllers\Api\ResourceToggleController::class, 'update'])
+        ->name('resource-toggle.update')->where('toggle', 'active|inactive');
+
+    Route::resource('services', \App\Http\Controllers\Api\ServiceController::class)
+        ->only(['index', 'store', 'update', 'destroy']);
+
+    Route::get('date', [\App\Http\Controllers\Api\DateController::class, 'index'])
+        ->name('date.index');
+
+    Route::get('resources/{resource}/schedule-overrides', [\App\Http\Controllers\Api\ScheduleOverrideController::class, 'index'])
+        ->name('schedule-overrides.index');
+    Route::post('resources/{resource}/schedule-overrides', [\App\Http\Controllers\Api\ScheduleOverrideController::class, 'store'])
+        ->name('schedule-overrides.store');
+    Route::delete('resources/{resource}/schedule-overrides/{scheduleOverride}', [\App\Http\Controllers\Api\ScheduleOverrideController::class, 'destroy'])
+        ->name('schedule-overrides.destroy');
+
+    // reporting
+    Route::post('reports/availability-count', [\App\Http\Controllers\Api\ForecastCountController::class, 'index'])
+        ->name('reports.availability-count.index');
+
+    Route::post('reports/bookings', [\App\Http\Controllers\Api\ForecastBookingsController::class, 'index'])
+        ->name('reports.bookings.index');
+
+    Route::post('reports/heat', [\App\Http\Controllers\Api\ForecastHeatmapController::class, 'index'])
+        ->name('reports.heat.index');
+
+//    Route::post('reports/bookings', [\App\Http\Controllers\Api\ForecastBookingLeadController::class, 'index'])
+//        ->name('reports.bookings.index');
+
+
+
+});

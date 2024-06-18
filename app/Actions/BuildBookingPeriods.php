@@ -18,7 +18,8 @@ class BuildBookingPeriods
                 CarbonImmutable::parse($booking->starts_at),
                 CarbonImmutable::parse($booking->ends_at),
                 precision: Precision::MINUTE(),
-                boundaries: Boundaries::EXCLUDE_NONE()
+//                boundaries: Boundaries::EXCLUDE_NONE() // this allows the periods to be merged without an offset
+                boundaries: Boundaries::EXCLUDE_ALL() // this allows the periods to be merged without an offset
             );
         }));
     }

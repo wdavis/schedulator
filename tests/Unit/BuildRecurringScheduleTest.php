@@ -44,7 +44,7 @@ class BuildRecurringScheduleTest extends TestCase
 
         // Assert the result is a PeriodCollection
         $this->assertInstanceOf(PeriodCollection::class, $result);
-ray($result);
+
         // Assert the periods in the collection are correct
         $this->assertCount(2, $result);
 

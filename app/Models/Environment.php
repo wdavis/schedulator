@@ -19,23 +19,28 @@ class Environment extends Model
         'user_id',
     ];
 
-    public function resources()
+    public function resources(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Resource::class);
     }
 
-    public function user()
+    public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    public function services()
+    public function services(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Service::class);
     }
 
-    public function api_keys()
+    public function api_keys(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(ApiKey::class);
     }
+
+//    public function default_service(): \Illuminate\Database\Eloquent\Relations\HasOne
+//    {
+//        return $this->hasOne(Service::class)->where('default', 't');
+//    }
 }

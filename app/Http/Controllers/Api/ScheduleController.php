@@ -7,6 +7,7 @@ use App\Actions\UpdateSchedule;
 use App\Models\Location;
 use App\Models\Resource;
 use App\Traits\InteractsWithEnvironment;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Validator;
 
 class ScheduleController
@@ -24,10 +25,23 @@ class ScheduleController
 
     public function index(string $resource_id)
     {
-        return Resource::where('id', $resource_id)
-            ->where('environment_id', $this->getApiEnvironmentId())
-            ->with('location.schedules')
-            ->firstOrFail();
+        try {
+            return Resource::where('id', $resource_id)
+                ->where('environment_id', $this->getApiEnvironmentId())
+                ->with('location.schedules')
+                ->firstOrFail();
+        } catch (ModelNotFoundException $e) {
+             // report?
+            return response()->json([
+                'error' => "Resource {$resource_id} not found"
+            ], 500);
+        } catch (\Throwable $e) {
+            // report?
+            return response()->json([
+                'error' => $e->getMessage()
+            ], 500);
+        }
+
     }
 
     public function update(Resource $resource)

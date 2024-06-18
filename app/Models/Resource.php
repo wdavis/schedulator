@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\HasMeta;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -11,6 +12,7 @@ class Resource extends Model
 {
     use HasFactory;
     use HasUuids;
+    use HasMeta;
 
     public $incrementing = false;
     protected $keyType = 'string';
@@ -19,6 +21,10 @@ class Resource extends Model
         'name',
         'recurring_schedule',
         'environment_id',
+    ];
+
+    protected $casts = [
+        'meta' => 'array',
     ];
 
     public function locations(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
@@ -37,6 +43,21 @@ class Resource extends Model
     public function environment()
     {
         return $this->belongsTo(Environment::class);
+    }
+
+    public function bookingWindowLeadOverride(): ?int
+    {
+        return $this->booking_window_lead_override;
+    }
+
+    public function bookingWindowEndOverride(): ?int
+    {
+        return $this->booking_window_end_override;
+    }
+
+    public function cancellationLead(): ?int
+    {
+        return $this->cancellation_lead_override;
     }
 
     public function isAvailable($dateTime, $durationInMinutes)

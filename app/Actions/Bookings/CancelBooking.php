@@ -2,6 +2,7 @@
 
 namespace App\Actions\Bookings;
 
+use App\Exceptions\BookingAlreadyCancelledException;
 use App\Models\Booking;
 use Carbon\Carbon;
 
@@ -10,7 +11,7 @@ class CancelBooking
     public function cancel(Booking $booking, bool $force = false): Booking
     {
         if($booking->cancelled_at) {
-            throw new \Exception('Booking has already been cancelled');
+            throw new BookingAlreadyCancelledException('Booking has already been cancelled');
         }
 
         if(!$booking->relationLoaded('service')) {

@@ -20,6 +20,7 @@ return new class extends Migration
             $table->boolean('api_active')->default(false);
             $table->boolean('hipaa_mode')->default(false);
             $table->jsonb('meta')->nullable();
+            $table->index(['id', 'api_active']);
             $table->rememberToken();
             $table->timestamps();
         });

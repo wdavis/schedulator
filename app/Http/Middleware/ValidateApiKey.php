@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Middleware;
 
 use App\Models\ApiKey;
@@ -12,43 +11,56 @@ class ValidateApiKey
     /**
      * Handle an incoming request.
      *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Closure  $next
+     * @param  string|null  $requireMaster
+     * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function handle(Request $request, Closure $next): Response
+    public function handle(Request $request, Closure $next, $requireMaster = null): Response
     {
         $apiKey = $request->header('X-Api-Key');
+
+        if (is_null($apiKey)) {
+            $apiKey = request()->header('Authorization');
+            if (!is_null($apiKey)) {
+                $apiKey = str_replace('Bearer ', '', $apiKey);
+            }
+        }
 
         if (!$apiKey) {
             return response()->json(['message' => 'API Key is required'], 401);
         }
 
-        // load api key record but only load single environment with matching id for this user
+        // Load the API key record and related user and environment
         $apiKeyRecord = ApiKey::where('key', $apiKey)
             ->whereHas('user', function($query) {
                 $query->where('api_active', true);
             })
-            ->with('user','environment')->first();
+            ->with('user', 'environment')
+            ->first();
 
         if (!$apiKeyRecord) {
-            return response()->json(['message' => 'Invalid API Key'], 401);
+            return response()->json(['message' => 'Invalid API Key'], 403);
         }
 
-//        $environmentName = $request->header('X-Environment');
-//
-//        if (!$environmentName) {
-//            return response()->json(['message' => 'Environment is required'], 400);
-//        }
-
-        $environment = $apiKeyRecord->environment;
-
-        if (!$environment) {
-            return response()->json(['message' => 'Invalid environment'], 400);
+        // Check if the master key is required and if the provided key is a master key
+        if ($requireMaster === 'master' && !$apiKeyRecord->is_master) {
+            return response()->json(['message' => 'Invalid'], 403);
         }
 
-        // Store the user and environment in the request for further processing
-        // these are accessible in the controller via $request->attributes->get('user')
+        // If not a master key, ensure the environment is valid
+        if (!$apiKeyRecord->is_master) {
+            $environment = $apiKeyRecord->environment;
+
+            if (!$environment) {
+                return response()->json(['message' => 'Invalid environment'], 400);
+            }
+
+            $request->attributes->set('environment', $environment);
+        }
+
+        // Store the user in the request for further processing
         $request->attributes->set('user', $apiKeyRecord->user);
-        $request->attributes->set('environment', $environment);
 
         return $next($request);
     }
