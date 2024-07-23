@@ -4,42 +4,45 @@ namespace App\Actions;
 
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Collection;
-use Spatie\Period\Period;
 
 class GetScheduleByDay
 {
-    // new format?
-    // everything is a slot with an array of multiple items
-    // items can be of two types openings or bookings
-    // everything else is a gap
-
-    public function execute(array $openings, Collection $bookings, CarbonImmutable $startDate, CarbonImmutable $endDate, ?string $timezone = null): array
+    public function execute(array $openings, Collection $bookings, CarbonImmutable $startDate, CarbonImmutable $endDate, ?string $timezone = 'UTC'): array
     {
+        // Ensure startDate and endDate are in UTC
+        $startDate = $startDate->setTimezone('UTC');
+        $endDate = $endDate->setTimezone('UTC');
+
         $groupedBookings = $this->groupBookingsByDay($bookings, $timezone);
         $groupedOpenings = $this->groupOpeningsByDay($openings, $timezone);
 
         $combinedSlots = $this->combineSlots($groupedBookings, $groupedOpenings);
 
-        $values = $this->addGaps($combinedSlots);
+        $values = $this->addGaps($combinedSlots, $timezone);
 
+        $finalValues = [];
         for ($date = $startDate; $date->lte($endDate); $date = $date->addDay()) {
-            $dateString = $date->toDateString();
+            $dateString = $date->setTimezone($timezone)->toDateString();
             if (!isset($values[$dateString])) {
                 $values[$dateString] = [
                     'date' => $dateString,
-                    'day' => $date->format('D'),
+                    'day' => $date->setTimezone($timezone)->format('D'),
                     'slots' => [],
                 ];
             }
+            $finalValues[] = $values[$dateString];
         }
 
-        // sort array by keys
-        ksort($values);
+        // Sort array by date
+        usort($finalValues, function ($a, $b) {
+            return strcmp($a['date'], $b['date']);
+        });
 
-        return $values;
+        // Format for output
+        return $this->formatForOutput($finalValues, $timezone);
     }
 
-    private function groupBookingsByDay(Collection $bookings, ?string $timezone): array
+    private function groupBookingsByDay(Collection $bookings, string $timezone): array
     {
         $grouped = [];
 
@@ -57,33 +60,24 @@ class GetScheduleByDay
                 ];
             }
 
-            // Check if there is an existing slot with the same start and end times
-            $existingSlotIndex = null;
-            foreach ($grouped[$date]['slots'] as $index => $slot) {
-                if ($slot['type'] === 'booking' && $slot['start']->eq($start) && $slot['end']->eq($end)) {
-                    $existingSlotIndex = $index;
-                    break;
-                }
-            }
-
-            if ($existingSlotIndex !== null) {
-                // Merge the booking into the existing slot
-                $grouped[$date]['slots'][$existingSlotIndex]['bookings'][] = $booking;
-            } else {
-                // Create a new slot for the booking
+            $slotIndex = $this->findSlotIndex($grouped[$date]['slots'], $start, $end);
+            if ($slotIndex === -1) {
                 $grouped[$date]['slots'][] = [
-                    'type' => 'booking',
+                    'type' => 'booking_slot',
                     'start' => $start,
                     'end' => $end,
                     'bookings' => [$booking],
+                    'openings' => [],
                 ];
+            } else {
+                $grouped[$date]['slots'][$slotIndex]['bookings'][] = $booking;
             }
         }
 
         return $grouped;
     }
 
-    private function groupOpeningsByDay(array $openings, ?string $timezone): array
+    private function groupOpeningsByDay(array $openings, string $timezone): array
     {
         $grouped = [];
 
@@ -101,11 +95,28 @@ class GetScheduleByDay
                 ];
             }
 
-            $grouped[$date]['slots'][] = [
-                'type' => 'opening',
-                'start' => $start,
-                'end' => $end,
-            ];
+            $slotIndex = $this->findSlotIndex($grouped[$date]['slots'], $start, $end);
+            if ($slotIndex === -1) {
+                $grouped[$date]['slots'][] = [
+                    'type' => 'opening_slot',
+                    'start' => $start,
+                    'end' => $end,
+                    'openings' => [
+                        [
+                            'type' => 'opening',
+                            'start' => $start->toIso8601String(),
+                            'end' => $end->toIso8601String(),
+                        ]
+                    ],
+                    'bookings' => [],
+                ];
+            } else {
+                $grouped[$date]['slots'][$slotIndex]['openings'][] = [
+                    'type' => 'opening',
+                    'start' => $start->toIso8601String(),
+                    'end' => $end->toIso8601String(),
+                ];
+            }
         }
 
         return $grouped;
@@ -117,7 +128,17 @@ class GetScheduleByDay
             if (!isset($groupedBookings[$date])) {
                 $groupedBookings[$date] = $openings;
             } else {
-                $groupedBookings[$date]['slots'] = array_merge($groupedBookings[$date]['slots'], $openings['slots']);
+                foreach ($openings['slots'] as $openingSlot) {
+                    $slotIndex = $this->findSlotIndex($groupedBookings[$date]['slots'], $openingSlot['start'], $openingSlot['end']);
+                    if ($slotIndex === -1) {
+                        $groupedBookings[$date]['slots'][] = $openingSlot;
+                    } else {
+                        $groupedBookings[$date]['slots'][$slotIndex]['openings'] = array_merge(
+                            $groupedBookings[$date]['slots'][$slotIndex]['openings'],
+                            $openingSlot['openings']
+                        );
+                    }
+                }
                 usort($groupedBookings[$date]['slots'], function ($a, $b) {
                     return $a['start']->greaterThan($b['start']);
                 });
@@ -127,7 +148,7 @@ class GetScheduleByDay
         return $groupedBookings;
     }
 
-    private function addGaps(array $groupedSlots): array
+    private function addGaps(array $groupedSlots, string $timezone): array
     {
         foreach ($groupedSlots as $date => $day) {
             $slots = $day['slots'];
@@ -135,11 +156,14 @@ class GetScheduleByDay
             $previousEnd = null;
 
             foreach ($slots as $slot) {
-                if ($previousEnd !== null && $slot['start']->greaterThan($previousEnd)) {
+                $slotStart = $slot['start'];
+                if ($previousEnd !== null && $slotStart->greaterThan($previousEnd)) {
                     $newSlots[] = [
                         'type' => 'gap',
-                        'start' => $previousEnd,
-                        'end' => $slot['start'],
+                        'start' => $previousEnd->setTimezone($timezone),
+                        'end' => $slotStart->setTimezone($timezone),
+                        'openings' => [],
+                        'bookings' => [],
                     ];
                 }
 
@@ -151,5 +175,35 @@ class GetScheduleByDay
         }
 
         return $groupedSlots;
+    }
+
+    private function formatForOutput(array $values, string $timezone): array
+    {
+        foreach ($values as &$dayData) {
+            for ($i = 0; $i < count($dayData['slots']); $i++) {
+                $slot = &$dayData['slots'][$i];
+                $slot['start'] = $slot['start']->setTimezone($timezone)->toIso8601String();
+                $slot['end'] = $slot['end']->setTimezone($timezone)->toIso8601String();
+
+                if (!isset($slot['openings'])) {
+                    $slot['openings'] = [];
+                }
+                if (!isset($slot['bookings'])) {
+                    $slot['bookings'] = [];
+                }
+            }
+        }
+
+        return $values;
+    }
+
+    private function findSlotIndex(array $slots, CarbonImmutable $start, CarbonImmutable $end): int
+    {
+        foreach ($slots as $index => $slot) {
+            if ($slot['start']->eq($start) && $slot['end']->eq($end)) {
+                return $index;
+            }
+        }
+        return -1;
     }
 }

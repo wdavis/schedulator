@@ -67,21 +67,23 @@ class CalendarController
         $start = $request->get('startDate');
         $end = $request->get('endDate');
         $serviceId = $request->get('serviceId');
-        $timezone = $request->get('timezone');
+        $timezone = $request->get('timezone', 'UTC');
 
         $service = Service::where('id', $serviceId)
             ->where('environment_id', $this->getApiEnvironmentId())
             ->firstOrFail()
         ;
 
-        $requestedDate = CarbonImmutable::parse($start)->setTimezone($timezone)->startOfDay();
-        $requestedEndDate = CarbonImmutable::parse($end)->setTimezone($timezone);
+//        $requestedDate = CarbonImmutable::parse($start)->startOfDay()->setTimezone($timezone);
+        $requestedDate = CarbonImmutable::parse($start)->startOfDay()->setTimezone('UTC');
+//        $requestedEndDate = CarbonImmutable::parse($end)->endOfDay()->setTimezone($timezone);
+        $requestedEndDate = CarbonImmutable::parse($end)->endOfDay()->setTimezone('UTC');
 
-        if(!$end) {
-            $endDate = $requestedDate->endOfDay();
-        } else {
-            $endDate = $requestedEndDate->endOfDay();
-        }
+//        if(!$end) {
+//            $endDate = $requestedDate->endOfDay();
+//        } else {
+//            $endDate = $requestedEndDate->endOfDay();
+//        }
 
 //        if($requestedDate->isPast() && $requestedEndDate->isPast()) {
 //            return response()->json([
@@ -107,7 +109,7 @@ class CalendarController
             $resources,
             $service,
             startDate: $requestedDate,
-            endDate: $endDate,
+            endDate: $requestedEndDate,
             scopeLeadTimes: false, // we're viewing everything. will not be able to actually schedule without lead times
         );
 
@@ -143,10 +145,11 @@ class CalendarController
 
                 ->map(function($booking) use ($getPeriod, $service) {
                 return $getPeriod->get($booking, $service);
-            })->filter(function($booking) use ($requestedDate, $requestedEndDate) {
-                    // check if the booking is within the bounds of the $requestedDate and $requestedEndDate
-                    return $booking['period']->start()->isBetween($requestedDate, $requestedEndDate, Precision::MINUTE(), Boundaries::EXCLUDE_END());
-                });
+            });
+//                ->filter(function($booking) use ($requestedDate, $requestedEndDate) {
+//                    // check if the booking is within the bounds of the $requestedDate and $requestedEndDate
+//                    return $booking['period']->start()->isBetween($requestedDate, $requestedEndDate, Precision::MINUTE(), Boundaries::EXCLUDE_END());
+//                });
         });
 
         // todo inject?

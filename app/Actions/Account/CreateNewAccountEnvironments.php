@@ -11,28 +11,37 @@ class CreateNewAccountEnvironments
 {
     public function create(User $user)
     {
+        // first check which environments they have
+        $user->load('environments');
+
         $environments = [];
 
-        $prodEnv = Environment::create([
-            'name' => "production",
-            'user_id' => $user->id,
-        ]);
+        if($user->environments->filter(fn($env) => $env->name === 'production')->count() > 0) {
+            $prodEnv = Environment::create([
+                'name' => "production",
+                'user_id' => $user->id,
+            ]);
 
-        $environments[] = $prodEnv;
+            $environments[] = $prodEnv;
+        }
 
-        $stagingEnv = Environment::create([
-            'name' => "staging",
-            'user_id' => $user->id,
-        ]);
+        if($user->environments->filter(fn($env) => $env->name === 'staging')->count() > 0) {
+            $stagingEnv = Environment::create([
+                'name' => "staging",
+                'user_id' => $user->id,
+            ]);
 
-        $environments[] = $stagingEnv;
+            $environments[] = $stagingEnv;
+        }
 
-        $devEnv = Environment::create([
-            'name' => "dev",
-            'user_id' => $user->id,
-        ]);
+        if($user->environments->filter(fn($env) => $env->name === 'dev')->count() > 0) {
+            $devEnv = Environment::create([
+                'name' => "dev",
+                'user_id' => $user->id,
+            ]);
 
-        $environments[] = $devEnv;
+            $environments[] = $devEnv;
+        }
 
         $responseEnvs = [];
 

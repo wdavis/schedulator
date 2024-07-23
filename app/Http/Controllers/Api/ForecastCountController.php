@@ -34,7 +34,7 @@ class ForecastCountController
         $validator = Validator::make($request->all(), [
             'startDate' => ['required', new Iso8601Date()],
             'endDate' => ['required', new Iso8601Date()],
-            'serviceId' => 'required|exists:services,id',
+            'serviceId' => 'required',
             'resourceIds' => 'array|nullable',
         ]);
 
@@ -51,13 +51,8 @@ class ForecastCountController
             ->firstOrFail()
         ;
 
-        $requestedDate = CarbonImmutable::parse($start);
-
-        if(!$end) {
-            $endDate = $requestedDate->endOfDay();
-        } else {
-            $endDate = CarbonImmutable::parse($end)->endOfDay();
-        }
+        $requestedDate = CarbonImmutable::parse($start)->startOfDay()->setTimezone('UTC');
+        $requestedEndDate = CarbonImmutable::parse($end)->endOfDay()->setTimezone('UTC');
 
 //        if($requestedDate->isPast() && $requestedEndDate->isPast()) {
 //            return response()->json([
@@ -79,7 +74,7 @@ class ForecastCountController
             ->get()
         ;
 
-        $availability = $this->getCombinedSchedulesForDateCount->get($resources, $service, $requestedDate, endDate: $endDate);
+        $availability = $this->getCombinedSchedulesForDateCount->get($resources, $service, $requestedDate, endDate: $requestedEndDate);
 
         return response()->json([
             'availability' => $availability

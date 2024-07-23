@@ -7,6 +7,7 @@ use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvi
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Str;
 
 class RouteServiceProvider extends ServiceProvider
 {
@@ -25,7 +26,27 @@ class RouteServiceProvider extends ServiceProvider
     public function boot(): void
     {
         RateLimiter::for('api', function (Request $request) {
-            return Limit::perMinute(800)->by($request->user()?->id ?: $request->ip());
+
+            // if the request has an authorization header, we will use the value of the header as the key
+            // otherwise, we will use the IP address of the request as the key
+            $key = $request->header('Authorization');
+
+            if (is_null($key)) {
+                $key = $request->ip();
+            } else { // get the api key by removing the "Bearer " prefix
+                $key = str_replace('Bearer ', '', $key);
+            }
+
+            // now determine the rate limit based on the prefix of the key (e.g. "production-", "staging-", "dev-")
+            $rateLimit = 5;
+
+            if (Str::startsWith($key, 'production-')) {
+                $rateLimit = 800;
+            } elseif (Str::startsWith($key, 'staging-') || Str::startsWith($key, 'dev-') || Str::startsWith($key, 'master-')) {
+                $rateLimit = 50;
+            }
+
+            return Limit::perMinute($rateLimit)->by($key);
         });
 
         $this->routes(function () {

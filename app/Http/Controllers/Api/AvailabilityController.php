@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Api;
 
 use App\Actions\FormatValidationErrors;
-use App\Actions\GetAllAvailabilityForDate;
 use App\Actions\GetCombinedSchedulesForDate;
 use App\Actions\ScopeAvailabilityWithLeadTime;
 use App\Models\Resource;
@@ -57,20 +56,27 @@ class AvailabilityController
         $start = $request->get('startDate');
         $end = $request->get('endDate');
         $serviceId = $request->get('serviceId');
+        $timezone = $request->get('timezone', 'UTC');
 
-        $service = Service::where('id', $serviceId)
-            ->where('environment_id', $this->getApiEnvironmentId())
-            ->firstOrFail()
-        ;
-
-        $requestedDate = CarbonImmutable::parse($start);
-        $requestedEndDate = CarbonImmutable::parse($end);
-
-        if(!$end) {
-            $endDate = $requestedDate->endOfDay();
-        } else {
-            $endDate = CarbonImmutable::parse($end)->endOfDay();
+        try {
+            $service = Service::where('id', $serviceId)
+                ->where('environment_id', $this->getApiEnvironmentId())
+                ->firstOrFail()
+            ;
+        } catch (\Throwable $e) {
+            return response()->json([
+                'message' => 'Service not found'
+            ], 404);
         }
+
+        $requestedDate = CarbonImmutable::parse($start)->startOfDay()->setTimezone('UTC');
+        $requestedEndDate = CarbonImmutable::parse($end)->endOfDay()->setTimezone('UTC');
+
+//        if(!$end) {
+//            $endDate = $requestedDate->endOfDay();
+//        } else {
+//            $endDate = CarbonImmutable::parse($end)->endOfDay();
+//        }
 
         if($requestedDate->isPast() && $requestedEndDate->isPast()) {
             return response()->json([
@@ -91,7 +97,7 @@ class AvailabilityController
             ->get()
         ;
 
-        $availability = $this->getCombinedSchedulesForDate->get($resources, $service, $requestedDate, endDate: $endDate);
+        $availability = $this->getCombinedSchedulesForDate->get($resources, $service, $requestedDate, endDate: $requestedEndDate);
 
         $currentTimeOfDay = CarbonImmutable::now();
 
@@ -103,25 +109,33 @@ class AvailabilityController
             requestedStartDate: $currentTimeOfDay
         );
 
-        // look at the end date
-        $endScope = new Period(
-            $requestedEndDate,
-            $endDate->endOfDay(),
-            Precision::MINUTE(),
-            Boundaries::EXCLUDE_ALL()
-        );
-        // strip off the extras
-        $availability = $availability->subtract($endScope);
+//        // look at the end date
+//        $endScope = new Period(
+//            $requestedEndDate,
+//            $requestedEndDate,
+//            Precision::MINUTE(),
+//            Boundaries::EXCLUDE_ALL()
+//        );
+//        // strip off the extras
+//        $availability = $availability->subtract($endScope);
 
         // todo inject?
         $action = new \App\Actions\SplitPeriodIntoIntervals();
         $slots = $action->execute($availability, $service);
 
         // date format
-        if($request->get('format') === 'days') {
+//        if($request->get('format') === 'days') {
+//
+//            $action = new \App\Actions\GroupOpeningsByDay();
+//            $slots = $action->execute($slots, $request->get('timezone'));
+//        }
 
-            $action = new \App\Actions\GroupOpeningsByDay();
-            $slots = $action->execute($slots, $request->get('timezone'));
+        if($timezone !== 'UTC') {
+            // format dates in the requested timezone
+            foreach($slots as &$slot) {
+                $slot['start'] = $slot['start']->setTimezone($timezone)->toIso8601String();
+                $slot['end'] = $slot['end']->setTimezone($timezone)->toIso8601String();
+            }
         }
 
         return response()->json($slots);

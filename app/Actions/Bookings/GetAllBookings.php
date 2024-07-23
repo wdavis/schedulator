@@ -32,6 +32,8 @@ class GetAllBookings
             ->where(function($query) use ($startDate, $endDate) {
                 $query->where('starts_at', '>=', $startDate)
                     ->where('ends_at', '<=', $endDate);
-            })->get();
+            })
+            ->orderBy('starts_at')
+            ->get();
     }
 }

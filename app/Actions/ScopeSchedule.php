@@ -18,11 +18,11 @@ class ScopeSchedule
     {
         // remove everything outside of the requested date range
 
-        $beginningScope = new Period($startDate->subYears(5), $startDate->startOfDay(), Precision::MINUTE(), Boundaries::EXCLUDE_ALL());
+        $beginningScope = new Period($startDate->subYears(5), $startDate, Precision::MINUTE(), Boundaries::EXCLUDE_ALL());
         $availability = $availability->subtract($beginningScope);
 
         // look at the end date
-        $endScope = new Period($endDate->endOfDay()->addSecond(), $endDate->addYear(), Precision::MINUTE(), Boundaries::EXCLUDE_ALL());
+        $endScope = new Period($endDate->addSecond(), $endDate->addYear(), Precision::MINUTE(), Boundaries::EXCLUDE_ALL());
         $availability = $availability->subtract($endScope);
 
         return $availability;

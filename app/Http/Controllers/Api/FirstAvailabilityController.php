@@ -9,6 +9,7 @@ use App\Models\Service;
 use App\Rules\Iso8601Date;
 use App\Traits\InteractsWithEnvironment;
 use Carbon\CarbonImmutable;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Validator;
 
 class FirstAvailabilityController
@@ -47,7 +48,13 @@ class FirstAvailabilityController
             ->get();
 
         try {
-            $service = Service::where('id', $serviceId)->firstOrFail();
+            try {
+                $service = Service::where('id', $serviceId)->firstOrFail();
+            } catch (ModelNotFoundException $e) {
+                return response()->json([
+                    'message' => 'Service not found'
+                ], 404);
+            }
             $requestedDate = CarbonImmutable::parse($time);
 
             $firstResourceId = $this->getFirstAvailableResource->get($resources, $service, $requestedDate);
