@@ -33,7 +33,7 @@ use Spatie\Period\Precision;
  */
 class BuildRecurringSchedule
 {
-    public function build(Collection $schedules, CarbonImmutable $startDate, CarbonImmutable $endDate): PeriodCollection
+    public function build(Collection $schedules, CarbonImmutable $startDate, CarbonImmutable $endDate, $timezone = 'UTC'): PeriodCollection
     {
         $itemsToAdd = [];
 
@@ -46,8 +46,21 @@ class BuildRecurringSchedule
             }
 
             while ($currentDate->lte($endDate)) {
-                $start = $currentDate->setTimeFromTimeString($schedule->start_time);
-                $end = $currentDate->setTimeFromTimeString($schedule->end_time);
+
+                // convert the start_time and end_time hours from the $timezone to UTC
+//                $currentDate->setTimezone($timezone);
+//                $currentDate->setTimezone('UTC');
+
+                $start = CarbonImmutable::createFromDate($currentDate->year, $currentDate->month, $currentDate->day, $timezone)
+                    ->setTimeFromTimeString($schedule->start_time)
+                    ->setTimezone('UTC');
+
+                $end = CarbonImmutable::createFromDate($currentDate->year, $currentDate->month, $currentDate->day, $timezone)
+                    ->setTimeFromTimeString($schedule->end_time)
+                    ->setTimezone('UTC');
+
+//                $start = $currentDate->setTimeFromTimeString($schedule->start_time)->setTimezone($timezone)->setTimezone('UTC');
+//                $end = $currentDate->setTimeFromTimeString($schedule->end_time)->setTimezone($timezone)->setTimezone('UTC');
 
                 $itemsToAdd[] = Period::make($start, $end, Precision::MINUTE(), Boundaries::EXCLUDE_NONE());
 

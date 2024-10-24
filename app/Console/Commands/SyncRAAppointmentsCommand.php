@@ -76,12 +76,13 @@ class SyncRAAppointmentsCommand extends Command
                             service: $environment->services->first(),
                             locationId: $resource->locations->first()->id,
                             meta: [
-                                'external_id' => $appointment->id,
-                                'external_appointment_type_id' => $appointment->appointment_type_id,
-                                'external_patient_id' => $appointment->patient_id,
-                                'appointment_method' => $appointment->appointment_method,
-//                            'external_timezone' => $appointment['timezone,
+                                'appointment_id' => (string)$appointment->id,
+                                'appointment_type_id' => (string)$appointment->appointment_type_id,
+                                'patient_id' => (string)$appointment->patient_id,
+                                'appointment_method' => (string)$appointment->appointment_method,
+                                'provider_id' => (string)$appointment->provider_id,
                             ],
+                            cancelled: $appointment->cancelled
                         );
 
                         $this->info("Created booking {$booking->id}");

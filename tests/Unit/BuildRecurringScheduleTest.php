@@ -57,4 +57,44 @@ class BuildRecurringScheduleTest extends TestCase
 
 
     }
+
+    public function test_resources_timezone_is_honored()
+    {
+        $startDate = CarbonImmutable::create(2021, 1, 1, 0, 0, 0);
+
+        $this->travelTo($startDate);
+
+        // Create a new instance of BuildRecurringSchedule
+        $buildRecurringSchedule = new BuildRecurringSchedule();
+
+        // Define start and end date
+        $endDate = $startDate->addWeek();
+
+        // Create some schedules
+        $schedules = new Collection([
+            new Schedule([
+                'day_of_week' => 1,
+                'start_time' => '08:00', // 8am in America/Chicago
+                'end_time' => '12:00',
+            ]),
+            new Schedule([
+                'day_of_week' => 2,
+                'start_time' => '13:00',
+                'end_time' => '17:00',
+            ]),
+        ]);
+
+        // Call build method
+        $result = $buildRecurringSchedule->build($schedules, $startDate, $endDate, 'America/Chicago')->sort();
+
+
+        // assert that the dates are converted to UTC
+        $this->assertEquals('2021-01-04 14:00', $result[0]->start()->format('Y-m-d H:i'));
+        $this->assertEquals('2021-01-04 18:00', $result[0]->end()->format('Y-m-d H:i'));
+
+        $this->assertEquals('2021-01-05 19:00', $result[1]->start()->format('Y-m-d H:i'));
+        $this->assertEquals('2021-01-05 23:00', $result[1]->end()->format('Y-m-d H:i'));
+
+
+    }
 }

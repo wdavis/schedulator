@@ -2,18 +2,14 @@
 
 namespace App\Actions;
 
-namespace App\Actions;
-
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Collection;
 
 class FormatSchedules
 {
     public function format(Collection $schedules)
     {
-        $groupedSchedules = $schedules->groupBy('day_of_week');
-
-        // Mapping day numbers back to their string representations
+        // Mapping day numbers to their string representations
         $dayOfWeekMap = [
             1 => 'monday',
             2 => 'tuesday',
@@ -24,22 +20,30 @@ class FormatSchedules
             7 => 'sunday',
         ];
 
-        // The sortedDays array will hold the sorted keys (day of the week numbers)
-        $sortedDays = $groupedSchedules->keys()->sort()->values();
+        // Grouping schedules by 'day_of_week'
+        $groupedSchedules = $schedules->groupBy('day_of_week');
 
-        $transformedSchedules = $sortedDays->mapWithKeys(function ($day) use ($groupedSchedules, $dayOfWeekMap) {
-            $sortedTimes = $groupedSchedules[$day]->sortBy('start_time')->values();
+        // Initialize an empty array for transformed schedules
+        $transformedSchedules = collect();
 
-            return [
-                $dayOfWeekMap[$day] => $sortedTimes->map(function ($schedule) {
+        // Loop through all days of the week to ensure no days are missed
+        foreach ($dayOfWeekMap as $dayNumber => $dayName) {
+            if ($groupedSchedules->has($dayNumber)) {
+                // Sort the times and format them if the day exists in the grouped schedules
+                $sortedTimes = $groupedSchedules[$dayNumber]->sortBy('start_time')->values();
+
+                // Map the sorted times to the formatted array
+                $transformedSchedules[$dayName] = $sortedTimes->map(function ($schedule) {
                     return [
                         'start_time' => Carbon::parse($schedule->start_time)->format('H:i:s'),
                         'end_time' => Carbon::parse($schedule->end_time)->format('H:i:s'),
                     ];
-                }),
-            ];
-        });
-
+                });
+            } else {
+                // If the day is missing, add an empty array
+                $transformedSchedules[$dayName] = [];
+            }
+        }
 
         return $transformedSchedules;
     }

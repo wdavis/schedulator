@@ -6,7 +6,7 @@ use Carbon\CarbonImmutable;
 
 class GroupOpeningsByDay
 {
-    public function execute(array $openings, ?string $timezone = null): array
+    public function execute(array $openings, CarbonImmutable $startDate, CarbonImmutable $endDate, ?string $timezone = null): array
     {
         $groupedOpenings = [];
 
@@ -30,6 +30,26 @@ class GroupOpeningsByDay
             ];
         }
 
-        return array_values($groupedOpenings);
+        $values = $groupedOpenings;
+
+        $finalValues = [];
+        for ($date = $startDate; $date->lte($endDate); $date = $date->addDay()) {
+            $dateString = $date->setTimezone($timezone)->toDateString();
+            if (!isset($values[$dateString])) {
+                $values[$dateString] = [
+                    'date' => $dateString,
+                    'day' => $date->setTimezone($timezone)->format('D'),
+                    'slots' => [],
+                ];
+            }
+            $finalValues[] = $values[$dateString];
+        }
+
+        // Sort array by date
+        usort($finalValues, function ($a, $b) {
+            return strcmp($a['date'], $b['date']);
+        });
+
+        return $finalValues;
     }
 }

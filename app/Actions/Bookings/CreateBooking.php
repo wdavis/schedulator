@@ -28,6 +28,10 @@ class CreateBooking
     public function create(string $resourceId, string $serviceId, string $timeSlot, string $environmentId, string $name = "", array $meta = [], bool $bypassLeadTime = false, bool $bypassActive = false): Booking
     {
         $originalRequestedDate = CarbonImmutable::parse($timeSlot);
+
+        $scheduleStartRange = $originalRequestedDate->startOfDay()->setTimezone('UTC');
+        $scheduleEndRange = $originalRequestedDate->endOfDay()->setTimezone('UTC');
+
         $requestedDate = $originalRequestedDate->setTimezone('UTC');
 
         if(!$requestedDate) {
@@ -50,8 +54,8 @@ class CreateBooking
         $availability = $this->getCombinedSchedulesForDate->get(
             resources: $resources,
             service: $service,
-            startDate: $requestedDate->startOfDay(),
-            endDate: $requestedDate->endOfDay()
+            startDate: $scheduleStartRange,
+            endDate: $scheduleEndRange
         );
 
         $availableBeforeLead = $this->checkScheduleAvailability->check(

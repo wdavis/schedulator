@@ -6,6 +6,7 @@ use App\Contracts\HttpStatusContract;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Http\Exceptions\ThrottleRequestsException;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Throwable;
@@ -53,6 +54,11 @@ class Handler extends ExceptionHandler
                 if($e instanceof QueryException) {
                     $status = 400;
                     $message = 'Bad request.';
+                }
+
+                if($e instanceof ThrottleRequestsException) {
+                    $status = 429;
+                    $message = 'Too many requests.';
                 }
 
                 return response()->json([

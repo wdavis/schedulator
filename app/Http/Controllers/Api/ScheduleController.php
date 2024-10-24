@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Actions\FormatSchedules;
 use App\Actions\FormatValidationErrors;
 use App\Actions\UpdateSchedule;
 use App\Models\Location;
@@ -14,22 +15,42 @@ class ScheduleController
 {
     use InteractsWithEnvironment;
 
+    private FormatSchedules $formatSchedules;
     private UpdateSchedule $updateSchedule;
     private FormatValidationErrors $formatValidationErrors;
 
-    public function __construct(UpdateSchedule $updateSchedule, FormatValidationErrors $formatValidationErrors)
+    public function __construct(UpdateSchedule $updateSchedule, FormatValidationErrors $formatValidationErrors, \App\Actions\FormatSchedules $formatSchedules)
     {
         $this->updateSchedule = $updateSchedule;
         $this->formatValidationErrors = $formatValidationErrors;
+        $this->formatSchedules = $formatSchedules;
     }
 
     public function index(string $resource_id)
     {
         try {
-            return Resource::where('id', $resource_id)
+            $resource = Resource::where('id', $resource_id)
                 ->where('environment_id', $this->getApiEnvironmentId())
                 ->with('location.schedules')
                 ->firstOrFail();
+
+            $schedules = $resource->location?->schedules ?? [];
+
+            // if schedule is empty, return an empty week schedule
+            if(count($schedules) === 0) {
+                return response()->json([
+                    'monday' => [],
+                    'tuesday' => [],
+                    'wednesday' => [],
+                    'thursday' => [],
+                    'friday' => [],
+                    'saturday' => [],
+                    'sunday' => [],
+                ]);
+            }
+
+            return $this->formatSchedules->format($schedules);
+
         } catch (ModelNotFoundException $e) {
              // report?
             return response()->json([

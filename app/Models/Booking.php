@@ -21,6 +21,7 @@ class Booking extends Model
         'service_id',
         'starts_at',
         'ends_at',
+        'cancelled_at',
         'meta'
     ];
 

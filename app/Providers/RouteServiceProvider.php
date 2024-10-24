@@ -42,6 +42,8 @@ class RouteServiceProvider extends ServiceProvider
 
             if (Str::startsWith($key, 'production-')) {
                 $rateLimit = 800;
+            } elseif (app()->environment('local')) {
+                $rateLimit = 1000;
             } elseif (Str::startsWith($key, 'staging-') || Str::startsWith($key, 'dev-') || Str::startsWith($key, 'master-')) {
                 $rateLimit = 50;
             }

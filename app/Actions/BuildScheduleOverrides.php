@@ -2,9 +2,11 @@
 
 namespace App\Actions;
 
+use App\Enums\ScheduleOverrideType;
 use App\Models\ScheduleOverride;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Collection;
+use Spatie\Period\Boundaries;
 use Spatie\Period\Period;
 use Spatie\Period\PeriodCollection;
 use Spatie\Period\Precision;
@@ -21,12 +23,17 @@ class BuildScheduleOverrides
             // Create a Period for the current ScheduleOverride
             $start = CarbonImmutable::createFromFormat('Y-m-d H:i:s', $override->starts_at);
             $end = CarbonImmutable::createFromFormat('Y-m-d H:i:s', $override->ends_at);
-            $period = Period::make($start, $end, Precision::MINUTE());
+            $period = Period::make(
+                $start,
+                $end,
+                Precision::MINUTE(),
+                boundaries: $override->type === ScheduleOverrideType::block->value ? Boundaries::EXCLUDE_ALL() : Boundaries::EXCLUDE_NONE()
+            );
 
             // Add the Period to the appropriate collection based on the type
-            if ($override->type === 'opening') {
+            if ($override->type === ScheduleOverrideType::opening->value) {
                 $openingOverrides = $openingOverrides->add($period);
-            } elseif ($override->type === 'block') {
+            } elseif ($override->type === ScheduleOverrideType::block->value) {
                 $blockOverrides = $blockOverrides->add($period);
             }
         }

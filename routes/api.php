@@ -31,6 +31,8 @@ Route::group(['middleware' => 'api-key:master'], function () {
     Route::get('users/{userId}/api-keys', [\App\Http\Controllers\Api\Master\UserApiKeyController::class, 'index'])
         ->name('users.api-keys.index');
 
+    Route::delete('environments/{environmentId}/reset', [\App\Http\Controllers\Api\Master\AccountEnvironmentResetController::class, 'destroy'])
+        ->name('environments.reset');
 });
 
 Route::group(['middleware' => 'api-key'], function () {
@@ -63,6 +65,21 @@ Route::group(['middleware' => 'api-key'], function () {
     Route::delete('bookings/{resource}', [\App\Http\Controllers\Api\BookingController::class, 'destroy'])
         ->name('bookings.destroy');
 
+    Route::put('bookings/{resource}', [\App\Http\Controllers\Api\BookingController::class, 'update'])
+        ->name('bookings.update');
+
+    Route::put('bookings/{resource}/cancel', [\App\Http\Controllers\Api\BookingController::class, 'update'])
+        ->name('bookings-cancel.update');
+
+    Route::delete('bookings/{resource}', [\App\Http\Controllers\Api\BookingController::class, 'destroy'])
+        ->name('bookings.destroy');
+
+    Route::post('bookings/{bookingId}/reschedule', [\App\Http\Controllers\Api\BookingRescheduleController::class, 'store'])
+        ->name('bookings.reschedule.store');
+
+    Route::post('bookings/external-lookup', [\App\Http\Controllers\Api\ExternalBookingController::class, 'index'])
+        ->name('bookings.external-lookup.index');
+
     # Resource Schedule
     Route::get('resources/{resource}/schedule', [\App\Http\Controllers\Api\ScheduleController::class, 'index'])
         ->name('schedules.index');
@@ -86,6 +103,8 @@ Route::group(['middleware' => 'api-key'], function () {
         ->name('schedule-overrides.index');
     Route::post('resources/{resource}/schedule-overrides', [\App\Http\Controllers\Api\ScheduleOverrideController::class, 'store'])
         ->name('schedule-overrides.store');
+    Route::put('resources/{resource}/schedule-overrides/{month}', [\App\Http\Controllers\Api\ScheduleOverrideController::class, 'update'])
+        ->name('schedule-overrides.update');
     Route::delete('resources/{resource}/schedule-overrides/{scheduleOverride}', [\App\Http\Controllers\Api\ScheduleOverrideController::class, 'destroy'])
         ->name('schedule-overrides.destroy');
 

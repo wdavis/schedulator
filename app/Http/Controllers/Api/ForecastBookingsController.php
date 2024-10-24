@@ -48,50 +48,52 @@ class ForecastBookingsController
             serviceId: $serviceId
         );
 
-        $results = [];
+         return response()->json(['bookings' => $bookings->count()]);
 
-        for ($date = $startDate; $date <= $endDate; $date = $date->addDay()) {
-            $dateString = $date->toDateString();
-            $results[$dateString] = [
-                'count' => 0,
-                'color' => null,
-                'slotsByHour' => [] // You can fill with default hourly slots if needed
-            ];
-        }
-
-        foreach ($bookings as $item) {
-            $start = $item->starts_at;
-            $end = $item->ends_at;
-            $currentDate = $start->toDateString();
-            $hourKey = $start->format('H:00:00') . '-' . $start->addHour()->format('H:00:00');
-
-            if (!isset($results[$currentDate])) {
-                $results[$currentDate] = [
-                    'count' => 0,
-                    'color' => null,
-                    'slotsByHour' => []
-                ];
-            }
-
-            $results[$currentDate]['count'] += 1;
-
-            if (!isset($results[$currentDate]['slotsByHour'][$hourKey])) {
-                $results[$currentDate]['slotsByHour'][$hourKey] = [
-                    'color' => null,
-                    'count' => 0,
-                    'resources' => []
-                ];
-            }
-
-            $results[$currentDate]['slotsByHour'][$hourKey]['count'] += 1;
-            // Add the extra information from this dataset, such as ID and meta, if needed
-            $results[$currentDate]['slotsByHour'][$hourKey]['resources'][] = [
-                'id' => $item['id'],
-                'meta' => $item['meta']
-            ];
-        }
-
-        return $this->gradeColors($results, startColor: '#ffffff', endColor: '#ff0000');
+//        $results = [];
+//
+//        for ($date = $startDate; $date <= $endDate; $date = $date->addDay()) {
+//            $dateString = $date->toDateString();
+//            $results[$dateString] = [
+//                'count' => 0,
+//                'color' => null,
+//                'slotsByHour' => [] // You can fill with default hourly slots if needed
+//            ];
+//        }
+//
+//        foreach ($bookings as $item) {
+//            $start = $item->starts_at;
+//            $end = $item->ends_at;
+//            $currentDate = $start->toDateString();
+//            $hourKey = $start->format('H:00:00') . '-' . $start->addHour()->format('H:00:00');
+//
+//            if (!isset($results[$currentDate])) {
+//                $results[$currentDate] = [
+//                    'count' => 0,
+//                    'color' => null,
+//                    'slotsByHour' => []
+//                ];
+//            }
+//
+//            $results[$currentDate]['count'] += 1;
+//
+//            if (!isset($results[$currentDate]['slotsByHour'][$hourKey])) {
+//                $results[$currentDate]['slotsByHour'][$hourKey] = [
+//                    'color' => null,
+//                    'count' => 0,
+//                    'resources' => []
+//                ];
+//            }
+//
+//            $results[$currentDate]['slotsByHour'][$hourKey]['count'] += 1;
+//            // Add the extra information from this dataset, such as ID and meta, if needed
+//            $results[$currentDate]['slotsByHour'][$hourKey]['resources'][] = [
+//                'id' => $item['id'],
+//                'meta' => $item['meta']
+//            ];
+//        }
+//
+//        return $this->gradeColors($results, startColor: '#ffffff', endColor: '#ff0000');
 //        return $bookings;
         // appointments booked vs appointments open for range
 

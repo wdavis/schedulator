@@ -18,7 +18,6 @@ class BookingController
     use InteractsWithEnvironment;
 
     private CreateBooking $createBooking;
-    private CancelBooking $cancelBooking;
     private FormatValidationErrors $formatValidationErrors;
 
     public function __construct(CreateBooking $createBooking, FormatValidationErrors $formatValidationErrors, \App\Actions\Bookings\CancelBooking $cancelBooking)
@@ -41,6 +40,19 @@ class BookingController
                 }
                 if($locationId) {
                     $query->where('location_id', $locationId);
+                }
+
+                $startDate = request('start_date', null);
+                $endDate = request('end_date', null);
+                if($startDate) {
+                    // parse the date and convert to UTC
+                    $startDate = \Carbon\CarbonImmutable::parse($startDate)->setTimezone('UTC');
+                    $query->where('starts_at', '>=', $startDate);
+                }
+                if($endDate) {
+                    // parse the date and convert to UTC
+                    $endDate = \Carbon\CarbonImmutable::parse($endDate)->setTimezone('UTC');
+                    $query->where('ends_at', '<=', $endDate);
                 }
             })->orderBy('created_at', 'desc')->get();
 
@@ -71,16 +83,31 @@ class BookingController
         );
     }
 
-    public function destroy(string $id)
+    public function destroy(Request $request, string $id)
+    {
+        $booking = Booking::whereHas('resource', function ($query) {
+            $query->where('environment_id', $this->getApiEnvironmentId());
+        })->where('id', $id)->delete();
+
+//        try {
+
+        return response()->json([], 204);
+//        } catch () {
+//            return response()->json([], 204);
+//        }
+    }
+
+    public function update(string $id)
     {
         $booking = Booking::whereHas('resource', function ($query) {
             $query->where('environment_id', $this->getApiEnvironmentId());
         })->where('id', $id)->firstOrFail();
 
 //        try {
-            $this->cancelBooking->cancel($booking, request('force', false));
 
-            return response()->json([], 204);
+        $booking->name = request('name');
+        $booking->save();
+
 //        } catch () {
 //            return response()->json([], 204);
 //        }

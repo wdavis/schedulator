@@ -37,11 +37,20 @@ class ResourceController
         );
     }
 
+    public function show(string $resourceId)
+    {
+        return ResourceResource::make(
+            Resource::where('id', $resourceId)
+                ->where('environment_id', $this->getApiEnvironmentId())->firstOrFail()
+        );
+    }
+
     public function store()
     {
         $validator = Validator::make(request()->all(), [
             'name' => 'required',
             'active' => 'boolean',
+            'meta' => ['array', 'nullable'],
         ]);
 
         if($validator->fails()) {
@@ -53,6 +62,7 @@ class ResourceController
                 name: request()->input('name'),
                 environmentId: $this->getApiEnvironmentId(),
                 active: request()->input('active', false),
+                meta: request()->input('meta', []),
             ));
         } catch (\Throwable $e) {
             return response()->json([
@@ -64,8 +74,9 @@ class ResourceController
     public function update(string $resourceId)
     {
         $validator = Validator::make(request()->all(), [
-            'name' => 'required',
-            'active' => 'boolean',
+            'name' => ['string', 'nullable'],
+            'active' => ['boolean', 'nullable'],
+            'booking_window_lead_override' => ['integer', 'nullable'],
             'meta' => ['array', 'nullable'],
         ]);
 
@@ -81,6 +92,7 @@ class ResourceController
             return $this->updateResource->update(
                 resource: $resource,
                 name: request()->input('name'),
+                bookingWindowLeadOverride: request()->input('booking_window_lead_override'),
                 meta: request()->input('meta', []),
             );
 

@@ -124,11 +124,22 @@ class AvailabilityController
         $slots = $action->execute($availability, $service);
 
         // date format
-//        if($request->get('format') === 'days') {
-//
-//            $action = new \App\Actions\GroupOpeningsByDay();
-//            $slots = $action->execute($slots, $request->get('timezone'));
-//        }
+        if($request->get('format') === 'days') {
+
+//            $getScheduleByDay = new \App\Actions\GetScheduleByDay();
+//            $slots = $getScheduleByDay->execute(
+//                $slots,
+//                bookings: collect(),
+//                startDate: $requestedDate,
+//                endDate: $requestedEndDate,
+//                timezone: $timezone
+//            );
+
+            $action = new \App\Actions\GroupOpeningsByDay();
+            $slots = $action->execute($slots, $requestedDate, $requestedEndDate, $request->get('timezone'));
+
+            return response()->json($slots);
+        }
 
         if($timezone !== 'UTC') {
             // format dates in the requested timezone

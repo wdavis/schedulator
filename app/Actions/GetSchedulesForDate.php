@@ -68,7 +68,7 @@ class GetSchedulesForDate
             $overrides = $this->buildScheduleOverrides->get($availableOverrides->where('resource_id', $resource->id));
 
             // Build the recurring schedule for the given date
-            $recurring = $this->buildRecurringSchedule->build($resourceSchedule, $startDate, $endDate);
+            $recurring = $this->buildRecurringSchedule->build($resourceSchedule, $startDate, $endDate, timezone: $resource->getMeta('timezone'));
 
 //            if($bookings->isEmpty()) {
 //                return $schedule; // todo why are we doing this?
