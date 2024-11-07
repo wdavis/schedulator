@@ -48,6 +48,31 @@ class FormatOverridesTest extends TestCase
         $this->assertEquals('2024-09-04T15:30:00-05:00', $day4['schedule'][0]['ends_at']);
     }
 
+    public function test_handles_timezone_change_days_without_repeating()
+    {
+        $formatOverrides = new FormatOverrides();
+
+        // Create a mock collection of ScheduleOverride entries
+        // dates are stored in UTC, but we want to format them in America/Chicago timezone
+        $scheduleOverrides = collect([
+            $this->createScheduleOverride('2024-11-03T01:00:00-05:00', '2024-11-03T02:00:00-05:00', 'opening'),
+            $this->createScheduleOverride('2024-11-03T13:00:00-06:00', '2024-11-03T14:00:00-06:00', 'opening'),
+            $this->createScheduleOverride('2024-11-03T13:30:00-06:00', '2024-11-03T14:30:00-06:00', 'block'),
+        ]);
+
+        $timezone = 'America/Chicago'; // Testing with a different timezone
+        $startDate = CarbonImmutable::parse('2024-11-01', $timezone)->startOfDay();
+        $endDate = CarbonImmutable::parse('2024-11-30', $timezone)->endOfDay();
+
+        $formatted = $formatOverrides->format($scheduleOverrides, $startDate, $endDate, $timezone);
+
+        $this->assertCount(30, $formatted);
+        // Check specific dates
+        $potentiallyRepeated = $formatted->where('date', '2024-11-03');
+        dump($potentiallyRepeated);
+        $this->assertCount(1, $potentiallyRepeated);
+    }
+
     /**
      * Helper function to create a mock ScheduleOverride instance.
      *

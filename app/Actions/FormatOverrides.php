@@ -25,10 +25,17 @@ class FormatOverrides
         });
 
         // Step 2: Iterate through the date range provided, converting the output to the requested timezone
+        $seenDates = [];
         $finalSchedule = collect();
         for ($date = $startDate->startOfDay(); $date->lte($endDate->endOfDay()); $date = $date->addDay()) {
             $formattedDate = $date->setTimezone($timezone)->format('Y-m-d');
             $dayOfWeek = $date->setTimezone($timezone)->format('D');
+
+            // Check if the date has already been added to avoid duplicates on DST change days
+            if (in_array($formattedDate, $seenDates)) {
+                continue;
+            }
+            $seenDates[] = $formattedDate;
 
             // Add schedule data for the day, formatted in the requested timezone
             $finalSchedule->push([

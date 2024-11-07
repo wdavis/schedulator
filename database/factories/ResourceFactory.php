@@ -17,6 +17,7 @@ class ResourceFactory extends Factory
     public function definition(): array
     {
         return [
+            'id' => $this->faker->uuid(),
             'name' => 'Resource '.$this->faker->name(),
             'environment_id' => \App\Models\Environment::factory(),
             'active' => true,

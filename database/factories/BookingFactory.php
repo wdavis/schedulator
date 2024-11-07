@@ -20,6 +20,7 @@ class BookingFactory extends Factory
     public function definition(): array
     {
         return [
+            'id' => $this->faker->uuid(),
             'resource_id' => Resource::factory(),
             'location_id' => Location::factory(),
             'service_id' => Service::factory(),

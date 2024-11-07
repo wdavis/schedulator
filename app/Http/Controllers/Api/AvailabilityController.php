@@ -72,12 +72,6 @@ class AvailabilityController
         $requestedDate = CarbonImmutable::parse($start)->startOfDay()->setTimezone('UTC');
         $requestedEndDate = CarbonImmutable::parse($end)->endOfDay()->setTimezone('UTC');
 
-//        if(!$end) {
-//            $endDate = $requestedDate->endOfDay();
-//        } else {
-//            $endDate = CarbonImmutable::parse($end)->endOfDay();
-//        }
-
         if($requestedDate->isPast() && $requestedEndDate->isPast()) {
             return response()->json([
                 'message' => 'The requested range is in the past'
