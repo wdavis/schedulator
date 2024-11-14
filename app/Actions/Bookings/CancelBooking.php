@@ -24,12 +24,34 @@ class CancelBooking
         $bookingWithCancellationLead = $startsAt->subMinutes($booking->service->cancellation_lead);
 
         if($bookingWithCancellationLead->isPast() && !$force) {
-            throw new \Exception("Booking cannot be cancelled within {$booking->service->cancellation_lead} minutes of the start time {$booking->starts_at}");
+            $formattedDuration = $this->formatDuration($booking->service->cancellation_lead);
+            throw new \Exception("Booking cannot be cancelled within {$formattedDuration} of the start time {$booking->starts_at->toIso8601String()}");
         }
 
         $booking->cancelled_at = now();
         $booking->save();
 
         return $booking;
+    }
+
+    private function formatDuration(?int $minutes): string
+    {
+        // Handle null or 0 values
+        if ($minutes === null || $minutes === 0) {
+            return '0 minutes';
+        }
+
+        // Calculate hours and remaining minutes
+        $hours = intdiv($minutes, 60);
+        $remainingMinutes = $minutes % 60;
+
+        // Format the output based on the hours and minutes
+        if ($hours > 0 && $remainingMinutes > 0) {
+            return "{$hours} hours {$remainingMinutes} minutes";
+        } elseif ($hours > 0) {
+            return "{$hours} hours";
+        } else {
+            return "{$remainingMinutes} minutes";
+        }
     }
 }

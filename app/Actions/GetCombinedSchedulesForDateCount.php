@@ -6,10 +6,7 @@ use App\Models\Resource;
 use App\Models\Service;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Collection;
-use Spatie\Period\Boundaries;
-use Spatie\Period\Period;
-use Spatie\Period\PeriodCollection;
-use Spatie\Period\Precision;
+use App\Actions\GetSchedulesForDate;
 
 class GetCombinedSchedulesForDateCount
 {

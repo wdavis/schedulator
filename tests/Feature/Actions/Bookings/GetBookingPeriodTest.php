@@ -36,9 +36,9 @@ class GetBookingPeriodTest extends TestCase
         $period = $action->get($booking, $service);
 
         // Assert
-        $this->assertInstanceOf(Period::class, $period);
-        $this->assertEquals(CarbonImmutable::parse($booking->starts_at), $period->start());
-        $this->assertEquals(CarbonImmutable::parse($booking->ends_at), $period->end());
+        $this->assertInstanceOf(Period::class, $period['period']);
+        $this->assertEquals(CarbonImmutable::parse($booking['starts_at']), $period['period']->start());
+        $this->assertEquals(CarbonImmutable::parse($booking['ends_at']), $period['period']->end());
     }
 
     /** @test */

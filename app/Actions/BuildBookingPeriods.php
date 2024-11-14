@@ -2,6 +2,7 @@
 
 namespace App\Actions;
 
+use App\Models\Booking;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Collection;
 use Spatie\Period\Boundaries;
@@ -11,6 +12,10 @@ use Spatie\Period\Precision;
 
 class BuildBookingPeriods
 {
+    /**
+     * @param Collection<Booking> $bookings
+     * @return PeriodCollection
+     */
     public function build(Collection $bookings): PeriodCollection
     {
         return new PeriodCollection(...$bookings->map(function ($booking) {

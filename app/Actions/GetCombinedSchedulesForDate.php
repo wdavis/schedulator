@@ -7,6 +7,8 @@ use App\Models\Service;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Collection;
 use Spatie\Period\PeriodCollection;
+use App\Actions\GetSchedulesForDate;
+use App\Actions\CombinePeriodCollections;
 
 class GetCombinedSchedulesForDate
 {

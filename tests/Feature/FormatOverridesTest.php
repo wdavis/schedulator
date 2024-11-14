@@ -69,7 +69,6 @@ class FormatOverridesTest extends TestCase
         $this->assertCount(30, $formatted);
         // Check specific dates
         $potentiallyRepeated = $formatted->where('date', '2024-11-03');
-        dump($potentiallyRepeated);
         $this->assertCount(1, $potentiallyRepeated);
     }
 
@@ -83,15 +82,10 @@ class FormatOverridesTest extends TestCase
      */
     private function createScheduleOverride($startsAt, $endsAt, $type)
     {
-        return new ScheduleOverride([
-            'id' => (string) \Str::uuid(),
-            'resource_id' => (string) \Str::uuid(),
-            'location_id' => (string) \Str::uuid(),
+        return ScheduleOverride::factory()->make([
             'starts_at' => CarbonImmutable::parse($startsAt, 'UTC')->toIso8601ZuluString(),
             'ends_at' => CarbonImmutable::parse($endsAt, 'UTC')->toIso8601ZuluString(),
             'type' => $type,
-            'created_at' => now(),
-            'updated_at' => now(),
         ]);
     }
 }

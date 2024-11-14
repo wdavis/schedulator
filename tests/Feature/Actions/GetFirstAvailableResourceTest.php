@@ -55,18 +55,35 @@ class GetFirstAvailableResourceTest extends TestCase
 
         $this->get_schedules_for_date
             ->shouldReceive('get')
-            ->with($resources, $requested_date, $requested_date)
+            ->withArgs(function ($passedResources, $passedService, $passedStartDate, $passedEndDate) use ($resources, $requested_date, $service) {
+                $this->assertEquals($resources, $passedResources);
+                $this->assertEquals($service, $passedService);
+                $this->assertEquals($requested_date, $passedStartDate);
+                $this->assertEquals($requested_date, $passedEndDate);
+                return true;
+            })
             ->andReturn($schedules);
 
         $this->check_schedule_availability
             ->shouldReceive('check')
-            ->with($schedules[0]['periods'], $requested_date, $service->duration)
-            ->andReturn(false);
+            ->andReturnUsing(function ($passedPeriods, $passedRequestedStartTime, $passedDuration) use ($schedules, $requested_date, $service) {
+                static $invocation = 0;
+                $invocation++;
 
-        $this->check_schedule_availability
-            ->shouldReceive('check')
-            ->with($schedules[1]['periods'], $requested_date, $service->duration)
-            ->andReturn(true);
+                if ($invocation === 1) {
+                    $this->assertEquals($schedules[0]['periods'], $passedPeriods);
+                    $this->assertEquals($requested_date, $passedRequestedStartTime);
+                    $this->assertEquals($service->duration, $passedDuration);
+                    return false; // First call returns false
+                }
+
+                if ($invocation === 2) {
+                    $this->assertEquals($schedules[1]['periods'], $passedPeriods);
+                    $this->assertEquals($requested_date, $passedRequestedStartTime);
+                    $this->assertEquals($service->duration, $passedDuration);
+                    return true; // Second call returns true
+                }
+            });
 
         $get_first_available_resource = new GetFirstAvailableResource(
             $this->get_schedules_for_date,
@@ -96,7 +113,13 @@ class GetFirstAvailableResourceTest extends TestCase
 
         $this->get_schedules_for_date
             ->shouldReceive('get')
-            ->with($resources, $requested_date, $requested_date)
+            ->withArgs(function ($passedResources, $passedService, $passedStartDate, $passedEndDate) use ($resources, $requested_date, $service) {
+                $this->assertEquals($resources, $passedResources);
+                $this->assertEquals($service, $passedService);
+                $this->assertEquals($requested_date, $passedStartDate);
+                $this->assertEquals($requested_date, $passedEndDate);
+                return true;
+            })
             ->andReturn($schedules);
 
         $this->check_schedule_availability

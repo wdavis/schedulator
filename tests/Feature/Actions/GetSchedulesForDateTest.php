@@ -47,12 +47,15 @@ class GetSchedulesForDateTest extends TestCase
         );
 
         $resources = Resource::factory()->count(2)->state(new Sequence(
-            ['active' => true, 'booking_window_lead_override' => 60],
+            [
+                'active' => true,
+                'booking_window_lead_override' => 60
+            ],
             ['active' => false]
         ))->create();
 
         $service = Service::factory()->make([
-            'booking_window_lead' => 22, // something different than the 15 of the resource
+            'booking_window_lead' => 22, // something different than the 60 of the resource
             'duration' => 15,
         ]);
 

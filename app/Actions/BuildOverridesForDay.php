@@ -10,6 +10,7 @@ use Spatie\Period\Period;
 use Spatie\Period\PeriodCollection;
 use Spatie\Period\Precision;
 
+// class is just used for syncing RA
 class BuildOverridesForDay
 {
     /**

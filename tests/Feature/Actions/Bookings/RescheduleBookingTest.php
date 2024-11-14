@@ -143,15 +143,26 @@ class RescheduleBookingTest extends TestCase
         ]);
 
         $newBooking = Booking::factory()->make([
-//            'resource_id' => (string) Str::uuid(),
-//            'service_id' => (string) Str::uuid(),
             'starts_at' => now()->addDay(),
         ]);
 
         $this->createBookingMock
             ->shouldReceive('create')
             ->once()
-            ->with($newBooking->resource_id, $newBooking->service_id, $newBooking->starts_at->toIso8601String())
+            ->withArgs(function($passedResourceId, $passedServiceId, $passedTimeSlot, $passedEnvironmentId, $passedName, $passedMeta, $passedBypassLeadTime, $passedBypassActive) use ($newBooking, $oldBooking, $environment) {
+                $this->assertEquals($newBooking->resource_id, $passedResourceId);
+                $this->assertEquals($newBooking->service_id, $passedServiceId);
+                $this->assertEquals($newBooking->starts_at->toIso8601String(), $passedTimeSlot);
+                $this->assertEquals($environment->id, $passedEnvironmentId);
+                $this->assertEquals($oldBooking->name, $passedName);
+                // assert array contains key previous_starts_at with oldbooking starts_at
+                $this->assertArrayHasKey('previous_starts_at', $passedMeta);
+                $this->assertEquals($oldBooking->starts_at->toIso8601String(), $passedMeta['previous_starts_at']);
+                $this->assertFalse($passedBypassLeadTime);
+                $this->assertFalse($passedBypassActive);
+
+                return true;
+            })
             ->andReturn($newBooking);
 
         $this->cancelBookingMock
@@ -160,11 +171,11 @@ class RescheduleBookingTest extends TestCase
             ->with(Mockery::type(Booking::class), false);
 
         $rescheduledBooking = $this->rescheduleBooking->reschedule(
-            $oldBooking->id,
-            $newBooking->starts_at->toIso8601String(),
-            $environment->id,
-            $newBooking->resource_id,
-            $newBooking->service_id
+            bookingId: $oldBooking->id,
+            newTimeSlot: $newBooking->starts_at->toIso8601String(),
+            environmentId: $environment->id,
+            newResourceId: $newBooking->resource_id,
+            newServiceId: $newBooking->service_id
         );
 
         $this->assertEquals($rescheduledBooking->resource_id, $newBooking->resource_id);

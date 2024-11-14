@@ -2,11 +2,20 @@
 
 namespace App\Actions;
 
+use App\Models\Booking;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Collection;
 
 class GetScheduleByDay
 {
+    /**
+     * @param array $openings
+     * @param Collection<Booking> $bookings
+     * @param CarbonImmutable $startDate
+     * @param CarbonImmutable $endDate
+     * @param string|null $timezone
+     * @return array
+     */
     public function execute(array $openings, Collection $bookings, CarbonImmutable $startDate, CarbonImmutable $endDate, ?string $timezone = 'UTC'): array
     {
         // Ensure startDate and endDate are in UTC
@@ -66,11 +75,39 @@ class GetScheduleByDay
                     'type' => 'booking_slot',
                     'start' => $start,
                     'end' => $end,
-                    'bookings' => [$booking],
+                    'bookings' => [
+                        [
+                            'type' => 'booking',
+                            'start' => $booking['starts_at'],
+                            'end' => $booking['ends_at'],
+                            'record' => [
+                                'id' => $booking['id'],
+                                'name' => $booking['name'],
+                                'service_id' => $booking['service_id'],
+                                'resource_id' => $booking['resource_id'],
+                                'meta' => $booking['meta'],
+                                'created_at' => $booking['created_at'],
+                                'updated_at' => $booking['updated_at'],
+                            ]
+                        ],
+                    ],
                     'openings' => [],
                 ];
             } else {
-                $grouped[$date]['slots'][$slotIndex]['bookings'][] = $booking;
+                $grouped[$date]['slots'][$slotIndex]['bookings'][] = [
+                    'type' => 'booking',
+                    'start' => $booking['starts_at'],
+                    'end' => $booking['ends_at'],
+                    'record' => [
+                        'id' => $booking['id'],
+                        'name' => $booking['name'],
+                        'service_id' => $booking['service_id'],
+                        'resource_id' => $booking['resource_id'],
+                        'meta' => $booking['meta'],
+                        'created_at' => $booking['created_at'],
+                        'updated_at' => $booking['updated_at'],
+                    ]
+                ];
             }
         }
 
