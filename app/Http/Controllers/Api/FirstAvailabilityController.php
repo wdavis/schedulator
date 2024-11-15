@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Api;
 
 use App\Actions\FormatValidationErrors;
 use App\Actions\GetFirstAvailableResource;
+use App\Exceptions\NoResourceAvailabilityForRequestedTimeException;
+use App\Http\Resources\ResourceResource;
 use App\Models\Resource;
 use App\Models\Service;
 use App\Rules\Iso8601Date;
@@ -27,7 +29,7 @@ class FirstAvailabilityController
 
     public function index()
     {
-        $validator = Validator::make(request()->all(), [
+        $validator = Validator::make(request()->only('resourceIds', 'serviceId', 'time'), [
             'resourceIds' => 'required|array',
             'serviceId' => 'required',
             'time' => ['required', new Iso8601Date()],
@@ -45,7 +47,10 @@ class FirstAvailabilityController
             ->where('environment_id', $this->getApiEnvironmentId())
             ->where('active', true)
             ->with('locations.schedules')
-            ->get();
+            // keep the order of the resources as provided in the request, postgres specific
+            ->orderByRaw(
+                "array_position(ARRAY[" . implode(',', array_map(fn($id) => "'{$id}'", $resourceIds)) . "]::uuid[], id)"
+            )->get();
 
         try {
             try {
@@ -59,9 +64,12 @@ class FirstAvailabilityController
 
             $firstResourceId = $this->getFirstAvailableResource->get($resources, $service, $requestedDate);
 
-            return response()->json($resources->firstWhere('id', $firstResourceId));
+            return ResourceResource::make($resources->firstWhere('id', $firstResourceId));
+        } catch (NoResourceAvailabilityForRequestedTimeException $e) {
+            return response()->json([
+                'message' => $e->getMessage()
+            ], 404);
         } catch (\Exception $e) {
-
             return response()->json([
                 'error' => $e->getMessage()
             ], 500);

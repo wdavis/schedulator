@@ -45,19 +45,34 @@ class Resource extends Model
         return $this->belongsTo(Environment::class);
     }
 
+    /**
+     * The earliest time ahead a booking can be made for this resource.
+     * Forcing this to a big number for now, not even sure we are honoring it.
+     * @return int|null
+     */
     public function bookingWindowLeadOverride(): ?int
     {
         return $this->booking_window_lead_override;
     }
 
+    /**
+     * The latest time (in minutes) before a booking can be made for this resource.
+     *
+     * @return int|null
+     */
     public function bookingWindowEndOverride(): ?int
     {
         return $this->booking_window_end_override;
     }
 
-    public function cancellationLead(): ?int
+    /**
+     * The minutes before start time that a booking can be cancelled for this resource.
+     *
+     * @return int|null
+     */
+    public function cancellationWindowEnd(): ?int
     {
-        return $this->cancellation_lead_override;
+        return $this->cancellation_window_end;
     }
 
     public function isAvailable($dateTime, $durationInMinutes)

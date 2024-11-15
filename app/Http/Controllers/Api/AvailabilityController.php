@@ -90,7 +90,6 @@ class AvailabilityController
             ->where('active', true)
             ->get()
         ;
-
         $availability = $this->getCombinedSchedulesForDate->get($resources, $service, $requestedDate, endDate: $requestedEndDate);
 
         $currentTimeOfDay = CarbonImmutable::now();
@@ -140,6 +139,11 @@ class AvailabilityController
             foreach($slots as &$slot) {
                 $slot['start'] = $slot['start']->setTimezone($timezone)->toIso8601String();
                 $slot['end'] = $slot['end']->setTimezone($timezone)->toIso8601String();
+            }
+        } else {
+            foreach($slots as &$slot) {
+                $slot['start'] = $slot['start']->toIso8601String();
+                $slot['end'] = $slot['end']->toIso8601String();
             }
         }
 

@@ -133,4 +133,43 @@ class GetFirstAvailableResourceTest extends TestCase
 
         $get_first_available_resource->get($resources, $service, $requested_date);
     }
+
+    // todo test that bookings are subtracted by ensuring the service duration is added to the requested date and passed to get schedules for date
+    public function test_end_range_is_generated_based_off_of_the_service_duration(): void
+    {
+        $resources = new Collection;
+        $service = Service::factory()->make(['duration' => 15]);
+        $requested_date = CarbonImmutable::now();
+
+        $schedules = collect([
+            [
+                'resource' => Resource::factory()->make(['id' => 1]),
+                'resource_id' => 1,
+                'periods' => PeriodCollection::make()
+            ]
+        ]);
+
+        $this->get_schedules_for_date
+            ->shouldReceive('get')
+            ->withArgs(function ($passedResources, $passedService, $passedStartDate, $passedEndDate) use ($resources, $requested_date, $service) {
+                $this->assertEquals($resources, $passedResources);
+                $this->assertEquals($service, $passedService);
+                $this->assertEquals($requested_date, $passedStartDate);
+                $this->assertEquals($requested_date->addMinutes($service->duration), $passedEndDate, 'The end date should be the requested date plus the service duration');
+                return true;
+            })
+            ->andReturn($schedules);
+
+        $this->check_schedule_availability
+            ->shouldReceive('check')
+            ->andReturn(true);
+
+        $get_first_available_resource = new GetFirstAvailableResource(
+            $this->get_schedules_for_date,
+            $this->check_schedule_availability
+        );
+
+        $get_first_available_resource->get($resources, $service, $requested_date);
+
+    }
 }

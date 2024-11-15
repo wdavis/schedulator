@@ -16,7 +16,7 @@ class CreateNewAccountEnvironments
 
         $environments = [];
 
-        if($user->environments->filter(fn($env) => $env->name === 'production')->count() > 0) {
+        if($user->environments->filter(fn($env) => $env->name === 'production')->count() === 0) {
             $prodEnv = Environment::create([
                 'name' => "production",
                 'user_id' => $user->id,
@@ -25,7 +25,7 @@ class CreateNewAccountEnvironments
             $environments[] = $prodEnv;
         }
 
-        if($user->environments->filter(fn($env) => $env->name === 'staging')->count() > 0) {
+        if($user->environments->filter(fn($env) => $env->name === 'staging')->count() === 0) {
             $stagingEnv = Environment::create([
                 'name' => "staging",
                 'user_id' => $user->id,
@@ -34,7 +34,7 @@ class CreateNewAccountEnvironments
             $environments[] = $stagingEnv;
         }
 
-        if($user->environments->filter(fn($env) => $env->name === 'dev')->count() > 0) {
+        if($user->environments->filter(fn($env) => $env->name === 'dev')->count() === 0) {
             $devEnv = Environment::create([
                 'name' => "dev",
                 'user_id' => $user->id,
@@ -58,11 +58,15 @@ class CreateNewAccountEnvironments
 
             $service = $environment->services()->create([
                 'name' => "Default Service for {$environment->name}",
+//                'booking_window_lead' => 60, // use db column defaults
+//                'booking_window_end' => 60, // use db column defaults
+//                'cancellation_window_end' => 60, // use db column defaults
             ]);
 
             $responseEnvs[$environment->name] = [
                 'api_key' => $apiKey->key,
                 'service_id' => $service->id,
+                'environment_id' => $environment->id,
             ];
         }
 

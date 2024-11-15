@@ -19,7 +19,7 @@ class Service extends Model
         'buffer_after',
         'booking_window_lead',
         'booking_window_end',
-        'cancellation_lead',
+        'cancellation_window_end',
 //        'booking_id',
 //        'environment_id',
     ];

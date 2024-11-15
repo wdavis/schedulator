@@ -105,6 +105,20 @@ class CreateBooking
         );
     }
 
+    /**
+     * Create Booking record
+     *
+     * Only use this method if you have already checked availability or are importing bookings
+     *
+     * @param string $name
+     * @param string $resourceId
+     * @param CarbonImmutable $requestedDate
+     * @param Service $service
+     * @param string $locationId
+     * @param array $meta
+     * @param bool $cancelled
+     * @return Booking
+     */
     public function createBooking(string $name, string $resourceId, CarbonImmutable $requestedDate, Service $service, string $locationId, array $meta = [], bool $cancelled = false) : Booking
     {
         // todo need to check if environment requires hipaa

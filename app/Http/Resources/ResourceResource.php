@@ -20,7 +20,7 @@ class ResourceResource extends JsonResource
             'active' => $this->active,
             'booking_window_lead_override' => $this->booking_window_lead_override,
             'meta' => $this->meta,
-            'locations' => LocationResource::collection($this->whenLoaded('locations')),
+//            'locations' => LocationResource::collection($this->whenLoaded('locations')),
         ];
     }
 }

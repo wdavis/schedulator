@@ -88,6 +88,7 @@ class GetSchedulesForDate
             if($scopeLeadTimes) {
                 $periods = $this->scopeAvailabilityWithLeadTime->scope(
                     availability: $periods,
+                    // todo change this to booking_window_end_override
                     leadTimeInMinutes: $resource->bookingWindowLeadOverride() ?? $service->booking_window_lead,
                     bookingDurationInMinutes: $service->duration,
 //                requestedStartDate: $startDate
