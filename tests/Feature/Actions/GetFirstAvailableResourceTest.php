@@ -59,7 +59,7 @@ class GetFirstAvailableResourceTest extends TestCase
                 $this->assertEquals($resources, $passedResources);
                 $this->assertEquals($service, $passedService);
                 $this->assertEquals($requested_date, $passedStartDate);
-                $this->assertEquals($requested_date, $passedEndDate);
+                $this->assertEquals($requested_date->addMinutes($service->duration), $passedEndDate);
                 return true;
             })
             ->andReturn($schedules);
@@ -117,7 +117,7 @@ class GetFirstAvailableResourceTest extends TestCase
                 $this->assertEquals($resources, $passedResources);
                 $this->assertEquals($service, $passedService);
                 $this->assertEquals($requested_date, $passedStartDate);
-                $this->assertEquals($requested_date, $passedEndDate);
+                $this->assertEquals($requested_date->addMinutes($service->duration), $passedEndDate);
                 return true;
             })
             ->andReturn($schedules);

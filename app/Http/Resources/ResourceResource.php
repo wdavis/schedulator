@@ -19,6 +19,8 @@ class ResourceResource extends JsonResource
             'name' => $this->name,
             'active' => $this->active,
             'booking_window_lead_override' => $this->booking_window_lead_override,
+            'booking_window_end_override' => $this->booking_window_end_override,
+            'cancellation_window_end_override' => $this->cancellation_window_end_override,
             'meta' => $this->meta,
 //            'locations' => LocationResource::collection($this->whenLoaded('locations')),
         ];

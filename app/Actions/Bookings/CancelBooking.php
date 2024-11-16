@@ -14,6 +14,7 @@ class CancelBooking
             throw new BookingAlreadyCancelledException('Booking has already been cancelled');
         }
 
+        // todo check if resource is loaded
         if(!$booking->relationLoaded('service')) {
             $booking->load('service');
         }
@@ -21,10 +22,10 @@ class CancelBooking
         // look at the service and check the lead time for cancellation
         /** @var Carbon $startsAt */
         $startsAt = $booking->starts_at;
-        $bookingWithCancellationLead = $startsAt->subMinutes($booking->service->cancellation_lead);
+        $bookingWithCancellationLead = $startsAt->subMinutes($booking->service->cancellation_window_end);
 
         if($bookingWithCancellationLead->isPast() && !$force) {
-            $formattedDuration = $this->formatDuration($booking->service->cancellation_lead);
+            $formattedDuration = $this->formatDuration($booking->service->cancellation_window_end);
             throw new \Exception("Booking cannot be cancelled within {$formattedDuration} of the start time {$booking->starts_at->toIso8601String()}");
         }
 

@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('services', function (Blueprint $table) {
-            $table->integer('cancellation_window_end')->nullable();
+            $table->integer('cancellation_window_end')->default(60);
             $table->dropColumn('cancellation_lead');
         });
 

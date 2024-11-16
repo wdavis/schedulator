@@ -61,7 +61,7 @@ class ServiceController
             'buffer_after' => ['integer', 'nullable'],
             'booking_window_lead' => ['integer', 'nullable'],
             'booking_window_end' => ['integer', 'nullable'],
-            'cancellation_lead' => ['integer', 'nullable'],
+            'cancellation_window_end' => ['integer', 'nullable'],
         ]);
 
         if($validator->fails()) {

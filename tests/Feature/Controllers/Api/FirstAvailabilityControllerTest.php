@@ -42,9 +42,9 @@ class FirstAvailabilityControllerTest extends TestCase
             'id',
             'name',
             'active',
-            // todo add booking_window_end_override
-            // todo add cancellation_window_end_override
             'booking_window_lead_override',
+            'booking_window_end_override',
+            'cancellation_window_end_override',
             'meta'
         ]);
 
@@ -138,8 +138,7 @@ class FirstAvailabilityControllerTest extends TestCase
         );
 
         // the first resource has a 45 minute lead time
-        // todo change this to booking_window_end_override
-        $accountInfo['prodResource']->booking_window_lead_override = 45;
+        $accountInfo['prodResource']->booking_window_end_override = 45;
         $accountInfo['prodResource']->save();
 
         $winningResource = $this->createResource(
@@ -155,8 +154,7 @@ class FirstAvailabilityControllerTest extends TestCase
         );
 
         // the second resource has a 0 minute lead time, so they should be the first
-        // todo change this to booking_window_end_override
-        $winningResource->booking_window_lead_override = 0;
+        $winningResource->booking_window_end_override = 0;
         $winningResource->save();
 
         $response = $this->postJson(route('first-availability'), [
@@ -196,7 +194,7 @@ class FirstAvailabilityControllerTest extends TestCase
         );
 
         // todo change this to booking_window_end_override
-        $accountInfo['prodResource']->booking_window_lead_override = 0;
+        $accountInfo['prodResource']->booking_window_end_override = 0;
         $accountInfo['prodResource']->save();
 
         $winningResource = $this->createResource(
@@ -212,7 +210,7 @@ class FirstAvailabilityControllerTest extends TestCase
         );
 
         // todo change this to booking_window_end_override
-        $winningResource->booking_window_lead_override = 0;
+        $winningResource->booking_window_end_override = 0;
         $winningResource->save();
 
         $response = $this->postJson(route('first-availability'), [

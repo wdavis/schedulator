@@ -33,23 +33,34 @@ class UpdateResourceTest extends TestCase
     }
 
     /** @test */
-    public function it_updates_the_booking_window_lead_override()
+    public function it_updates_the_booking_window_overrides()
     {
         // Arrange
         $resource = Resource::factory()->create([
             'booking_window_lead_override' => 10,
+            'booking_window_end_override' => 20,
+            'cancellation_window_end_override' => 30,
         ]);
 
         $action = new UpdateResource();
 
         // Act
-        $updatedResource = $action->update($resource, null, 20);
+        $updatedResource = $action->update(
+            $resource,
+            bookingWindowLeadOverride: 20,
+            bookingWindowEndOverride: 30,
+            cancellationWindowEndOverride: 40
+        );
 
         // Assert
         $this->assertEquals(20, $updatedResource->booking_window_lead_override);
+        $this->assertEquals(30, $updatedResource->booking_window_end_override);
+        $this->assertEquals(40, $updatedResource->cancellation_window_end_override);
         $this->assertDatabaseHas('resources', [
             'id' => $resource->id,
             'booking_window_lead_override' => 20,
+            'booking_window_end_override' => 30,
+            'cancellation_window_end_override' => 40,
         ]);
     }
 
@@ -64,7 +75,9 @@ class UpdateResourceTest extends TestCase
         $action = new UpdateResource();
 
         // Act
-        $updatedResource = $action->update($resource, null, null, ['baz' => 'qux']);
+        $updatedResource = $action->update(
+            $resource,
+            meta: ['baz' => 'qux']);
 
         // Assert
         $this->assertEquals(['foo' => 'bar', 'baz' => 'qux'], $updatedResource->meta);

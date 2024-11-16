@@ -70,9 +70,9 @@ class Resource extends Model
      *
      * @return int|null
      */
-    public function cancellationWindowEnd(): ?int
+    public function cancellationWindowEndOverride(): ?int
     {
-        return $this->cancellation_window_end;
+        return $this->cancellation_window_end_override;
     }
 
     public function isAvailable($dateTime, $durationInMinutes)

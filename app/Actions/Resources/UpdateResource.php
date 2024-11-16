@@ -18,10 +18,9 @@ class UpdateResource
             $resource->name = $name;
         }
 
-        // todo fix
         $resource->booking_window_lead_override = $bookingWindowLeadOverride;
-//        $resource->booking_window_end_override = $bookingWindowEndOverride;
-//        $resource->cancellation_window_end_override = $cancellationWindowEndOverride;
+        $resource->booking_window_end_override = $bookingWindowEndOverride;
+        $resource->cancellation_window_end_override = $cancellationWindowEndOverride;
 
         $resource->meta = array_merge($resource->meta ?? [], $meta);
 

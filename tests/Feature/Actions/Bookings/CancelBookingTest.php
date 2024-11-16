@@ -35,7 +35,7 @@ class CancelBookingTest extends TestCase
 
     public function test_booking_cannot_be_cancelled_if_past_cancellation_lead_time()
     {
-        $service = Service::factory()->create(['cancellation_lead' => 60]);
+        $service = Service::factory()->create(['cancellation_window_end' => 60]);
         $booking = Booking::factory()->create(['service_id' => $service->id, 'starts_at' => Carbon::now()->addMinutes(30)]);
 
         $cancelBooking = new CancelBooking();
@@ -48,7 +48,7 @@ class CancelBookingTest extends TestCase
 
     public function test_booking_can_be_cancelled_forcefully_past_cancellation_lead_time()
     {
-        $service = Service::factory()->create(['cancellation_lead' => 60]);
+        $service = Service::factory()->create(['cancellation_window_end' => 60]);
         $booking = Booking::factory()->create(['service_id' => $service->id, 'starts_at' => Carbon::now()->addMinutes(30)]);
 
         $cancelBooking = new CancelBooking();

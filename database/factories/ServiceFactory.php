@@ -24,7 +24,7 @@ class ServiceFactory extends Factory
             'buffer_after' => 0,
             'booking_window_lead' => 0,
             'booking_window_end' => 0,
-            'cancellation_lead' => 0,
+            'cancellation_window_end' => 0,
             'slots' => 1,
         ];
     }

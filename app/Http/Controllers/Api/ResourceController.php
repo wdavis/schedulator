@@ -77,6 +77,8 @@ class ResourceController
             'name' => ['string', 'nullable'],
             'active' => ['boolean', 'nullable'],
             'booking_window_lead_override' => ['integer', 'nullable'],
+            'booking_window_end_override' => ['integer', 'nullable'],
+            'cancellation_window_end_override' => ['integer', 'nullable'],
             'meta' => ['array', 'nullable'],
         ]);
 
@@ -93,6 +95,8 @@ class ResourceController
                 resource: $resource,
                 name: request()->input('name'),
                 bookingWindowLeadOverride: request()->input('booking_window_lead_override'),
+                bookingWindowEndOverride: request()->input('booking_window_end_override'),
+                cancellationWindowEndOverride: request()->input('cancellation_window_end_override'),
                 meta: request()->input('meta', []),
             );
 

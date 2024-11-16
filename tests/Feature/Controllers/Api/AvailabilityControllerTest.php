@@ -253,11 +253,7 @@ class AvailabilityControllerTest extends TestCase
         );
 
         // modify lead time for the service
-        // todo change to this
-//        $accountInfo['prodService']->booking_window_end = 15;
-
-        // todo replace booking_window_lead with booking_window_end
-        $accountInfo['prodService']->booking_window_lead = 60;
+        $accountInfo['prodService']->booking_window_end = 60;
         $accountInfo['prodService']->save();
 
         $response = $this->postJson(
@@ -302,8 +298,7 @@ class AvailabilityControllerTest extends TestCase
             resource: $accountInfo['prodResource']
         );
 
-        // todo replace booking_window_lead_override with booking_window_end_override
-        $accountInfo['prodResource']->booking_window_lead_override = 120;
+        $accountInfo['prodResource']->booking_window_end_override = 120;
         $accountInfo['prodResource']->save();
 
         $response = $this->postJson(
