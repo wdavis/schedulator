@@ -18,7 +18,7 @@ class BookingCancelController
     {
         $booking = Booking::whereHas('resource', function ($query) {
             $query->where('environment_id', $this->getApiEnvironmentId());
-        })->where('id', $id)->firstOrFail();
+        })->with('service', 'resource')->where('id', $id)->firstOrFail();
 
 //        try {
         $this->cancelBooking->cancel($booking, request('force', false));

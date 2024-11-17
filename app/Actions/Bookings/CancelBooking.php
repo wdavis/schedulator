@@ -19,13 +19,19 @@ class CancelBooking
             $booking->load('service');
         }
 
+        if(!$booking->relationLoaded('resource')) {
+            $booking->load('resource');
+        }
+
+        $cancellationWindowEnd = $booking->resource->cancellation_window_end_override ?? $booking->service->cancellation_window_end;
+
         // look at the service and check the lead time for cancellation
         /** @var Carbon $startsAt */
         $startsAt = $booking->starts_at;
-        $bookingWithCancellationLead = $startsAt->subMinutes($booking->service->cancellation_window_end);
+        $bookingWithCancellationLead = $startsAt->subMinutes($cancellationWindowEnd);
 
         if($bookingWithCancellationLead->isPast() && !$force) {
-            $formattedDuration = $this->formatDuration($booking->service->cancellation_window_end);
+            $formattedDuration = $this->formatDuration($cancellationWindowEnd);
             throw new \Exception("Booking cannot be cancelled within {$formattedDuration} of the start time {$booking->starts_at->toIso8601String()}");
         }
 
