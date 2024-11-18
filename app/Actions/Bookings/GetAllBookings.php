@@ -29,10 +29,11 @@ class GetAllBookings
             ->when($locationId, function($query) use ($locationId) {
                 $query->where('location_id', $locationId);
             })
-            ->where(function($query) use ($startDate, $endDate) {
-                $query->where('starts_at', '>=', $startDate)
-                    ->where('ends_at', '<=', $endDate);
-            })
+            // CREATE INDEX bookings_tsrange_idx ON bookings USING GIST (tsrange(starts_at, ends_at));
+            ->whereRaw(
+                'tsrange(starts_at, ends_at) && tsrange(?, ?)',
+                [$startDate, $endDate]
+            )
             ->orderBy('starts_at')
             ->get();
     }
