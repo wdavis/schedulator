@@ -9,7 +9,7 @@ use Illuminate\Support\Str;
 
 class CreateNewAccountEnvironments
 {
-    public function create(User $user)
+    public function create(User $user, int $defaultServiceDuration = 15): array
     {
         // first check which environments they have
         $user->load('environments');
@@ -26,7 +26,7 @@ class CreateNewAccountEnvironments
         }
 
         if($user->environments->filter(fn($env) => $env->name === 'staging')->count() === 0) {
-            $stagingEnv = Environment::create([
+           $stagingEnv = Environment::create([
                 'name' => "staging",
                 'user_id' => $user->id,
             ]);
@@ -58,6 +58,7 @@ class CreateNewAccountEnvironments
 
             $service = $environment->services()->create([
                 'name' => "Default Service for {$environment->name}",
+                'duration' => $defaultServiceDuration,
 //                'booking_window_lead' => 60, // use db column defaults
 //                'booking_window_end' => 60, // use db column defaults
 //                'cancellation_window_end' => 60, // use db column defaults

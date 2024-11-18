@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Controllers\Api;
 
+use App\Enums\ScheduleOverrideType;
 use Carbon\CarbonImmutable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -13,7 +14,7 @@ class CalendarControllerTest extends TestCase
     use RefreshDatabase;
     use CreatesTestAccounts;
 
-    public function test_calendar_shows_openings_for_environment(): void
+    public function test_calendar_shows_openings(): void
     {
         $accountInfo = $this->createAccount();
 
@@ -89,8 +90,11 @@ class CalendarControllerTest extends TestCase
         ]);
     }
 
-    public function test_calendar_only_shows_openings_from_environment(): void
+    public function test_calendar_only_shows_openings_from_specific_environment(): void
     {
+        $date = CarbonImmutable::create(2024, 1, 1);
+        $this->travelTo($date);
+
         $accountInfo = $this->createAccount();
 
         $this->createSchedule(
@@ -108,8 +112,8 @@ class CalendarControllerTest extends TestCase
         );
 
         // get date of nearest monday
-        $prodDate = CarbonImmutable::now()->next('monday');
-        $stagingDate = CarbonImmutable::now()->next('tuesday')->endOfDay();
+        $prodDate = $date; // monday
+        $stagingDate = $date->addDay()->endOfDay(); // tuesday
 
         $response = $this->postJson(
             uri: route('calendar.index'),
@@ -159,11 +163,189 @@ class CalendarControllerTest extends TestCase
         );
 
         $response->assertJsonCount(1, '0.slots.0.bookings');
+        $response->assertJsonCount(0, '0.slots.0.openings');
         $this->assertEquals('test', $response->json()[0]['slots'][0]['bookings'][0]['record']['name']);
+
+        // check that there is only one opening
+        $response->assertJsonCount(1, '0.slots.1.openings');
+        $response->assertJsonCount(0, '0.slots.1.bookings');
     }
 
-    // todo test overrides
-    // todo disabled resources
-    // todo specific resource ids
+    public function test_overrides_can_block_out_entire_day(): void
+    {
+        $accountInfo = $this->createAccount();
+
+        $this->createSchedule(
+            day: 'monday',
+            startTime: '08:00',
+            endTime: '12:00',
+            resource: $accountInfo['prodResource']
+        );
+
+        $startDate = CarbonImmutable::now()->next('monday');
+
+        $this->createOverride(
+            resource: $accountInfo['prodResource'],
+            type: ScheduleOverrideType::block,
+            startDate: $startDate->setTimeFromTimeString('08:00'),
+            endDate: $startDate->setTimeFromTimeString('12:00')
+        );
+
+        $response = $this->postJson(
+            uri: route('calendar.index'),
+            data: [
+                'serviceId' => $accountInfo['prodService']->id,
+                'startDate' => $startDate->toIso8601String(),
+                'endDate' => $startDate->endOfDay()->toIso8601String(),
+                'format' => 'days',
+            ],
+            headers: $this->createAuthHeader($accountInfo['prodApiKey'])
+        );
+
+        $response->assertJsonCount(0, '0.slots');
+    }
+
+    public function test_override_openings_are_added(): void
+    {
+        $accountInfo = $this->createAccount(defaultServiceDuration: 60);
+
+        $this->createSchedule(
+            day: 'monday',
+            startTime: '08:00',
+            endTime: '12:00',
+            resource: $accountInfo['prodResource']
+        );
+
+        $startDate = CarbonImmutable::now()->next('monday');
+
+        $this->createOverride(
+            resource: $accountInfo['prodResource'],
+            type: ScheduleOverrideType::opening,
+            startDate: $startDate->setTimeFromTimeString('13:00'),
+            endDate: $startDate->setTimeFromTimeString('17:00')
+        );
+
+        $response = $this->postJson(
+            uri: route('calendar.index'),
+            data: [
+                'serviceId' => $accountInfo['prodService']->id,
+                'startDate' => $startDate->toIso8601String(),
+                'endDate' => $startDate->endOfDay()->toIso8601String(),
+
+            ],
+            headers: $this->createAuthHeader($accountInfo['prodApiKey'])
+        );
+
+        $response->assertJsonCount(9, '0.slots'); // count including gaps
+        $this->assertEquals(8, $this->countSlotsByType($response->json('0.slots'), 'opening_slot'));
+
+    }
+
+    public function test_partial_block_on_schedule(): void
+    {
+        $date = CarbonImmutable::create(2024, 1, 1);
+        $this->travelTo($date);
+
+        $accountInfo = $this->createAccount();
+
+        $this->createSchedule(
+            day: 'monday',
+            startTime: '08:00',
+            endTime: '12:00',
+            resource: $accountInfo['prodResource']
+        );
+
+        $startDate = $date;
+
+        $this->createOverride(
+            resource: $accountInfo['prodResource'],
+            type: ScheduleOverrideType::block,
+            startDate: $startDate->setTimeFromTimeString('09:00'),
+            endDate: $startDate->setTimeFromTimeString('11:00')
+        );
+
+        $response = $this->postJson(
+            uri: route('calendar.index'),
+            data: [
+                'serviceId' => $accountInfo['prodService']->id,
+                'startDate' => $startDate->toIso8601String(),
+                'endDate' => $startDate->endOfDay()->toIso8601String(),
+                'format' => 'days',
+            ],
+            headers: $this->createAuthHeader($accountInfo['prodApiKey'])
+        );
+
+        $slots = $response->json('0.slots');
+        $this->assertEquals(8, $this->countSlotsByType($slots, 'opening_slot'), 'There should be 8 opening slots');
+        $this->assertEquals(1, $this->countSlotsByType($slots, 'gap'), 'There should be 1 gap');
+    }
+
+    public function test_pull_specific_resource_ids(): void
+    {
+        $date = CarbonImmutable::create(2024, 1, 1);
+        $this->travelTo($date);
+
+        $accountInfo = $this->createAccount();
+
+        $includedResource = $this->createResource(
+            name: 'Included Resource',
+            environmentId: $accountInfo['prodEnvironmentId']
+        );
+
+        $this->createSchedule(
+            day: 'monday',
+            startTime: '08:00',
+            endTime: '12:00',
+            resource: $includedResource
+        );
+
+        $includedResource2 = $this->createResource(
+            name: 'Included Resource 2',
+            environmentId: $accountInfo['prodEnvironmentId']
+        );
+
+        $this->createSchedule(
+            day: 'monday',
+            startTime: '12:00',
+            endTime: '14:00',
+            resource: $includedResource2
+        );
+
+        $excludedResource = $this->createResource(
+            name: 'Excluded Resource',
+            environmentId: $accountInfo['prodEnvironmentId']
+        );
+
+        $this->createSchedule(
+            day: 'monday',
+            startTime: '14:00',
+            endTime: '16:00',
+            resource: $excludedResource
+        );
+
+        $startDate = $date;
+        $endDate = $startDate->endOfDay();
+
+        $response = $this->postJson(
+            uri: route('calendar.index'),
+            data: [
+                'serviceId' => $accountInfo['prodService']->id,
+                'startDate' => $startDate->toIso8601String(),
+                'endDate' => $endDate->toIso8601String(),
+                'format' => 'days',
+                'resourceIds' => [
+                    $includedResource->id,
+                    $includedResource2->id
+                ],
+            ],
+            headers: $this->createAuthHeader($accountInfo['prodApiKey'])
+        );
+
+        $slots = $response->json('0.slots');
+        $this->assertEquals(24, $this->countSlotsByType($slots, 'opening_slot'), 'There should be 2 opening slots');
+
+        // last slot should be 13:45 - 14:00, 14:00 - 16:00 that would be the excluded resource
+        $this->assertEquals($startDate->setTimeFromTimeString('13:45')->toIso8601String(), $slots[23]['start']);
+    }
 
 }

@@ -4,8 +4,10 @@ namespace Tests\Helpers;
 
 use App\Actions\Account\CreateNewAccount;
 use App\Actions\Bookings\CreateBooking;
+use App\Actions\Overrides\CreateOverride;
 use App\Actions\Resources\CreateResource;
 use App\Actions\UpdateSchedule;
+use App\Enums\ScheduleOverrideType;
 use App\Models\Resource;
 use App\Models\Service;
 use App\Models\User;
@@ -27,14 +29,15 @@ trait CreatesTestAccounts
         );
     }
 
-    private function createAccount()
+    private function createAccount(int $defaultServiceDuration = 15): array
     {
         /** @var CreateNewAccount $createAccount */
         $createAccount = app(CreateNewAccount::class);
         $account = $createAccount->create(
             name: 'Test User',
             email: 'test@test.com',
-            password: 'password'
+            password: 'password',
+            defaultServiceDuration: $defaultServiceDuration
         );
 
         // create production resource
@@ -108,6 +111,25 @@ trait CreatesTestAccounts
             service: $service,
             locationId: $resource->location->id
         );
+    }
+
+    private function createOverride(Resource $resource, ScheduleOverrideType $type, CarbonImmutable $startDate, CarbonImmutable $endDate, array $data = [])
+    {
+        /** @var CreateOverride $action */
+        $action = app(CreateOverride::class);
+        return $action->create(
+            resource: $resource,
+            type: $type,
+            startDate: $startDate,
+            endDate: $endDate,
+            data: $data
+        );
+    }
+
+    private function countSlotsByType(array $slots, $type): int
+    {
+        return count(array_filter($slots, fn($slot) => $slot['type'] === $type));
+
     }
 
     private function createAuthHeader($apiKey): array

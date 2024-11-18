@@ -20,14 +20,14 @@ class CreateNewAccount
         $this->createNewAccountEnvironments = $createNewAccountEnvironments;
     }
 
-    public function create(string $name, string $email, string $password)
+    public function create(string $name, string $email, string $password, int $defaultServiceDuration = 15): array
     {
         $user = null;
         $keys = null;
 
-        DB::transaction(function () use ($name, $email, $password, &$user, &$keys) {
+        DB::transaction(function () use ($name, $email, $password, &$user, &$keys, $defaultServiceDuration) {
             $user = $this->createUser($name, $email, $password);
-            $keys = $this->createEnvironments($user);
+            $keys = $this->createEnvironments($user, $defaultServiceDuration);
         });
 
         return [
@@ -52,10 +52,11 @@ class CreateNewAccount
 
     }
 
-    private function createEnvironments(User $user)
+    private function createEnvironments(User $user, int $defaultServiceDuration): array
     {
-        return $this->createNewAccountEnvironments->create($user);
+        return $this->createNewAccountEnvironments->create($user, $defaultServiceDuration);
     }
+
 
 
 }
