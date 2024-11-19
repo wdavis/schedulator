@@ -58,8 +58,8 @@ class GetFirstAvailableResourceTest extends TestCase
             ->withArgs(function ($passedResources, $passedService, $passedStartDate, $passedEndDate) use ($resources, $requested_date, $service) {
                 $this->assertEquals($resources, $passedResources);
                 $this->assertEquals($service, $passedService);
-                $this->assertEquals($requested_date, $passedStartDate);
-                $this->assertEquals($requested_date->addMinutes($service->duration), $passedEndDate);
+                $this->assertEquals($requested_date->startOfDay(), $passedStartDate);
+                $this->assertEquals($requested_date->endOfDay(), $passedEndDate);
                 return true;
             })
             ->andReturn($schedules);
@@ -90,7 +90,13 @@ class GetFirstAvailableResourceTest extends TestCase
             $this->check_schedule_availability
         );
 
-        $resource_id = $get_first_available_resource->get($resources, $service, $requested_date);
+        $resource_id = $get_first_available_resource->get(
+            resources: $resources,
+            service: $service,
+            requestedDate: $requested_date,
+            requestedStartOfDate: $requested_date->startOfDay(),
+            requestedEndOfDate: $requested_date->endOfDay()
+        );
 
         $this->assertEquals($schedules[1]['resource']->id, $resource_id);
     }
@@ -116,8 +122,8 @@ class GetFirstAvailableResourceTest extends TestCase
             ->withArgs(function ($passedResources, $passedService, $passedStartDate, $passedEndDate) use ($resources, $requested_date, $service) {
                 $this->assertEquals($resources, $passedResources);
                 $this->assertEquals($service, $passedService);
-                $this->assertEquals($requested_date, $passedStartDate);
-                $this->assertEquals($requested_date->addMinutes($service->duration), $passedEndDate);
+                $this->assertEquals($requested_date->startOfDay(), $passedStartDate);
+                $this->assertEquals($requested_date->endOfDay(), $passedEndDate);
                 return true;
             })
             ->andReturn($schedules);
@@ -131,7 +137,13 @@ class GetFirstAvailableResourceTest extends TestCase
             $this->check_schedule_availability
         );
 
-        $get_first_available_resource->get($resources, $service, $requested_date);
+        $get_first_available_resource->get(
+            resources: $resources,
+            service: $service,
+            requestedDate: $requested_date,
+            requestedStartOfDate: $requested_date->startOfDay(),
+            requestedEndOfDate: $requested_date->endOfDay()
+        );
     }
 
     // todo test that bookings are subtracted by ensuring the service duration is added to the requested date and passed to get schedules for date
@@ -154,8 +166,8 @@ class GetFirstAvailableResourceTest extends TestCase
             ->withArgs(function ($passedResources, $passedService, $passedStartDate, $passedEndDate) use ($resources, $requested_date, $service) {
                 $this->assertEquals($resources, $passedResources);
                 $this->assertEquals($service, $passedService);
-                $this->assertEquals($requested_date, $passedStartDate);
-                $this->assertEquals($requested_date->addMinutes($service->duration), $passedEndDate, 'The end date should be the requested date plus the service duration');
+                $this->assertEquals($requested_date->startOfDay(), $passedStartDate);
+                $this->assertEquals($requested_date->endOfDay(), $passedEndDate);
                 return true;
             })
             ->andReturn($schedules);
@@ -169,7 +181,13 @@ class GetFirstAvailableResourceTest extends TestCase
             $this->check_schedule_availability
         );
 
-        $get_first_available_resource->get($resources, $service, $requested_date);
+        $get_first_available_resource->get(
+            resources: $resources,
+            service: $service,
+            requestedDate: $requested_date,
+            requestedStartOfDate: $requested_date->startOfDay(),
+            requestedEndOfDate: $requested_date->endOfDay()
+        );
 
     }
 }

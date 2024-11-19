@@ -60,9 +60,17 @@ class FirstAvailabilityController
                     'message' => 'Service not found'
                 ], 404);
             }
-            $requestedDate = CarbonImmutable::parse($time);
+            $requestedTime = CarbonImmutable::parse($time)->setTimezone('UTC');
+            $requestedDateStart = $requestedTime->startOfDay()->setTimezone('UTC');
+            $requestedDateEnd = $requestedTime->endOfDay()->setTimezone('UTC');
 
-            $firstResourceId = $this->getFirstAvailableResource->get($resources, $service, $requestedDate);
+            $firstResourceId = $this->getFirstAvailableResource->get(
+                resources: $resources,
+                service: $service,
+                requestedDate: $requestedTime,
+                requestedStartOfDate: $requestedDateStart,
+                requestedEndOfDate: $requestedDateEnd
+            );
 
             return ResourceResource::make($resources->firstWhere('id', $firstResourceId));
         } catch (NoResourceAvailabilityForRequestedTimeException $e) {
