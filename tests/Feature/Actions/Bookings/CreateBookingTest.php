@@ -16,10 +16,13 @@ use Carbon\CarbonImmutable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Spatie\Period\Period;
 use Spatie\Period\PeriodCollection;
+use Tests\Helpers\CreatesTestAccounts;
 use Tests\TestCase;
 
 class CreateBookingTest extends TestCase
 {
+    use CreatesTestAccounts;
+
     use RefreshDatabase;
 
     private $getCombinedSchedulesForDateMock;
@@ -176,5 +179,49 @@ class CreateBookingTest extends TestCase
         $this->assertEquals($resource->id, $booking->resource_id);
         $this->assertEquals($service->id, $booking->service_id);
         $this->assertTrue($booking->meta['bypassLeadTime']);
+    }
+
+    public function test_resource_booking_window_end_is_honored()
+    {
+        $location = Location::factory()->create();
+        $resource = Resource::factory()->create(['active' => true, 'booking_window_end_override' => 60]);
+
+        // Attach the location to the resource
+        $resource->locations()->attach($location->id);
+        $resource->load('location'); // Load the location before passing to CreateBooking
+
+        $service = Service::factory()->create(['duration' => 60, 'booking_window_end' => 1000]);
+        $requestedDate = CarbonImmutable::now()->addDay();
+
+        // Create a PeriodCollection as a mock return value
+        $periodCollection = new PeriodCollection(
+            Period::make($requestedDate->startOfDay(), $requestedDate->endOfDay())
+        );
+
+        // Mock the combined schedule and availability
+        $this->getCombinedSchedulesForDateMock
+            ->shouldReceive('get')
+            ->andReturn($periodCollection);
+
+        $this->checkScheduleAvailabilityMock
+            ->shouldReceive('check')
+            ->andReturn(true); // Availability before lead time
+
+        $this->scopeAvailabilityWithLeadTimeMock
+            ->shouldReceive('scope')
+            ->withArgs(function ($passedAvailability, $passedLeadTime) use ($resource, $service) {
+                $this->assertEquals($resource->bookingWindowEndOverride(), $passedLeadTime);
+                return true;
+            })
+            ->andReturn($periodCollection);
+
+        $this->createBookingAction->create(
+            $resource->id,
+            $service->id,
+            $requestedDate->toIso8601String(),
+            $resource->environment_id,
+            'Test Booking',
+        );
+
     }
 }

@@ -77,7 +77,7 @@ class CreateBooking
 
         $availability = $this->scopeAvailabilityWithLeadTime->scope(
             $availability,
-            leadTimeInMinutes: $resources->first()->bookingWindowLeadOverride() ?? $service->booking_window_end,
+            leadTimeInMinutes: $resources->first()->bookingWindowEndOverride() ?? $service->booking_window_end,
             bookingDurationInMinutes: $service->duration
         );
 
