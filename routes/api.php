@@ -68,7 +68,7 @@ Route::group(['middleware' => 'api-key'], function () {
     Route::put('bookings/{resource}', [\App\Http\Controllers\Api\BookingController::class, 'update'])
         ->name('bookings.update');
 
-    Route::put('bookings/{resource}/cancel', [\App\Http\Controllers\Api\BookingController::class, 'update'])
+    Route::put('bookings/{resource}/cancel', [\App\Http\Controllers\Api\BookingCancelController::class, 'update'])
         ->name('bookings-cancel.update');
 
     Route::delete('bookings/{resource}', [\App\Http\Controllers\Api\BookingController::class, 'destroy'])
