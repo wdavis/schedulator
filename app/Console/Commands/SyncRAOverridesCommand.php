@@ -7,6 +7,7 @@ use App\Actions\Imports\AcuityRequest;
 use App\Actions\Imports\DailyHours;
 use App\Actions\Overrides\CreateOverride;
 use App\Enums\ScheduleOverrideType;
+use App\Models\Environment;
 use App\Models\Resource;
 use Carbon\Carbon;
 use Carbon\CarbonImmutable;
@@ -35,6 +36,12 @@ class SyncRAOverridesCommand extends Command
     public function handle(BuildOverridesForDay $buildOverridesForDay, CreateOverride $createOverride)
     {
         $environmentId = $this->argument('environmentId');
+
+        $environment = Environment::where('id', $environmentId)
+            ->with('services')
+            ->firstOrFail();
+
+        $this->info("Syncing appointments for environment: {$environment->name}");
 
         $monthStrings = [];
         $monthsForward = 1;

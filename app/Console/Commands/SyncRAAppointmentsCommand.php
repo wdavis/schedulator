@@ -36,67 +36,53 @@ class SyncRAAppointmentsCommand extends Command
             ->with('services')
             ->firstOrFail();
 
+        $this->info("Syncing appointments for environment: {$environment->name}");
+
         // limit is 30 per page currently
 
         $page = 1;
         $hasMorePages = true;
 
-        // start pulling appointments from RA limiting to 5 pages
         while ($hasMorePages) {
             $appointments = $this->getPage($page);
 
-//            if($response->status() !== 200) {
-//                $this->error("Failed to get appointments from RA: {$response->status()}");
-//                return;
-//            }
+            $this->info("Processing page: {$page}");
 
-//            if ($response->status() === 200) {
-//                $appointments = $response->json()['data'];
+            foreach ($appointments as $appointment) {
 
-                $this->info("Processing page: {$page}");
+                // lookup the resource by the external/acuity id
+                $resource = Resource::where('meta->external_id', $appointment->provider_id)
+                    ->with('locations')
+                    ->first();
 
-//                foreach ($appointments['data'] as $appointment) {
-                foreach ($appointments as $appointment) {
-
-                    // lookup the resource by the external/acuity id
-                    $resource = Resource::where('meta->external_id', $appointment->provider_id)
-                        ->with('locations')
-                        ->first();
-
-                    if(!$resource) {
-                        $this->warn("Resource ra_id: {$appointment->provider_id} not found in ssa");
-                        continue;
-                    }
-
-                    try {
-                        $booking = $createBooking->createBooking(
-                            name: '', // todo change
-                            resourceId: $resource->id,
-                            requestedDate: CarbonImmutable::parse($appointment->starts_at, 'America/Chicago')->setTimezone('UTC'),
-                            service: $environment->services->first(),
-                            locationId: $resource->locations->first()->id,
-                            meta: [
-                                'appointment_id' => (string)$appointment->id,
-                                'appointment_type_id' => (string)$appointment->appointment_type_id,
-                                'patient_id' => (string)$appointment->patient_id,
-                                'appointment_method' => (string)$appointment->appointment_method,
-                                'provider_id' => (string)$appointment->provider_id,
-                            ],
-                            cancelled: $appointment->cancelled
-                        );
-
-                        $this->info("Created booking {$booking->id}");
-                    } catch (\Exception $e) {
-                        $this->error("Failed to create booking [resource: {$resource->id}]: {$e->getMessage()}");
-                    }
-
-
-                    // check if appointment exists
-                    // if not create it
-                    // if it does update it
-                    // if it is cancelled delete it
+                if(!$resource) {
+                    $this->warn("Resource ra_id: {$appointment->provider_id} not found in ssa");
+                    continue;
                 }
-//            }
+
+                try {
+                    $booking = $createBooking->createBooking(
+                        name: '', // this is updated separately in RA app:simple-scheduling-migration
+                        resourceId: $resource->id,
+                        requestedDate: CarbonImmutable::parse($appointment->starts_at, 'America/Chicago')->setTimezone('UTC'),
+                        service: $environment->services->first(),
+                        locationId: $resource->locations->first()->id,
+                        meta: [
+                            'appointment_id' => (string)$appointment->id,
+                            'appointment_type_id' => (string)$appointment->appointment_type_id,
+                            'patient_id' => (string)$appointment->patient_id,
+                            'appointment_method' => (string)$appointment->appointment_method,
+                            'provider_id' => (string)$appointment->provider_id,
+                        ],
+                        cancelled: $appointment->cancelled
+                    );
+
+                    $this->info("Created booking {$booking->id}");
+                } catch (\Exception $e) {
+                    $this->error("Failed to create booking [resource: {$resource->id}]: {$e->getMessage()}");
+                }
+
+            }
 
             // per page is 30. if the total is less than 30, then we are done
             if (count($appointments) < 1000) {
@@ -109,17 +95,8 @@ class SyncRAAppointmentsCommand extends Command
     }
 
     private function getPage($page) {
-//        $queryString = http_build_query([
-//            "include" => "provider,patient",
-//            "sort" => "-starts_at",
-//            "page[number]" => $page
-//        ]);
 
         $perPage = 1000;
-
-//        $response = \Illuminate\Support\Facades\Http::withHeaders([
-//            "X-Api-Key" => env('RA_KEY')
-//        ])->withoutVerifying()->get(env('RA_ENDPOINT')."/api/v1/appointments?{$queryString}");
 
         // get the offset based off the page and perPage to paginate records
         $response = DB::table('appointments')

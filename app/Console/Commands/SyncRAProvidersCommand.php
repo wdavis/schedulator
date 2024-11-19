@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Actions\Resources\CreateResource;
 use App\Actions\UpdateSchedule;
+use App\Models\Environment;
 use Illuminate\Console\Command;
 
 class SyncRAProvidersCommand extends Command
@@ -29,29 +30,42 @@ class SyncRAProvidersCommand extends Command
     {
         $environmentId = $this->argument('environmentId');
 
-//        $queryString = http_build_query([
-//            "filter[is_provider]" => "true"
-//        ]);
-//        //
-//        $response = \Illuminate\Support\Facades\Http::withHeaders([
-//            "X-Api-Key" => env('RA_KEY')
-//        ])->get(env('RA_ENDPOINT')."/api/v1/users?{$queryString}");
-//
-//        $body = $response->json();
+        // find the environment
+        $environment = Environment::where('id', $environmentId)
+            ->firstOrFail();
 
-//        $created = [];
+        $this->info("Syncing providers for environment: {$environment->name}");
 
+        $response = $this->getPage();
 
-            $response = $this->getPage();
+        if ($response->status() !== 200) {
+            $this->error("Failed to get providers from RA: {$response->status()}");
+            return;
+        }
 
-            if ($response->status() !== 200) {
-                $this->error("Failed to get providers from RA: {$response->status()}");
-                return;
-            }
+        $body = $response->json();
 
-            $body = $response->json();
+        foreach ($body as $provider) {
 
-            foreach ($body as $provider) {
+            // check if resource already exists
+            $resource = \App\Models\Resource::where('meta->external_id', $provider['id'])
+                ->where('environment_id', $environmentId)
+                ->first();
+
+            if($resource) {
+
+                // update the resource
+                $resource->setMeta([
+                    'external_id' => $provider['id'],
+                    'acuity_id' => $provider['calendar_id'],
+                    'email' => $provider['email'],
+                    'timezone' => $provider['timezone'],
+                ]);
+                $resource->save();
+
+                $this->info("Resource already exists: {$resource->name} acuity:{$provider['calendar_id']}. Meta updated.");
+
+            } else {
                 $resource = $createResource->create(
                     name: $provider['full_name'],
                     environmentId: $environmentId,
@@ -65,20 +79,18 @@ class SyncRAProvidersCommand extends Command
                 );
 
                 $this->info("Created resource: {$resource->name} acuity:{$provider['calendar_id']}");
-
-                //            $created[] = $resource;
-
-                // update their schedule
-                $scheduleData = $this->getScheduleData($provider['schedule']);
-
-                $updateSchedule->execute(
-                    $resource,
-                    $scheduleData,
-                    location: null
-                );
-
             }
 
+            // update their schedule
+            $scheduleData = $this->getScheduleData($provider['schedule']);
+
+            $updateSchedule->execute(
+                $resource,
+                $scheduleData,
+                location: null
+            );
+
+        }
 
     }
 
