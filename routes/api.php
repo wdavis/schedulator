@@ -44,6 +44,12 @@ Route::group(['middleware' => 'api-key'], function () {
     Route::get('environments', [\App\Http\Controllers\Api\EnvironmentController::class, 'index'])
         ->name('environments.index');
 
+    Route::post('environments', [\App\Http\Controllers\Api\EnvironmentController::class, 'store'])
+        ->name('environments.store');
+
+    Route::delete('environments/{id}', [\App\Http\Controllers\Api\EnvironmentController::class, 'destroy'])
+        ->name('environments.destroy');
+
     Route::get('api-keys', [\App\Http\Controllers\Api\ApiKeyController::class, 'index'])
         ->name('api-keys.index');
 
