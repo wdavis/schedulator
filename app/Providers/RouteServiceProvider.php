@@ -38,14 +38,14 @@ class RouteServiceProvider extends ServiceProvider
             }
 
             // now determine the rate limit based on the prefix of the key (e.g. "production-", "staging-", "dev-")
-            $rateLimit = 5;
+            $rateLimit = 50;
 
             if (Str::startsWith($key, 'production-')) {
-                $rateLimit = 10000;
+                $rateLimit = 8000;
             } elseif (app()->environment('local')) {
                 $rateLimit = 3000;
             } elseif (Str::startsWith($key, 'staging-') || Str::startsWith($key, 'dev-') || Str::startsWith($key, 'master-')) {
-                $rateLimit = 50;
+                $rateLimit = 100;
             }
 
             return Limit::perMinute($rateLimit)->by($key);

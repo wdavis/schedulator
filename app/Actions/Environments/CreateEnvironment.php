@@ -3,6 +3,7 @@
 namespace App\Actions\Environments;
 
 use App\Exceptions\EnvironmentAlreadyExistsException;
+use App\Exceptions\InvalidEnvironmentNameException;
 use App\Models\ApiKey;
 use App\Models\Environment;
 use Illuminate\Support\Str;
@@ -13,7 +14,7 @@ class CreateEnvironment
     {
         // environment name can only contain alpha characters
         if(!ctype_alpha($environmentName)) {
-            throw new \InvalidArgumentException("Environment name can only contain alpha characters");
+            throw new InvalidEnvironmentNameException("Environment name can only contain alpha characters");
         }
 
         // check if environment exists first by name
