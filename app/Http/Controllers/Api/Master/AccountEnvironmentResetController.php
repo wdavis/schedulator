@@ -11,7 +11,7 @@ class AccountEnvironmentResetController
     {
         $environment = Environment::where('id', $environmentId)->firstOrFail();
 
-        if(str_contains($environment->name, 'prod')) {
+        if(str_contains($environment->name, 'production')) {
             return response()->json(['message' => 'Cannot reset production environment'], 422);
         }
 
@@ -19,7 +19,6 @@ class AccountEnvironmentResetController
         Resource::where('environment_id', $environment->id)->delete();
 
         // probably need to look for locations to delete
-
         return response()->json(['message' => 'Environment reset']);
     }
 }
