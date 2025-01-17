@@ -2,16 +2,15 @@
 
 namespace Database\Seeders;
 
-use App\Models\LocationResource;
-use Carbon\CarbonImmutable;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
 use App\Models\ApiKey;
 use App\Models\Environment;
 use App\Models\Location;
+use App\Models\LocationResource;
 use App\Models\Resource;
 use App\Models\Schedule;
 use App\Models\User;
+use Carbon\CarbonImmutable;
+use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
 
 class BasicSetupSeeder extends Seeder
@@ -53,21 +52,21 @@ class BasicSetupSeeder extends Seeder
         $environments = [];
         foreach ($users as $user) {
             $prodEnv = Environment::create([
-                'name' => "production",
+                'name' => 'production',
                 'user_id' => $user->id,
             ]);
 
             $environments[] = $prodEnv;
 
             $stagingEnv = Environment::create([
-                'name' => "staging",
+                'name' => 'staging',
                 'user_id' => $user->id,
             ]);
 
             $environments[] = $stagingEnv;
 
             $devEnv = Environment::create([
-                'name' => "dev",
+                'name' => 'dev',
                 'user_id' => $user->id,
             ]);
 
@@ -80,11 +79,10 @@ class BasicSetupSeeder extends Seeder
                 'name' => "Default Service for {$environment->name}",
             ]);
 
-//            $environment->update([
-//                'default_service_id' => $service->id,
-//            ]);
+            //            $environment->update([
+            //                'default_service_id' => $service->id,
+            //            ]);
         }
-
 
         return $environments;
     }
@@ -135,8 +133,8 @@ class BasicSetupSeeder extends Seeder
         foreach ($environments as $environment) {
             foreach ($scheduleData as $data) {
                 foreach ($data['days'] as $day) {
-ray($environment);
-                    foreach($resources[$environment->id] as $resourceLocation) {
+                    ray($environment);
+                    foreach ($resources[$environment->id] as $resourceLocation) {
                         ray($resourceLocation);
                         Schedule::create([
                             'resource_id' => $resourceLocation['resource']->id,

@@ -41,13 +41,13 @@ class Location extends Model
         $itemsToAdd = [];
 
         foreach ($schedules as $schedule) {
-//            ray($schedule);
+            //            ray($schedule);
             $currentDate = $startDate->copy();
 
             while ($currentDate->dayOfWeekIso !== $schedule->day_of_week) {
                 $currentDate = $currentDate->addDay();
             }
-//ray($currentDate);
+            //ray($currentDate);
             while ($currentDate->lte($endDate)) {
                 $start = $currentDate->setTimeFromTimeString($schedule->start_time);
                 $end = $currentDate->setTimeFromTimeString($schedule->end_time);
@@ -61,8 +61,6 @@ class Location extends Model
 
         return (new PeriodCollection(...$itemsToAdd))->overlapAll();
 
-//        return $periods;
+        //        return $periods;
     }
-
-
 }

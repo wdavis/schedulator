@@ -22,7 +22,7 @@ class User extends Authenticatable
         'email',
         'password',
         'api_active',
-        'hipaa_mode'
+        'hipaa_mode',
     ];
 
     /**

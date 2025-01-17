@@ -13,12 +13,12 @@ class CreateEnvironment
     public function create(int $userId, string $environmentName, int $defaultServiceDuration = 15): array
     {
         // environment name can only contain alpha characters
-        if(!ctype_alpha($environmentName)) {
-            throw new InvalidEnvironmentNameException("Environment name can only contain alpha characters");
+        if (! ctype_alpha($environmentName)) {
+            throw new InvalidEnvironmentNameException('Environment name can only contain alpha characters');
         }
 
         // check if environment exists first by name
-        if(Environment::where('name', $environmentName)->where('user_id', $userId)->count() > 0) {
+        if (Environment::where('name', $environmentName)->where('user_id', $userId)->count() > 0) {
             throw new EnvironmentAlreadyExistsException("Environment with name {$environmentName} already exists");
         }
 

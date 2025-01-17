@@ -6,12 +6,10 @@ use App\Actions\GetOpeningsCountPerDay;
 use App\Models\Resource;
 use App\Models\Service;
 use Carbon\CarbonImmutable;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Collection;
 use Spatie\Period\Period;
 use Spatie\Period\PeriodCollection;
 use Tests\TestCase;
-use Illuminate\Support\Collection;
 
 class GetOpeningsCountPerDayTest extends TestCase
 {
@@ -43,15 +41,15 @@ class GetOpeningsCountPerDayTest extends TestCase
                     [
                         [
                             'resource' => Resource::factory()->make(['id' => 1]),
-//                        'location_id' => 1,
-//                        'location' => Location,
-                            'periods' => $periods
-                        ]
+                            //                        'location_id' => 1,
+                            //                        'location' => Location,
+                            'periods' => $periods,
+                        ],
                     ]
                 ));
         });
 
-        $splitPeriodIntoIntervalsMock = $this->mock(\App\Actions\SplitPeriodIntoIntervals::class, function ($mock) use ($resources, $service, $startDate, $endDate, $periods) {
+        $splitPeriodIntoIntervalsMock = $this->mock(\App\Actions\SplitPeriodIntoIntervals::class, function ($mock) use ($service, $periods) {
             $mock->shouldReceive('execute')
                 ->once()
                 ->withArgs(function ($periods, $service) {
@@ -85,7 +83,6 @@ class GetOpeningsCountPerDayTest extends TestCase
         $this->assertEquals(1, $result['2023-08-12']['slotsByHour']['12:00:00-13:00:00']['count']);
 
         // todo not quite sure how to test the colors yet
-//        $this->assertEquals(null, $result['2023-08-12']['color']);
+        //        $this->assertEquals(null, $result['2023-08-12']['color']);
     }
-
 }

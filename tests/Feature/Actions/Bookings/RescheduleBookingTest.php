@@ -2,13 +2,12 @@
 
 namespace Tests\Feature\Actions\Bookings;
 
-use App\Actions\Bookings\RescheduleBooking;
-use App\Actions\Bookings\CreateBooking;
 use App\Actions\Bookings\CancelBooking;
+use App\Actions\Bookings\CreateBooking;
+use App\Actions\Bookings\RescheduleBooking;
 use App\Models\Booking;
 use App\Models\Environment;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\DB;
 use Mockery;
 use Tests\TestCase;
 
@@ -17,7 +16,9 @@ class RescheduleBookingTest extends TestCase
     use RefreshDatabase;
 
     private $createBookingMock;
+
     private $cancelBookingMock;
+
     private $rescheduleBooking;
 
     protected function setUp(): void
@@ -149,7 +150,7 @@ class RescheduleBookingTest extends TestCase
         $this->createBookingMock
             ->shouldReceive('create')
             ->once()
-            ->withArgs(function($passedResourceId, $passedServiceId, $passedTimeSlot, $passedEnvironmentId, $passedName, $passedMeta, $passedBypassLeadTime, $passedBypassActive) use ($newBooking, $oldBooking, $environment) {
+            ->withArgs(function ($passedResourceId, $passedServiceId, $passedTimeSlot, $passedEnvironmentId, $passedName, $passedMeta, $passedBypassLeadTime, $passedBypassActive) use ($newBooking, $oldBooking, $environment) {
                 $this->assertEquals($newBooking->resource_id, $passedResourceId);
                 $this->assertEquals($newBooking->service_id, $passedServiceId);
                 $this->assertEquals($newBooking->starts_at->toIso8601String(), $passedTimeSlot);

@@ -2,10 +2,10 @@
 
 namespace Tests\Unit;
 
-use PHPUnit\Framework\TestCase;
 use App\Actions\FormatSchedules;
-use Illuminate\Support\Collection;
 use Carbon\Carbon;
+use Illuminate\Support\Collection;
+use PHPUnit\Framework\TestCase;
 
 class FormatSchedulesTest extends TestCase
 {
@@ -15,7 +15,7 @@ class FormatSchedulesTest extends TestCase
     {
         parent::setUp();
 
-        $this->formatSchedules = new FormatSchedules();
+        $this->formatSchedules = new FormatSchedules;
     }
 
     public function test_formats_all_days_correctly_when_no_days_missing()

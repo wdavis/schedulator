@@ -15,7 +15,9 @@ use Carbon\CarbonImmutable;
 class CreateBooking
 {
     private GetCombinedSchedulesForDate $getCombinedSchedulesForDate;
+
     private CheckScheduleAvailability $checkScheduleAvailability;
+
     private ScopeAvailabilityWithLeadTime $scopeAvailabilityWithLeadTime;
 
     public function __construct(GetCombinedSchedulesForDate $getCombinedSchedulesForDate, CheckScheduleAvailability $checkScheduleAvailability, ScopeAvailabilityWithLeadTime $scopeAvailabilityWithLeadTime)
@@ -25,7 +27,7 @@ class CreateBooking
         $this->scopeAvailabilityWithLeadTime = $scopeAvailabilityWithLeadTime;
     }
 
-    public function create(string $resourceId, string $serviceId, string $timeSlot, string $environmentId, string $name = "", array $meta = [], bool $bypassLeadTime = false, bool $bypassActive = false): Booking
+    public function create(string $resourceId, string $serviceId, string $timeSlot, string $environmentId, string $name = '', array $meta = [], bool $bypassLeadTime = false, bool $bypassActive = false): Booking
     {
         $originalRequestedDate = CarbonImmutable::parse($timeSlot);
 
@@ -34,7 +36,7 @@ class CreateBooking
 
         $requestedDate = $originalRequestedDate->setTimezone('UTC');
 
-        if(!$requestedDate) {
+        if (! $requestedDate) {
             throw new \Exception('Invalid date');
         }
 
@@ -43,7 +45,7 @@ class CreateBooking
             ->where('environment_id', $environmentId)
             ->get();
 
-        if($resources->first()->active === false && !$bypassActive) {
+        if ($resources->first()->active === false && ! $bypassActive) {
             throw new ResourceNotActiveException('Resource is not active');
         }
 
@@ -64,7 +66,7 @@ class CreateBooking
             duration: $service->duration
         );
 
-        if($availableBeforeLead && $bypassLeadTime) {
+        if ($availableBeforeLead && $bypassLeadTime) {
             return $this->createBooking(
                 $name,
                 $resourceId,
@@ -87,11 +89,11 @@ class CreateBooking
             duration: $service->duration
         );
 
-        if($availableBeforeLead && !$available) {
+        if ($availableBeforeLead && ! $available) {
             throw new BookingTimeSlotNotAvailableException($this->formatBookingTimeSlotError($originalRequestedDate, $requestedDate)." (lead time of {$service->booking_window_end} minutes required)");
         }
 
-        if(!$available) {
+        if (! $available) {
             throw new BookingTimeSlotNotAvailableException($this->formatBookingTimeSlotError($originalRequestedDate, $requestedDate));
         }
 
@@ -109,24 +111,15 @@ class CreateBooking
      * Create Booking record
      *
      * Only use this method if you have already checked availability or are importing bookings
-     *
-     * @param string $name
-     * @param string $resourceId
-     * @param CarbonImmutable $requestedDate
-     * @param Service $service
-     * @param string $locationId
-     * @param array $meta
-     * @param bool $cancelled
-     * @return Booking
      */
-    public function createBooking(string $name, string $resourceId, CarbonImmutable $requestedDate, Service $service, string $locationId, array $meta = [], bool $cancelled = false) : Booking
+    public function createBooking(string $name, string $resourceId, CarbonImmutable $requestedDate, Service $service, string $locationId, array $meta = [], bool $cancelled = false): Booking
     {
         // todo need to check if environment requires hipaa
         // if it does then the name gets set to something generic, or something like an external id
 
         $cancelledAt = null;
 
-        if($cancelled) {
+        if ($cancelled) {
             $cancelledAt = now();
         }
 
@@ -139,14 +132,14 @@ class CreateBooking
             'starts_at' => $requestedDate,
             'ends_at' => $requestedDate->addMinutes($service->duration),
             'meta' => $meta,
-            'cancelled_at' => $cancelledAt
+            'cancelled_at' => $cancelledAt,
         ]);
     }
 
     private function formatBookingTimeSlotError(CarbonImmutable $date1, CarbonImmutable $date2): string
     {
         // if the iso8601 dates are different return date1 and date2
-        if($date1->toIso8601String() !== $date2->toIso8601String()) {
+        if ($date1->toIso8601String() !== $date2->toIso8601String()) {
             return "Time slot [{$date1->toIso8601String()} ({$date2->toIso8601String()})] not available";
         }
 

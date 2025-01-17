@@ -9,12 +9,7 @@ use Illuminate\Support\Collection;
 class GetScheduleByDay
 {
     /**
-     * @param array $openings
-     * @param Collection<Booking> $bookings
-     * @param CarbonImmutable $startDate
-     * @param CarbonImmutable $endDate
-     * @param string|null $timezone
-     * @return array
+     * @param  Collection<Booking>  $bookings
      */
     public function execute(array $openings, Collection $bookings, CarbonImmutable $startDate, CarbonImmutable $endDate, ?string $timezone = 'UTC'): array
     {
@@ -32,7 +27,7 @@ class GetScheduleByDay
         $finalValues = [];
         for ($date = $startDate; $date->lte($endDate); $date = $date->addDay()) {
             $dateString = $date->setTimezone($timezone)->toDateString();
-            if (!isset($values[$dateString])) {
+            if (! isset($values[$dateString])) {
                 $values[$dateString] = [
                     'date' => $dateString,
                     'day' => $date->setTimezone($timezone)->format('D'),
@@ -61,7 +56,7 @@ class GetScheduleByDay
             $date = $start->toDateString();
             $day = $start->format('D');
 
-            if (!isset($grouped[$date])) {
+            if (! isset($grouped[$date])) {
                 $grouped[$date] = [
                     'date' => $date,
                     'day' => $day,
@@ -88,7 +83,7 @@ class GetScheduleByDay
                                 'meta' => $booking['meta'],
                                 'created_at' => $booking['created_at'],
                                 'updated_at' => $booking['updated_at'],
-                            ]
+                            ],
                         ],
                     ],
                     'openings' => [],
@@ -106,7 +101,7 @@ class GetScheduleByDay
                         'meta' => $booking['meta'],
                         'created_at' => $booking['created_at'],
                         'updated_at' => $booking['updated_at'],
-                    ]
+                    ],
                 ];
             }
         }
@@ -124,7 +119,7 @@ class GetScheduleByDay
             $date = $start->toDateString();
             $day = $start->format('D');
 
-            if (!isset($grouped[$date])) {
+            if (! isset($grouped[$date])) {
                 $grouped[$date] = [
                     'date' => $date,
                     'day' => $day,
@@ -143,7 +138,7 @@ class GetScheduleByDay
                             'type' => 'opening',
                             'start' => $start->toIso8601String(),
                             'end' => $end->toIso8601String(),
-                        ]
+                        ],
                     ],
                     'bookings' => [],
                 ];
@@ -162,7 +157,7 @@ class GetScheduleByDay
     private function combineSlots(array $groupedBookings, array $groupedOpenings): array
     {
         foreach ($groupedOpenings as $date => $openings) {
-            if (!isset($groupedBookings[$date])) {
+            if (! isset($groupedBookings[$date])) {
                 $groupedBookings[$date] = $openings;
             } else {
                 foreach ($openings['slots'] as $openingSlot) {
@@ -222,10 +217,10 @@ class GetScheduleByDay
                 $slot['start'] = $slot['start']->setTimezone($timezone)->toIso8601String();
                 $slot['end'] = $slot['end']->setTimezone($timezone)->toIso8601String();
 
-                if (!isset($slot['openings'])) {
+                if (! isset($slot['openings'])) {
                     $slot['openings'] = [];
                 }
-                if (!isset($slot['bookings'])) {
+                if (! isset($slot['bookings'])) {
                     $slot['bookings'] = [];
                 }
             }
@@ -241,6 +236,7 @@ class GetScheduleByDay
                 return $index;
             }
         }
+
         return -1;
     }
 }

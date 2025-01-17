@@ -2,7 +2,6 @@
 
 namespace App\Actions;
 
-use App\Exceptions\BookingTimeSlotNotAvailableException;
 use App\Exceptions\NoResourceAvailabilityForRequestedTimeException;
 use App\Models\Service;
 use Carbon\CarbonImmutable;
@@ -11,6 +10,7 @@ use Illuminate\Database\Eloquent\Collection;
 class GetFirstAvailableResource
 {
     private GetSchedulesForDate $getSchedulesForDate;
+
     private CheckScheduleAvailability $checkScheduleAvailability;
 
     public function __construct(GetSchedulesForDate $getSchedulesForDate, CheckScheduleAvailability $checkScheduleAvailability)
@@ -25,12 +25,12 @@ class GetFirstAvailableResource
     {
         // since we only passin the requested start time of the appointment, we need to find the end time
         // this will allow us to find bookings
-//        $requestedDateEnd = $requestedDate->copy()->addMinutes($service->duration);
+        //        $requestedDateEnd = $requestedDate->copy()->addMinutes($service->duration);
 
         // we'll take the sort order of the resources as the order of preference
         // so, they could be provided sorted by priority, or by distance, or by some other metric
         // when provided into this method
-//        $schedules = $this->getSchedulesForDate->get($resources, $service, $requestedDate, $requestedDateEnd);
+        //        $schedules = $this->getSchedulesForDate->get($resources, $service, $requestedDate, $requestedDateEnd);
         $schedules = $this->getSchedulesForDate->get($resources, $service, $requestedStartOfDate, $requestedEndOfDate);
 
         // now we have to look at each of the schedules and find the first that has an opening

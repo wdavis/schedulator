@@ -18,7 +18,7 @@ class SplitPeriodIntoIntervalsTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->action = new SplitPeriodIntoIntervals();
+        $this->action = new SplitPeriodIntoIntervals;
     }
 
     public function test_execute_splits_periods_into_15_minute_intervals()

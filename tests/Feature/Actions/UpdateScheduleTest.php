@@ -17,6 +17,7 @@ class UpdateScheduleTest extends TestCase
     use RefreshDatabase;
 
     protected UpdateSchedule $action;
+
     protected FormatSchedules $formatSchedules;
 
     protected function setUp(): void

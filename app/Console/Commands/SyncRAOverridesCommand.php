@@ -58,47 +58,47 @@ class SyncRAOverridesCommand extends Command
             ->where('environment_id', $environmentId)
             ->get();
 
-        foreach($resources as $resource) {
+        foreach ($resources as $resource) {
             foreach ($monthStrings as $monthString) {
 
                 $date = CarbonImmutable::parse($monthString);
 
                 $body = $this->getOverrideScheduleHours($resource->getMeta('acuity_id'), $date);
 
-                echo(json_encode($body) . PHP_EOL);
+                echo json_encode($body).PHP_EOL;
 
                 $this->info("Processing {$resource->name} for {$date->format('Y-m-d')}");
 
-                $something = $body->filter(function(DailyHours $override) use ($resource) {
+                $something = $body->filter(function (DailyHours $override) {
                     return $override->overridden; // check if the hours are overridden for this date
                 })->map(function (DailyHours $override) use ($resource) {
 
                     $hours = collect($override->hours)->map(function ($hour) use ($override, $resource) {
-                        $startTime = CarbonImmutable::parse(CarbonImmutable::parse($override->date)->format('Y-m-d') . ' ' . $hour->startTimeHour . ':' . $hour->startTimeMinute . ' ' . $hour->startTimeSlot, $resource->getMeta('timezone'));
+                        $startTime = CarbonImmutable::parse(CarbonImmutable::parse($override->date)->format('Y-m-d').' '.$hour->startTimeHour.':'.$hour->startTimeMinute.' '.$hour->startTimeSlot, $resource->getMeta('timezone'));
                         $updatedStartTime = $startTime->setTimezone('utc');
-                        $endTime = CarbonImmutable::parse(CarbonImmutable::parse($override->date)->format('Y-m-d') . ' ' . $hour->endTimeHour . ':' . $hour->endTimeMinute . ' ' . $hour->endTimeSlot, $resource->getMeta('timezone'));
+                        $endTime = CarbonImmutable::parse(CarbonImmutable::parse($override->date)->format('Y-m-d').' '.$hour->endTimeHour.':'.$hour->endTimeMinute.' '.$hour->endTimeSlot, $resource->getMeta('timezone'));
                         $updatedEndTime = $endTime->setTimezone('utc');
 
                         return [
                             'resource_starts_at' => $startTime->toIso8601String(),
                             'starts_at' => $updatedStartTime->toIso8601String(),
                             'resource_ends_at' => $endTime->toIso8601String(),
-                            'ends_at' => $updatedEndTime->toIso8601String()
+                            'ends_at' => $updatedEndTime->toIso8601String(),
                         ];
                     });
 
                     return $hours;
                 });
 
-                if($something->isEmpty()) {
+                if ($something->isEmpty()) {
                     continue;
                 }
 
                 $overridesForDay = $buildOverridesForDay->build($date, $something);
-//
+                //
                 // create the overrides
 
-                foreach($overridesForDay['opening'] as $override) {
+                foreach ($overridesForDay['opening'] as $override) {
                     $createOverride->create(
                         $resource,
                         ScheduleOverrideType::opening,
@@ -106,21 +106,21 @@ class SyncRAOverridesCommand extends Command
                         CarbonImmutable::parse($override['ends_at'])
                     );
                 }
-//{
-//    "overridden": true,
-//    "date": "2023-11-25",
-//    "hours": [
-//        {
-//            "startTimeHour": "9",
-//            "startTimeMinute": "00",
-//            "startTimeSlot": "am",
-//            "endTimeHour": "10",
-//            "endTimeMinute": "00",
-//            "endTimeSlot": "am"
-//        }
-//    ],
-//},
-//return $override;
+                //{
+                //    "overridden": true,
+                //    "date": "2023-11-25",
+                //    "hours": [
+                //        {
+                //            "startTimeHour": "9",
+                //            "startTimeMinute": "00",
+                //            "startTimeSlot": "am",
+                //            "endTimeHour": "10",
+                //            "endTimeMinute": "00",
+                //            "endTimeSlot": "am"
+                //        }
+                //    ],
+                //},
+                //return $override;
                 print_r($overridesForDay);
 
                 // todo will have to look at regular schedule and diff the opening and slice the overrides into blocks
@@ -132,7 +132,7 @@ class SyncRAOverridesCommand extends Command
 
     public function getOverrideScheduleHours(int $calendarId, CarbonImmutable $date): Collection
     {
-        $ar = new AcuityRequest();
+        $ar = new AcuityRequest;
         $hoursOp = $ar->get("/app/v1/calendars/groups/{$calendarId}/override-hours/{$date->format('Y-m-d')}");
 
         $data = collect($hoursOp);

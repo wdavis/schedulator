@@ -22,12 +22,14 @@ use Tests\TestCase;
 class CreateBookingTest extends TestCase
 {
     use CreatesTestAccounts;
-
     use RefreshDatabase;
 
     private $getCombinedSchedulesForDateMock;
+
     private $checkScheduleAvailabilityMock;
+
     private $scopeAvailabilityWithLeadTimeMock;
+
     private $createBookingAction;
 
     protected function setUp(): void
@@ -209,8 +211,9 @@ class CreateBookingTest extends TestCase
 
         $this->scopeAvailabilityWithLeadTimeMock
             ->shouldReceive('scope')
-            ->withArgs(function ($passedAvailability, $passedLeadTime) use ($resource, $service) {
+            ->withArgs(function ($passedAvailability, $passedLeadTime) use ($resource) {
                 $this->assertEquals($resource->bookingWindowEndOverride(), $passedLeadTime);
+
                 return true;
             })
             ->andReturn($periodCollection);

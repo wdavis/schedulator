@@ -5,14 +5,13 @@ namespace Tests\Feature\Controllers\Api;
 use App\Enums\ScheduleOverrideType;
 use Carbon\CarbonImmutable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\Helpers\CreatesTestAccounts;
 use Tests\TestCase;
 
 class CalendarControllerTest extends TestCase
 {
-    use RefreshDatabase;
     use CreatesTestAccounts;
+    use RefreshDatabase;
 
     public function test_calendar_shows_openings(): void
     {
@@ -38,7 +37,7 @@ class CalendarControllerTest extends TestCase
                 'format' => 'days',
             ],
             headers: [
-                'Authorization' => 'Bearer ' . $accountInfo['prodApiKey'],
+                'Authorization' => 'Bearer '.$accountInfo['prodApiKey'],
             ]
         );
 
@@ -51,9 +50,9 @@ class CalendarControllerTest extends TestCase
                     '*' => [
                         'start',
                         'end',
-                    ]
-                ]
-            ]
+                    ],
+                ],
+            ],
         ]);
 
         $response->assertJsonFragment([
@@ -85,8 +84,8 @@ class CalendarControllerTest extends TestCase
                     ],
                     'start' => $startDate->setTimeFromTimeString('08:15')->toIso8601String(),
                     'type' => 'opening_slot',
-                ]
-            ]
+                ],
+            ],
         ]);
     }
 
@@ -124,7 +123,7 @@ class CalendarControllerTest extends TestCase
                 'format' => 'days',
             ],
             headers: [
-                'Authorization' => 'Bearer ' . $accountInfo['prodApiKey'],
+                'Authorization' => 'Bearer '.$accountInfo['prodApiKey'],
             ]
         );
 
@@ -335,7 +334,7 @@ class CalendarControllerTest extends TestCase
                 'format' => 'days',
                 'resourceIds' => [
                     $includedResource->id,
-                    $includedResource2->id
+                    $includedResource2->id,
                 ],
             ],
             headers: $this->createAuthHeader($accountInfo['prodApiKey'])
@@ -347,5 +346,4 @@ class CalendarControllerTest extends TestCase
         // last slot should be 13:45 - 14:00, 14:00 - 16:00 that would be the excluded resource
         $this->assertEquals($startDate->setTimeFromTimeString('13:45')->toIso8601String(), $slots[23]['start']);
     }
-
 }

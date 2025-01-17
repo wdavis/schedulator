@@ -17,6 +17,7 @@ class GetCombinedSchedulesForDateCountTest extends TestCase
     use RefreshDatabase;
 
     protected GetCombinedSchedulesForDateCount $action;
+
     protected GetSchedulesForDate $getSchedulesForDateMock;
 
     protected function setUp(): void
@@ -53,7 +54,7 @@ class GetCombinedSchedulesForDateCountTest extends TestCase
         $this->getSchedulesForDateMock
             ->shouldReceive('get')
             ->once()
-            ->withArgs(function($resources) use ($resource) {
+            ->withArgs(function ($resources) use ($resource) {
                 return $resources->contains($resource);
             })
             ->andReturn($scheduleData);
@@ -104,7 +105,7 @@ class GetCombinedSchedulesForDateCountTest extends TestCase
         $this->getSchedulesForDateMock
             ->shouldReceive('get')
             ->once()
-            ->withArgs(function($resources) use ($resource1, $resource2) {
+            ->withArgs(function ($resources) use ($resource1, $resource2) {
                 return $resources->contains($resource1) && $resources->contains($resource2);
             })
             ->andReturn($scheduleData);

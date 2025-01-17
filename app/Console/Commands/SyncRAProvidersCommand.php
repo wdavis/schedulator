@@ -40,6 +40,7 @@ class SyncRAProvidersCommand extends Command
 
         if ($response->status() !== 200) {
             $this->error("Failed to get providers from RA: {$response->status()}");
+
             return;
         }
 
@@ -52,7 +53,7 @@ class SyncRAProvidersCommand extends Command
                 ->where('environment_id', $environmentId)
                 ->first();
 
-            if($resource) {
+            if ($resource) {
 
                 // update the resource
                 $resource->setMeta([
@@ -97,39 +98,39 @@ class SyncRAProvidersCommand extends Command
     private function getScheduleData($originalData)
     {
         // Original data structure
-//        $originalData = [
-//            "Monday" => [
-//                [
-//                    "startTimeHour" => "9",
-//                    "startTimeMinute" => "00",
-//                    "startTimeSlot" => "am",
-//                    "endTimeHour" => "10",
-//                    "endTimeMinute" => "00",
-//                    "endTimeSlot" => "am"
-//                ]
-//            ],
-//            // Add other days as per your original data structure
-//        ];
+        //        $originalData = [
+        //            "Monday" => [
+        //                [
+        //                    "startTimeHour" => "9",
+        //                    "startTimeMinute" => "00",
+        //                    "startTimeSlot" => "am",
+        //                    "endTimeHour" => "10",
+        //                    "endTimeMinute" => "00",
+        //                    "endTimeSlot" => "am"
+        //                ]
+        //            ],
+        //            // Add other days as per your original data structure
+        //        ];
 
         // Day of the week mapping to lowercase for new format
         $dayOfWeekMapping = [
-            "Monday" => "monday",
-            "Tuesday" => "tuesday",
-            "Wednesday" => "wednesday",
-            "Thursday" => "thursday",
-            "Friday" => "friday",
-            "Saturday" => "saturday",
-            "Sunday" => "sunday",
+            'Monday' => 'monday',
+            'Tuesday' => 'tuesday',
+            'Wednesday' => 'wednesday',
+            'Thursday' => 'thursday',
+            'Friday' => 'friday',
+            'Saturday' => 'saturday',
+            'Sunday' => 'sunday',
         ];
 
         // Process the data
-        $newData = ["schedules" => []];
+        $newData = ['schedules' => []];
         foreach ($originalData as $day => $timeSlots) {
             $dayLower = $dayOfWeekMapping[$day];
             foreach ($timeSlots as $slot) {
-                $newData["schedules"][$dayLower][] = [
-                    "start_time" => $this->convertTo24HourFormat((int)$slot['startTimeHour'], (int)$slot['startTimeMinute'], $slot['startTimeSlot']),
-                    "end_time" => $this->convertTo24HourFormat((int)$slot['endTimeHour'], (int)$slot['endTimeMinute'], $slot['endTimeSlot'])
+                $newData['schedules'][$dayLower][] = [
+                    'start_time' => $this->convertTo24HourFormat((int) $slot['startTimeHour'], (int) $slot['startTimeMinute'], $slot['startTimeSlot']),
+                    'end_time' => $this->convertTo24HourFormat((int) $slot['endTimeHour'], (int) $slot['endTimeMinute'], $slot['endTimeSlot']),
                 ];
             }
         }
@@ -155,14 +156,15 @@ class SyncRAProvidersCommand extends Command
     {
         $hour = ($slot === 'pm' && $hour != 12) ? $hour + 12 : $hour;
         $hour = ($slot === 'am' && $hour == 12) ? 0 : $hour;
-        return sprintf("%02d:%02d:00", $hour, $minute);
+
+        return sprintf('%02d:%02d:00', $hour, $minute);
     }
 
     private function getPage()
     {
         $response = \Illuminate\Support\Facades\Http::withHeaders([
-            "X-Api-Key" => env('RA_KEY')
-        ])->get(env('RA_ENDPOINT')."/api/v1/providers");
+            'X-Api-Key' => env('RA_KEY'),
+        ])->get(env('RA_ENDPOINT').'/api/v1/providers');
 
         return $response;
     }

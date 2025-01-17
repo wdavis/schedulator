@@ -4,15 +4,13 @@ namespace Tests\Feature;
 
 use App\Actions\GroupOpeningsByDay;
 use Carbon\CarbonImmutable;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class GroupOpeningsByDayTest extends TestCase
 {
     public function test_it_groups_slots_by_day()
     {
-        $action = new GroupOpeningsByDay();
+        $action = new GroupOpeningsByDay;
         $slots = [
             ['start' => '2024-05-29T23:00:00Z', 'end' => '2024-05-29T23:15:00Z'],
             ['start' => '2024-05-30T00:00:00Z', 'end' => '2024-05-30T00:15:00Z'],
@@ -42,7 +40,7 @@ class GroupOpeningsByDayTest extends TestCase
 
     public function test_it_handles_multiple_slots_on_same_day()
     {
-        $action = new GroupOpeningsByDay();
+        $action = new GroupOpeningsByDay;
         $slots = [
             ['start' => '2024-11-03T10:00:00-06:00', 'end' => '2024-11-03T10:15:00-06:00'],
             ['start' => '2024-11-03T10:15:00-06:00', 'end' => '2024-11-03T10:30:00-06:00'],
@@ -67,7 +65,7 @@ class GroupOpeningsByDayTest extends TestCase
 
     public function test_it_handles_duplicate_day_scenario()
     {
-        $action = new GroupOpeningsByDay();
+        $action = new GroupOpeningsByDay;
         $slots = [];
         $timezone = 'America/Chicago';
 
@@ -91,7 +89,7 @@ class GroupOpeningsByDayTest extends TestCase
 
     public function test_it_handles_dst_start_spring_forward()
     {
-        $action = new GroupOpeningsByDay();
+        $action = new GroupOpeningsByDay;
         $slots = [
             ['start' => '2024-03-10T01:00:00-05:00', 'end' => '2024-03-10T03:00:00-04:00'],
         ];
@@ -110,7 +108,7 @@ class GroupOpeningsByDayTest extends TestCase
 
     public function test_it_handles_timezone_without_dst()
     {
-        $action = new GroupOpeningsByDay();
+        $action = new GroupOpeningsByDay;
         $slots = [
             ['start' => '2024-05-01T08:00:00-07:00', 'end' => '2024-05-01T10:00:00-07:00'],
         ];
@@ -130,7 +128,7 @@ class GroupOpeningsByDayTest extends TestCase
 
     public function test_it_handles_leap_year_date()
     {
-        $action = new GroupOpeningsByDay();
+        $action = new GroupOpeningsByDay;
         $slots = [
             ['start' => '2024-02-29T04:00:00-06:00', 'end' => '2024-02-29T05:00:00-06:00'], // Converted to America/Chicago time
         ];
@@ -150,7 +148,7 @@ class GroupOpeningsByDayTest extends TestCase
 
     public function test_it_handles_empty_slot_array()
     {
-        $action = new GroupOpeningsByDay();
+        $action = new GroupOpeningsByDay;
         $slots = [];
         $timezone = 'America/New_York';
 

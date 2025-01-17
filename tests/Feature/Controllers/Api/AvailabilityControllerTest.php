@@ -2,17 +2,15 @@
 
 namespace Tests\Feature\Controllers\Api;
 
-use App\Models\Schedule;
 use Carbon\CarbonImmutable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\Helpers\CreatesTestAccounts;
 use Tests\TestCase;
 
 class AvailabilityControllerTest extends TestCase
 {
-    use RefreshDatabase;
     use CreatesTestAccounts;
+    use RefreshDatabase;
 
     public function test_availability_scopes_to_environment(): void
     {
@@ -55,7 +53,7 @@ class AvailabilityControllerTest extends TestCase
         $response->assertJsonCount(2);
 
         // assert there are no tuesday schedules
-        foreach($body as $date => $schedules) {
+        foreach ($body as $date => $schedules) {
             $this->assertStringNotContainsString($wrongEnvironmentDate->format('Y-m-d'), $schedules['start']);
         }
     }
@@ -92,7 +90,7 @@ class AvailabilityControllerTest extends TestCase
             '*' => [
                 'start',
                 'end',
-            ]
+            ],
         ]);
         $response->assertJsonFragment([
             [
@@ -146,9 +144,9 @@ class AvailabilityControllerTest extends TestCase
                     '*' => [
                         'start',
                         'end',
-                    ]
-                ]
-            ]
+                    ],
+                ],
+            ],
         ]);
 
         $response->assertJsonFragment([
@@ -212,28 +210,28 @@ class AvailabilityControllerTest extends TestCase
             [
                 'start' => $date->setTimeFromTimeString('10:00')->toIso8601String(),
                 'end' => $date->setTimeFromTimeString('10:15')->toIso8601String(),
-            ]
+            ],
         ]);
 
         $response->assertJsonFragment([
             [
                 'start' => $date->setTimeFromTimeString('10:15')->toIso8601String(),
                 'end' => $date->setTimeFromTimeString('10:30')->toIso8601String(),
-            ]
+            ],
         ]);
 
         $response->assertJsonMissing([
             [
                 'start' => $date->setTimeFromTimeString('12:00')->toIso8601String(),
                 'end' => $date->setTimeFromTimeString('12:15')->toIso8601String(),
-            ]
+            ],
         ]);
 
         $response->assertJsonMissing([
             [
                 'start' => $date->setTimeFromTimeString('12:15')->toIso8601String(),
                 'end' => $date->setTimeFromTimeString('12:30')->toIso8601String(),
-            ]
+            ],
         ]);
 
     }
@@ -273,14 +271,14 @@ class AvailabilityControllerTest extends TestCase
             [
                 'start' => $date->setTimeFromTimeString('11:00')->toIso8601String(),
                 'end' => $date->setTimeFromTimeString('11:15')->toIso8601String(),
-            ]
+            ],
         ]);
 
         $response->assertJsonFragment([
             [
                 'start' => $date->setTimeFromTimeString('11:15')->toIso8601String(),
                 'end' => $date->setTimeFromTimeString('11:30')->toIso8601String(),
-            ]
+            ],
         ]);
     }
 
@@ -318,14 +316,14 @@ class AvailabilityControllerTest extends TestCase
             [
                 'start' => $date->setTimeFromTimeString('12:00')->toIso8601String(),
                 'end' => $date->setTimeFromTimeString('12:15')->toIso8601String(),
-            ]
+            ],
         ]);
 
         $response->assertJsonFragment([
             [
                 'start' => $date->setTimeFromTimeString('12:15')->toIso8601String(),
                 'end' => $date->setTimeFromTimeString('12:30')->toIso8601String(),
-            ]
+            ],
         ]);
     }
 }

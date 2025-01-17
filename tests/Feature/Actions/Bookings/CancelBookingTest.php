@@ -16,7 +16,7 @@ class CancelBookingTest extends TestCase
     public function test_booking_can_be_cancelled()
     {
         $booking = Booking::factory()->create();
-        $cancelBooking = new CancelBooking();
+        $cancelBooking = new CancelBooking;
         $cancelledBooking = $cancelBooking->cancel($booking);
 
         $this->assertNotNull($cancelledBooking->cancelled_at);
@@ -25,7 +25,7 @@ class CancelBookingTest extends TestCase
     public function test_booking_cannot_be_cancelled_twice()
     {
         $booking = Booking::factory()->create(['cancelled_at' => now()]);
-        $cancelBooking = new CancelBooking();
+        $cancelBooking = new CancelBooking;
 
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('Booking has already been cancelled');
@@ -38,7 +38,7 @@ class CancelBookingTest extends TestCase
         $service = Service::factory()->create(['cancellation_window_end' => 60]);
         $booking = Booking::factory()->create(['service_id' => $service->id, 'starts_at' => Carbon::now()->addMinutes(30)]);
 
-        $cancelBooking = new CancelBooking();
+        $cancelBooking = new CancelBooking;
 
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('Booking cannot be cancelled');
@@ -51,7 +51,7 @@ class CancelBookingTest extends TestCase
         $service = Service::factory()->create(['cancellation_window_end' => 60]);
         $booking = Booking::factory()->create(['service_id' => $service->id, 'starts_at' => Carbon::now()->addMinutes(30)]);
 
-        $cancelBooking = new CancelBooking();
+        $cancelBooking = new CancelBooking;
         $cancelledBooking = $cancelBooking->cancel($booking, true);
 
         $this->assertNotNull($cancelledBooking->cancelled_at);
@@ -70,7 +70,7 @@ class CancelBookingTest extends TestCase
         $booking->resource->cancellation_window_end_override = 60;
         $booking->resource->save();
 
-        $cancelBooking = new CancelBooking();
+        $cancelBooking = new CancelBooking;
         $cancelledBooking = $cancelBooking->cancel($booking);
 
         // The booking should be cancelled because the resource's override is 1 hour

@@ -2,19 +2,13 @@
 
 namespace App\Actions\Account;
 
-use App\Models\ApiKey;
-use App\Models\Environment;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 
 class CreateNewAccount
 {
     private CreateNewAccountEnvironments $createNewAccountEnvironments;
 
-    /**
-     * @param CreateNewAccountEnvironments $createNewAccountEnvironments
-     */
     public function __construct(CreateNewAccountEnvironments $createNewAccountEnvironments)
     {
         $this->createNewAccountEnvironments = $createNewAccountEnvironments;
@@ -37,7 +31,7 @@ class CreateNewAccount
                 'email' => $user->email,
             ],
             'keys' => $keys,
-            'message' => 'Keys created. Now create your resources and schedules.'
+            'message' => 'Keys created. Now create your resources and schedules.',
         ];
     }
 
@@ -56,7 +50,4 @@ class CreateNewAccount
     {
         return $this->createNewAccountEnvironments->create($user, $defaultServiceDuration);
     }
-
-
-
 }

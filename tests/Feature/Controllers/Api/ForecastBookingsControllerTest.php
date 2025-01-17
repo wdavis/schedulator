@@ -4,14 +4,13 @@ namespace Tests\Feature\Controllers\Api;
 
 use Carbon\CarbonImmutable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\Helpers\CreatesTestAccounts;
 use Tests\TestCase;
 
 class ForecastBookingsControllerTest extends TestCase
 {
-    use RefreshDatabase;
     use CreatesTestAccounts;
+    use RefreshDatabase;
 
     public function test_example()
     {
@@ -22,7 +21,7 @@ class ForecastBookingsControllerTest extends TestCase
 
         // create 10 bookings
         for ($i = 0; $i < 10; $i++) {
-            $hour = $i+8;
+            $hour = $i + 8;
             $this->createBooking(
                 $accountInfo['prodResource'],
                 $accountInfo['prodService'],
@@ -34,8 +33,8 @@ class ForecastBookingsControllerTest extends TestCase
             'startDate' => $date->toIso8601String(),
             'endDate' => $date->addDays(6)->toIso8601String(),
             'resourceIds' => [
-                $accountInfo['prodResource']->id
-            ]
+                $accountInfo['prodResource']->id,
+            ],
         ], $this->createAuthHeader($accountInfo['prodApiKey']));
 
         $response->assertStatus(200);

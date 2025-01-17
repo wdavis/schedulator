@@ -22,7 +22,7 @@ class ResourceResource extends JsonResource
             'booking_window_end_override' => $this->booking_window_end_override,
             'cancellation_window_end_override' => $this->cancellation_window_end_override,
             'meta' => $this->meta,
-//            'locations' => LocationResource::collection($this->whenLoaded('locations')),
+            //            'locations' => LocationResource::collection($this->whenLoaded('locations')),
         ];
     }
 }

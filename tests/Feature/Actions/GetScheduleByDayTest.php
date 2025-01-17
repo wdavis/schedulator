@@ -1,10 +1,10 @@
 <?php
 
 namespace Tests\Feature\Actions;
+
 use App\Actions\GetScheduleByDay;
 use App\Models\Booking;
 use Carbon\CarbonImmutable;
-use Illuminate\Support\Collection;
 use Tests\TestCase;
 
 class GetScheduleByDayTest extends TestCase
@@ -14,7 +14,7 @@ class GetScheduleByDayTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->action = new GetScheduleByDay();
+        $this->action = new GetScheduleByDay;
     }
 
     public function test_execute_with_single_opening_and_no_bookings()

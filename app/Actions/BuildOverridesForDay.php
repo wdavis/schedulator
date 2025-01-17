@@ -14,8 +14,7 @@ use Spatie\Period\Precision;
 class BuildOverridesForDay
 {
     /**
-     * @param CarbonImmutable $date
-     * @param Collection<DailyHours> $overrides
+     * @param  Collection<DailyHours>  $overrides
      */
     public function build(CarbonImmutable $date, Collection $openings)
     {
@@ -23,11 +22,11 @@ class BuildOverridesForDay
 
         foreach ($openings as $periods) {
 
-            foreach($periods as $period) {
+            foreach ($periods as $period) {
                 $formattedOpenings[] = [
                     'type' => 'opening',
                     'starts_at' => CarbonImmutable::parse($period['starts_at'])->toIso8601String(),
-                    'ends_at' => CarbonImmutable::parse($period['ends_at'])->toIso8601String()
+                    'ends_at' => CarbonImmutable::parse($period['ends_at'])->toIso8601String(),
                 ];
             }
         }
@@ -42,8 +41,8 @@ class BuildOverridesForDay
 
         $collection = new PeriodCollection($blockedPeriod);
 
-        foreach($openings as $opening) {
-            foreach($opening as $period) {
+        foreach ($openings as $opening) {
+            foreach ($opening as $period) {
                 $collection = $collection->subtract(new Period(
                     CarbonImmutable::parse($period['starts_at']),
                     CarbonImmutable::parse($period['ends_at']),
@@ -55,17 +54,17 @@ class BuildOverridesForDay
 
         $formattedBlocks = [];
 
-        foreach($collection as $block) {
+        foreach ($collection as $block) {
             $formattedBlocks[] = [
                 'type' => 'block',
                 'starts_at' => CarbonImmutable::parse($block->includedStart())->setTimezone('utc')->toIso8601String(),
-                'ends_at' => CarbonImmutable::parse($block->includedEnd())->setTimezone('utc')->toIso8601String()
+                'ends_at' => CarbonImmutable::parse($block->includedEnd())->setTimezone('utc')->toIso8601String(),
             ];
         }
 
         return [
             'opening' => $formattedOpenings,
-            'block' => $formattedBlocks // todo are providers actually using recurring schedules?
+            'block' => $formattedBlocks, // todo are providers actually using recurring schedules?
         ];
     }
 }

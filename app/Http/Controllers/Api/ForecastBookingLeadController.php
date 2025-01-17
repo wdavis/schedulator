@@ -29,7 +29,7 @@ class ForecastBookingLeadController
         $resourceIds = request('resourceIds', null);
 
         $resources = Resource::query()
-            ->when($resourceIds, fn($query) => $query->whereIn('id', $resourceIds))
+            ->when($resourceIds, fn ($query) => $query->whereIn('id', $resourceIds))
             ->where('environment_id', $this->getApiEnvironmentId())
             ->where('active', true)
             ->get();
@@ -38,7 +38,7 @@ class ForecastBookingLeadController
         $bookings = Booking::where('service_id', $serviceId)
             ->where('starts_at', '>=', $startDate)
             ->where('starts_at', '<=', $endDate)
-            ->when($resourceIds, fn($query) => $query->whereIn('resource_id', $resourceIds))
+            ->when($resourceIds, fn ($query) => $query->whereIn('resource_id', $resourceIds))
             ->get();
 
         // look at the bookings within the start and end date
@@ -46,23 +46,20 @@ class ForecastBookingLeadController
         // get the difference in minutes
         // group by the difference in minutes
 
-        $bookings->each(function($booking) {
+        $bookings->each(function ($booking) {
             $leadTime = $booking->starts_at->diffInMinutes($booking->created_at);
             $booking->leadTime = $leadTime;
         });
 
         $grouped = $bookings->groupBy('leadTime');
 
-        $results = $grouped->map(function($group) {
+        $results = $grouped->map(function ($group) {
             return $group->count();
         });
 
         return response()->json([
             'results' => $results,
         ]);
-
-
-
 
     }
 }

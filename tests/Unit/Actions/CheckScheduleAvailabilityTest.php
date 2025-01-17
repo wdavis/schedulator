@@ -17,7 +17,7 @@ class CheckScheduleAvailabilityTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->action = new CheckScheduleAvailability();
+        $this->action = new CheckScheduleAvailability;
     }
 
     public function test_it_returns_true_when_request_falls_within_availability()
@@ -91,7 +91,7 @@ class CheckScheduleAvailabilityTest extends TestCase
                 CarbonImmutable::parse('2024-11-13 10:00:00'),
                 CarbonImmutable::parse('2024-11-13 10:15:00'),
                 Precision::MINUTE(),
-//                Boundaries::EXCLUDE_ALL()
+                //                Boundaries::EXCLUDE_ALL()
             ),
         );
 

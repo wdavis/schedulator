@@ -17,12 +17,12 @@ class BuildScheduleOverridesTest extends \Tests\TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->action = new BuildScheduleOverrides();
+        $this->action = new BuildScheduleOverrides;
     }
 
     public function test_returns_empty_period_collections_when_no_overrides()
     {
-        $overrides = new Collection();
+        $overrides = new Collection;
         $result = $this->action->get($overrides);
 
         $this->assertArrayHasKey('opening', $result);

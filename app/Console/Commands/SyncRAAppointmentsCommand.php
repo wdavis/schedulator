@@ -55,8 +55,9 @@ class SyncRAAppointmentsCommand extends Command
                     ->with('locations')
                     ->first();
 
-                if(!$resource) {
+                if (! $resource) {
                     $this->warn("Resource ra_id: {$appointment->provider_id} not found in ssa");
+
                     continue;
                 }
 
@@ -68,11 +69,11 @@ class SyncRAAppointmentsCommand extends Command
                         service: $environment->services->first(),
                         locationId: $resource->locations->first()->id,
                         meta: [
-                            'appointment_id' => (string)$appointment->id,
-                            'appointment_type_id' => (string)$appointment->appointment_type_id,
-                            'patient_id' => (string)$appointment->patient_id,
-                            'appointment_method' => (string)$appointment->appointment_method,
-                            'provider_id' => (string)$appointment->provider_id,
+                            'appointment_id' => (string) $appointment->id,
+                            'appointment_type_id' => (string) $appointment->appointment_type_id,
+                            'patient_id' => (string) $appointment->patient_id,
+                            'appointment_method' => (string) $appointment->appointment_method,
+                            'provider_id' => (string) $appointment->provider_id,
                         ],
                         cancelled: $appointment->cancelled
                     );
@@ -94,7 +95,8 @@ class SyncRAAppointmentsCommand extends Command
 
     }
 
-    private function getPage($page) {
+    private function getPage($page)
+    {
 
         $perPage = 1000;
 

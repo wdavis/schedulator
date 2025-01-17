@@ -19,7 +19,7 @@ class UpdateResourceTest extends TestCase
             'name' => 'Old Resource Name',
         ]);
 
-        $action = new UpdateResource();
+        $action = new UpdateResource;
 
         // Act
         $updatedResource = $action->update($resource, 'New Resource Name');
@@ -42,7 +42,7 @@ class UpdateResourceTest extends TestCase
             'cancellation_window_end_override' => 30,
         ]);
 
-        $action = new UpdateResource();
+        $action = new UpdateResource;
 
         // Act
         $updatedResource = $action->update(
@@ -72,7 +72,7 @@ class UpdateResourceTest extends TestCase
             'meta' => ['foo' => 'bar'],
         ]);
 
-        $action = new UpdateResource();
+        $action = new UpdateResource;
 
         // Act
         $updatedResource = $action->update(
@@ -95,7 +95,7 @@ class UpdateResourceTest extends TestCase
             'name' => 'Original Name',
         ]);
 
-        $action = new UpdateResource();
+        $action = new UpdateResource;
 
         // Act
         $updatedResource = $action->update($resource, null);

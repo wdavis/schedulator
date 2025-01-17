@@ -16,7 +16,7 @@ class GroupOpeningsByDay
             $date = $start->toDateString();
             $day = $start->format('D');
 
-            if (!isset($groupedOpenings[$date])) {
+            if (! isset($groupedOpenings[$date])) {
                 $groupedOpenings[$date] = [
                     'date' => $date,
                     'day' => $day,
@@ -38,10 +38,10 @@ class GroupOpeningsByDay
             $dateString = $dateWithTimezone->toDateString();
 
             // Check if the date has already been added to avoid duplicates
-            if (!isset($seenDates[$dateString])) {
+            if (! isset($seenDates[$dateString])) {
                 $seenDates[$dateString] = true; // Mark this date as seen
 
-                if (!isset($groupedOpenings[$dateString])) {
+                if (! isset($groupedOpenings[$dateString])) {
                     $groupedOpenings[$dateString] = [
                         'date' => $dateString,
                         'day' => $dateWithTimezone->format('D'),
@@ -51,17 +51,17 @@ class GroupOpeningsByDay
 
                 // Ensure proper handling of DST transitions
                 $slots = $groupedOpenings[$dateString]['slots'];
-//                foreach ($slots as &$slot) {
-//                    $start = CarbonImmutable::parse($slot['start'])->setTimezone($timezone);
-//                    $end = CarbonImmutable::parse($slot['end'])->setTimezone($timezone);
-//
-//                    // Handle the repeated hour during DST end
-//                    if ($start->eq($end)) {
-//                        $end = $end->addHour();
-//                    }
-//                    $slot['start'] = $start->toISO8601String();
-//                    $slot['end'] = $end->toISO8601String();
-//                }
+                //                foreach ($slots as &$slot) {
+                //                    $start = CarbonImmutable::parse($slot['start'])->setTimezone($timezone);
+                //                    $end = CarbonImmutable::parse($slot['end'])->setTimezone($timezone);
+                //
+                //                    // Handle the repeated hour during DST end
+                //                    if ($start->eq($end)) {
+                //                        $end = $end->addHour();
+                //                    }
+                //                    $slot['start'] = $start->toISO8601String();
+                //                    $slot['end'] = $end->toISO8601String();
+                //                }
 
                 $groupedOpenings[$dateString]['slots'] = $slots;
                 $finalValues[] = $groupedOpenings[$dateString];

@@ -20,6 +20,7 @@ class GetFirstAvailableResourceTest extends TestCase
     use RefreshDatabase;
 
     private $get_schedules_for_date;
+
     private $check_schedule_availability;
 
     public function setUp(): void
@@ -42,15 +43,15 @@ class GetFirstAvailableResourceTest extends TestCase
                 'resource_id' => 1,
                 'periods' => PeriodCollection::make(
                     Period::make($requested_date->setTime(10, 0), $requested_date->setTime(11, 0)),
-                )
+                ),
             ],
             [
                 'resource' => Resource::factory()->make(['id' => 2]),
                 'resource_id' => 2,
                 'periods' => PeriodCollection::make(
                     Period::make($requested_date->setTime(9, 0), $requested_date->setTime(10, 0)),
-                )
-            ]
+                ),
+            ],
         ]);
 
         $this->get_schedules_for_date
@@ -60,6 +61,7 @@ class GetFirstAvailableResourceTest extends TestCase
                 $this->assertEquals($service, $passedService);
                 $this->assertEquals($requested_date->startOfDay(), $passedStartDate);
                 $this->assertEquals($requested_date->endOfDay(), $passedEndDate);
+
                 return true;
             })
             ->andReturn($schedules);
@@ -74,6 +76,7 @@ class GetFirstAvailableResourceTest extends TestCase
                     $this->assertEquals($schedules[0]['periods'], $passedPeriods);
                     $this->assertEquals($requested_date, $passedRequestedStartTime);
                     $this->assertEquals($service->duration, $passedDuration);
+
                     return false; // First call returns false
                 }
 
@@ -81,6 +84,7 @@ class GetFirstAvailableResourceTest extends TestCase
                     $this->assertEquals($schedules[1]['periods'], $passedPeriods);
                     $this->assertEquals($requested_date, $passedRequestedStartTime);
                     $this->assertEquals($service->duration, $passedDuration);
+
                     return true; // Second call returns true
                 }
             });
@@ -113,8 +117,8 @@ class GetFirstAvailableResourceTest extends TestCase
             [
                 'resource' => Resource::factory()->make(['id' => 1]),
                 'resource_id' => 1,
-                'periods' => PeriodCollection::make()
-            ]
+                'periods' => PeriodCollection::make(),
+            ],
         ]);
 
         $this->get_schedules_for_date
@@ -124,6 +128,7 @@ class GetFirstAvailableResourceTest extends TestCase
                 $this->assertEquals($service, $passedService);
                 $this->assertEquals($requested_date->startOfDay(), $passedStartDate);
                 $this->assertEquals($requested_date->endOfDay(), $passedEndDate);
+
                 return true;
             })
             ->andReturn($schedules);
@@ -157,8 +162,8 @@ class GetFirstAvailableResourceTest extends TestCase
             [
                 'resource' => Resource::factory()->make(['id' => 1]),
                 'resource_id' => 1,
-                'periods' => PeriodCollection::make()
-            ]
+                'periods' => PeriodCollection::make(),
+            ],
         ]);
 
         $this->get_schedules_for_date
@@ -168,6 +173,7 @@ class GetFirstAvailableResourceTest extends TestCase
                 $this->assertEquals($service, $passedService);
                 $this->assertEquals($requested_date->startOfDay(), $passedStartDate);
                 $this->assertEquals($requested_date->endOfDay(), $passedEndDate);
+
                 return true;
             })
             ->andReturn($schedules);

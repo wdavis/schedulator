@@ -16,7 +16,7 @@ class ScheduleOverride extends Model
         'location_id',
         'starts_at',
         'ends_at',
-        'type'
+        'type',
     ];
 
     protected $casts = [

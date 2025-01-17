@@ -6,7 +6,6 @@ use App\Actions\BuildRecurringSchedule;
 use App\Models\Schedule;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Spatie\Period\Period;
 use Spatie\Period\PeriodCollection;
 use Tests\TestCase;
@@ -20,7 +19,7 @@ class BuildRecurringScheduleTest extends TestCase
         $this->travelTo($startDate);
 
         // Create a new instance of BuildRecurringSchedule
-        $buildRecurringSchedule = new BuildRecurringSchedule();
+        $buildRecurringSchedule = new BuildRecurringSchedule;
 
         // Define start and end date
         $endDate = $startDate->addWeek();
@@ -55,7 +54,6 @@ class BuildRecurringScheduleTest extends TestCase
         $this->assertEquals('2021-01-05 13:00', $result[1]->start()->format('Y-m-d H:i'));
         $this->assertEquals('2021-01-05 17:00', $result[1]->end()->format('Y-m-d H:i'));
 
-
     }
 
     public function test_resources_timezone_is_honored()
@@ -65,7 +63,7 @@ class BuildRecurringScheduleTest extends TestCase
         $this->travelTo($startDate);
 
         // Create a new instance of BuildRecurringSchedule
-        $buildRecurringSchedule = new BuildRecurringSchedule();
+        $buildRecurringSchedule = new BuildRecurringSchedule;
 
         // Define start and end date
         $endDate = $startDate->addWeek();
@@ -87,14 +85,12 @@ class BuildRecurringScheduleTest extends TestCase
         // Call build method
         $result = $buildRecurringSchedule->build($schedules, $startDate, $endDate, 'America/Chicago')->sort();
 
-
         // assert that the dates are converted to UTC
         $this->assertEquals('2021-01-04 14:00', $result[0]->start()->format('Y-m-d H:i'));
         $this->assertEquals('2021-01-04 18:00', $result[0]->end()->format('Y-m-d H:i'));
 
         $this->assertEquals('2021-01-05 19:00', $result[1]->start()->format('Y-m-d H:i'));
         $this->assertEquals('2021-01-05 23:00', $result[1]->end()->format('Y-m-d H:i'));
-
 
     }
 }

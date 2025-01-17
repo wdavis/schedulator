@@ -13,14 +13,11 @@ class ServiceController
     use InteractsWithEnvironment;
 
     private CreateService $createService;
+
     private UpdateService $updateService;
+
     private FormatValidationErrors $formatValidationErrors;
 
-    /**
-     * @param CreateService $createService
-     * @param UpdateService $updateService
-     * @param FormatValidationErrors $formatValidationErrors
-     */
     public function __construct(CreateService $createService, \App\Actions\Services\UpdateService $updateService, \App\Actions\FormatValidationErrors $formatValidationErrors)
     {
         $this->createService = $createService;
@@ -40,7 +37,7 @@ class ServiceController
             'name' => 'required|string',
         ]);
 
-        if($validator->fails()) {
+        if ($validator->fails()) {
             return $this->formatValidationErrors->validate($validator->errors()->getMessages());
         }
 
@@ -64,7 +61,7 @@ class ServiceController
             'cancellation_window_end' => ['integer', 'nullable'],
         ]);
 
-        if($validator->fails()) {
+        if ($validator->fails()) {
             return $this->formatValidationErrors->validate($validator->errors()->getMessages());
         }
 
@@ -78,8 +75,5 @@ class ServiceController
         );
     }
 
-    public function destroy()
-    {
-
-    }
+    public function destroy() {}
 }

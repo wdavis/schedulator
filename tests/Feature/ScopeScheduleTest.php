@@ -17,7 +17,7 @@ class ScopeScheduleTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->action = new ScopeSchedule();
+        $this->action = new ScopeSchedule;
     }
 
     public function test_scope_removes_periods_before_start_date()
@@ -129,7 +129,7 @@ class ScopeScheduleTest extends TestCase
 
         // Act
         $result = $this->action->scope($availability, $startDate, $endDate);
-dump($result);
+        dump($result);
         // Assert: Only the second period, within range, should remain
         $this->assertCount(1, $result);
         $this->assertTrue($result[0]->startsAfterOrAt($startDate));

@@ -39,11 +39,11 @@ class Handler extends ExceptionHandler
                 $message = $e->getMessage();
 
                 $status = 500;
-                if($e instanceof HttpStatusContract) {
+                if ($e instanceof HttpStatusContract) {
                     $status = $e->getHttpStatusCode();
                 }
 
-                if($e instanceof ModelNotFoundException || $e instanceof NotFoundHttpException) {
+                if ($e instanceof ModelNotFoundException || $e instanceof NotFoundHttpException) {
                     $status = 404;
                     if (preg_match('/No query results for model \[App\\\Models\\\(.*?)]\./', $e->getMessage(), $matches)) {
                         $modelName = $matches[1]; // This will contain the model name e.g. 'Booking'
@@ -51,18 +51,18 @@ class Handler extends ExceptionHandler
                     }
                 }
 
-                if($e instanceof QueryException) {
+                if ($e instanceof QueryException) {
                     $status = 400;
                     $message = 'Bad request.';
                 }
 
-                if($e instanceof ThrottleRequestsException) {
+                if ($e instanceof ThrottleRequestsException) {
                     $status = 429;
                     $message = 'Too many requests.';
                 }
 
                 return response()->json([
-                    'message' => $message
+                    'message' => $message,
                 ], $status);
             }
 

@@ -9,8 +9,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Service extends Model
 {
-    use HasUuids;
     use HasFactory;
+    use HasUuids;
 
     protected $fillable = [
         'name',
@@ -20,12 +20,12 @@ class Service extends Model
         'booking_window_lead',
         'booking_window_end',
         'cancellation_window_end',
-//        'booking_id',
-//        'environment_id',
+        //        'booking_id',
+        //        'environment_id',
     ];
 
     protected $appends = [
-//        'buffer_before_interval',
+        //        'buffer_before_interval',
     ];
 
     public function booking()
@@ -38,19 +38,19 @@ class Service extends Model
         return $this->belongsTo(Environment::class);
     }
 
-//    public function bufferBeforeInterval(): Attribute
-//    {
-//        return Attribute::make(
-//            get: function ($value, $attributes) {
-//                try {
-//                    $interval = new \DateInterval("PT{$attributes['buffer_before']}M");
-//                } catch (\Exception $e) {
-//                    // Handle exception as needed.
-//                    $interval = null;
-//                }
-//
-//                return $interval;
-//            },
-//        )->withoutObjectCaching();
-//    }
+    //    public function bufferBeforeInterval(): Attribute
+    //    {
+    //        return Attribute::make(
+    //            get: function ($value, $attributes) {
+    //                try {
+    //                    $interval = new \DateInterval("PT{$attributes['buffer_before']}M");
+    //                } catch (\Exception $e) {
+    //                    // Handle exception as needed.
+    //                    $interval = null;
+    //                }
+    //
+    //                return $interval;
+    //            },
+    //        )->withoutObjectCaching();
+    //    }
 }

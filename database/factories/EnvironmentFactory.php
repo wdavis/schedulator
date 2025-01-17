@@ -19,7 +19,7 @@ class EnvironmentFactory extends Factory
         return [
             'id' => $this->faker->uuid,
             'user_id' => \App\Models\User::factory(),
-            'name' => 'environment'
+            'name' => 'environment',
             //
         ];
     }

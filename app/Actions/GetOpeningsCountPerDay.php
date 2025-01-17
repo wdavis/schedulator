@@ -12,6 +12,7 @@ class GetOpeningsCountPerDay
     use GradesColors;
 
     private GetSchedulesForDate $getSchedulesForDate;
+
     private SplitPeriodIntoIntervals $splitPeriodIntoIntervals;
 
     public function __construct(GetSchedulesForDate $getSchedulesForDate, SplitPeriodIntoIntervals $splitPeriodIntoIntervals)
@@ -35,11 +36,11 @@ class GetOpeningsCountPerDay
             $results[$dateString] = [
                 'count' => 0,
                 'color' => null,
-                'slotsByHour' => [] // You can fill with default hourly slots if needed
+                'slotsByHour' => [], // You can fill with default hourly slots if needed
             ];
         }
 
-        foreach($schedules as $schedule) {
+        foreach ($schedules as $schedule) {
 
             // take the periods and split them into hours
             // then we can loop through each of the hours and add them to the results array
@@ -47,25 +48,25 @@ class GetOpeningsCountPerDay
 
             foreach ($openPeriods as $item) {
                 $start = $item['start'];
-//                $end = $item['end'];
+                //                $end = $item['end'];
                 $currentDate = $start->toDateString();
-                $hourKey = $start->format('H:00:00') . '-' . $start->addHour()->format('H:00:00');
+                $hourKey = $start->format('H:00:00').'-'.$start->addHour()->format('H:00:00');
 
-                if (!isset($results[$currentDate])) {
+                if (! isset($results[$currentDate])) {
                     $results[$currentDate] = [
                         'count' => 0,
                         'color' => null,
-                        'slotsByHour' => []
+                        'slotsByHour' => [],
                     ];
                 }
 
                 $results[$currentDate]['count'] += 1;
 
-                if (!isset($results[$currentDate]['slotsByHour'][$hourKey])) {
+                if (! isset($results[$currentDate]['slotsByHour'][$hourKey])) {
                     $results[$currentDate]['slotsByHour'][$hourKey] = [
                         'color' => null,
                         'count' => 0,
-                        'resources' => []
+                        'resources' => [],
                     ];
                 }
 
@@ -76,7 +77,7 @@ class GetOpeningsCountPerDay
 
         return $this->gradeColors($results, startColor: '#ff0000', endColor: '#00ff00');
 
-//        return $results;
+        //        return $results;
 
     }
 }

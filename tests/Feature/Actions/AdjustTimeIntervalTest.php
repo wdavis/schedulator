@@ -4,8 +4,6 @@ namespace Tests\Feature\Actions;
 
 use App\Actions\AdjustTimeInterval;
 use Carbon\CarbonImmutable;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class AdjustTimeIntervalTest extends TestCase
@@ -16,7 +14,7 @@ class AdjustTimeIntervalTest extends TestCase
     {
         parent::setUp();
 
-        $this->adjustTimeInterval = new AdjustTimeInterval();
+        $this->adjustTimeInterval = new AdjustTimeInterval;
     }
 
     public function test_adjust_with_bump_to_next_interval(): void

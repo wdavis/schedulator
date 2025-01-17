@@ -14,8 +14,7 @@ class ScopeSchedule
         PeriodCollection $availability,
         CarbonImmutable $startDate,
         CarbonImmutable $endDate,
-    ): PeriodCollection
-    {
+    ): PeriodCollection {
         // remove everything outside of the requested date range
 
         $beginningScope = new Period($startDate->subYears(5), $startDate, Precision::MINUTE(), Boundaries::EXCLUDE_ALL());

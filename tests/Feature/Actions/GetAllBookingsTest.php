@@ -7,9 +7,9 @@ use App\Models\Booking;
 use App\Models\Location;
 use App\Models\Resource;
 use App\Models\Service;
+use Carbon\CarbonImmutable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
-use Carbon\CarbonImmutable;
 
 class GetAllBookingsTest extends TestCase
 {
@@ -47,7 +47,7 @@ class GetAllBookingsTest extends TestCase
         ]);
 
         // Act: Call the GetAllBookings action
-        $action = new GetAllBookings();
+        $action = new GetAllBookings;
         $results = $action->get($resources, $startDate, $endDate);
 
         // Assert: Verify the correct bookings are returned
@@ -74,7 +74,7 @@ class GetAllBookingsTest extends TestCase
         ]);
 
         // Act: Call the GetAllBookings action with includeCancelled = true
-        $action = new GetAllBookings();
+        $action = new GetAllBookings;
         $results = $action->get($resources, $startDate, $endDate, null, null, true);
 
         // Assert: Verify the cancelled booking is included
@@ -111,7 +111,7 @@ class GetAllBookingsTest extends TestCase
         ]);
 
         // Act: Call the GetAllBookings action with location and service filters
-        $action = new GetAllBookings();
+        $action = new GetAllBookings;
         $results = $action->get($resources, $startDate, $endDate, $location->id, $service->id);
 
         // Assert: Verify only matching bookings are returned
@@ -146,7 +146,7 @@ class GetAllBookingsTest extends TestCase
         ]);
 
         // Act: Call the GetAllBookings action
-        $action = new GetAllBookings();
+        $action = new GetAllBookings;
         $results = $action->get($resources, $startDate, $endDate);
 
         // Assert: Verify that the partially overlapping booking is included
@@ -181,7 +181,7 @@ class GetAllBookingsTest extends TestCase
         ]);
 
         // Act: Call the GetAllBookings action
-        $action = new GetAllBookings();
+        $action = new GetAllBookings;
         $results = $action->get($resources, $startDate, $endDate);
 
         // Assert: Verify that the exact match booking is included
@@ -212,7 +212,7 @@ class GetAllBookingsTest extends TestCase
         ]);
 
         // Act
-        $action = new GetAllBookings();
+        $action = new GetAllBookings;
         $results = $action->get($resources, $startDate, $endDate);
 
         // Assert
@@ -243,7 +243,7 @@ class GetAllBookingsTest extends TestCase
         ]);
 
         // Act
-        $action = new GetAllBookings();
+        $action = new GetAllBookings;
         $results = $action->get($resources, $startDate, $endDate);
 
         // Assert
@@ -267,7 +267,7 @@ class GetAllBookingsTest extends TestCase
         ]);
 
         // Act
-        $action = new GetAllBookings();
+        $action = new GetAllBookings;
         $results = $action->get($resources, $startDate, $endDate);
 
         // Assert
@@ -289,7 +289,7 @@ class GetAllBookingsTest extends TestCase
         ]);
 
         // Act
-        $action = new GetAllBookings();
+        $action = new GetAllBookings;
         $results = $action->get($resources, $startDate, $endDate);
 
         // Assert
@@ -318,7 +318,7 @@ class GetAllBookingsTest extends TestCase
         ]);
 
         // Act
-        $action = new GetAllBookings();
+        $action = new GetAllBookings;
         $results = $action->get($resources, $startDate, $endDate);
 
         // Assert
@@ -351,7 +351,7 @@ class GetAllBookingsTest extends TestCase
         ]);
 
         // Act: Call the GetAllBookings action without including cancelled bookings
-        $action = new GetAllBookings();
+        $action = new GetAllBookings;
         $results = $action->get($resources, $startDate, $endDate);
 
         // Assert: Verify that only the active booking is included

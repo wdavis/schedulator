@@ -3,13 +3,13 @@
 namespace Tests\Feature\Actions;
 
 use App\Actions\CombinePeriodCollections;
+use Carbon\CarbonImmutable;
 use Illuminate\Support\Collection;
+use Spatie\Period\Boundaries;
 use Spatie\Period\Period;
 use Spatie\Period\PeriodCollection;
-use Tests\TestCase;
-use Carbon\CarbonImmutable;
 use Spatie\Period\Precision;
-use Spatie\Period\Boundaries;
+use Tests\TestCase;
 
 class CombinePeriodCollectionsTest extends TestCase
 {
@@ -18,7 +18,7 @@ class CombinePeriodCollectionsTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->combinePeriodCollections = new CombinePeriodCollections();
+        $this->combinePeriodCollections = new CombinePeriodCollections;
     }
 
     public function test_combines_period_collections_without_key()
@@ -96,7 +96,7 @@ class CombinePeriodCollectionsTest extends TestCase
     public function test_empty_period_collections_returns_empty_collection()
     {
         // Arrange
-        $periodCollections = new Collection();
+        $periodCollections = new Collection;
 
         // Act
         $combinedCollection = $this->combinePeriodCollections->combine($periodCollections);
