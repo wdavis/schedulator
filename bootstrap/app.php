@@ -14,7 +14,14 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        //
+        $middleware->redirectGuestsTo(fn () => route('login'));
+        $middleware->redirectUsersTo(RouteServiceProvider::HOME);
+
+        $middleware->throttleApi();
+
+        $middleware->alias([
+            'api-key' => \App\Http\Middleware\ValidateApiKey::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
