@@ -23,7 +23,7 @@ class GetFirstAvailableResourceTest extends TestCase
 
     private $check_schedule_availability;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
