@@ -45,8 +45,6 @@ class ScopeAvailabilityWithLeadTimeTest extends TestCase
 
     /**
      * Test the scope method with a 24-hour lead time.
-     *
-     * @return void
      */
     public function test_scope_method_with_24_hour_lead_time(): void
     {

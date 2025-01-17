@@ -70,6 +70,5 @@ class AppServiceProvider extends ServiceProvider
             return Limit::perMinute($rateLimit)->by($key);
         });
 
-
     }
 }

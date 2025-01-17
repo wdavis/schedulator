@@ -11,8 +11,6 @@ class FormatOverridesTest extends TestCase
 {
     /**
      * Test formatting with timezone conversion.
-     *
-     * @return void
      */
     public function test_format_with_timezone_conversion(): void
     {
