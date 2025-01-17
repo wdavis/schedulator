@@ -19,10 +19,13 @@ class ScheduleOverride extends Model
         'type',
     ];
 
-    protected $casts = [
-        'starts_at' => 'immutable_datetime',
-        'ends_at' => 'immutable_datetime',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'starts_at' => 'immutable_datetime',
+            'ends_at' => 'immutable_datetime',
+        ];
+    }
 
     public function resource()
     {

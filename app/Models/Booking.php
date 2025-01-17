@@ -26,12 +26,15 @@ class Booking extends Model
         'meta',
     ];
 
-    protected $casts = [
-        'meta' => 'array',
-        'starts_at' => 'immutable_datetime',
-        'ends_at' => 'immutable_datetime',
-        'cancelled_at' => 'immutable_datetime',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'meta' => 'array',
+            'starts_at' => 'immutable_datetime',
+            'ends_at' => 'immutable_datetime',
+            'cancelled_at' => 'immutable_datetime',
+        ];
+    }
 
     public function resource()
     {

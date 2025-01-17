@@ -24,9 +24,12 @@ class Resource extends Model
         'environment_id',
     ];
 
-    protected $casts = [
-        'meta' => 'array',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'meta' => 'array',
+        ];
+    }
 
     public function locations(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
