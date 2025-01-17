@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Route;
 
 // routes/api.php
 
-Route::group(['middleware' => 'api-key:master'], function () {
+Route::middleware('api-key:master')->group(function () {
 
     Route::get('test-master-api-access', function () {
         return response('OK', 200);
@@ -35,7 +35,7 @@ Route::group(['middleware' => 'api-key:master'], function () {
         ->name('environments.reset');
 });
 
-Route::group(['middleware' => 'api-key'], function () {
+Route::middleware('api-key')->group(function () {
 
     Route::get('test-api-access', function () {
         return response('OK', 200);
