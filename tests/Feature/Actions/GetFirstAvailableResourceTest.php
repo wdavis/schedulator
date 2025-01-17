@@ -31,7 +31,7 @@ class GetFirstAvailableResourceTest extends TestCase
         $this->check_schedule_availability = $this->mock(CheckScheduleAvailability::class);
     }
 
-    public function test_get_first_available_resource()
+    public function test_get_first_available_resource(): void
     {
         $resources = new Collection;
         $service = Service::factory()->make(['duration' => 15]);
@@ -105,7 +105,7 @@ class GetFirstAvailableResourceTest extends TestCase
         $this->assertEquals($schedules[1]['resource']->id, $resource_id);
     }
 
-    public function test_throws_exception_when_no_available_resource()
+    public function test_throws_exception_when_no_available_resource(): void
     {
         $this->expectException(NoResourceAvailabilityForRequestedTimeException::class);
 

@@ -47,7 +47,7 @@ class CreateBookingTest extends TestCase
         );
     }
 
-    public function test_it_creates_a_booking_successfully()
+    public function test_it_creates_a_booking_successfully(): void
     {
         $location = Location::factory()->create();
         $resource = Resource::factory()->create(['active' => true]);
@@ -91,7 +91,7 @@ class CreateBookingTest extends TestCase
         $this->assertEquals($requestedDate->toIso8601String(), $booking->starts_at->toIso8601String());
     }
 
-    public function test_it_throws_exception_if_resource_is_not_active()
+    public function test_it_throws_exception_if_resource_is_not_active(): void
     {
         $resource = Resource::factory()->create(['active' => false]);
         $service = Service::factory()->create();
@@ -107,7 +107,7 @@ class CreateBookingTest extends TestCase
         );
     }
 
-    public function test_it_throws_exception_if_time_slot_not_available()
+    public function test_it_throws_exception_if_time_slot_not_available(): void
     {
         $resource = Resource::factory()->create(['active' => true]);
         $service = Service::factory()->create(['duration' => 60]);
@@ -141,7 +141,7 @@ class CreateBookingTest extends TestCase
         );
     }
 
-    public function test_it_bypasses_lead_time_when_allowed()
+    public function test_it_bypasses_lead_time_when_allowed(): void
     {
         $location = Location::factory()->create();
         $resource = Resource::factory()->create(['active' => true]);
@@ -183,7 +183,7 @@ class CreateBookingTest extends TestCase
         $this->assertTrue($booking->meta['bypassLeadTime']);
     }
 
-    public function test_resource_booking_window_end_is_honored()
+    public function test_resource_booking_window_end_is_honored(): void
     {
         $location = Location::factory()->create();
         $resource = Resource::factory()->create(['active' => true, 'booking_window_end_override' => 60]);

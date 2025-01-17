@@ -7,7 +7,7 @@ use Tests\TestCase;
 
 class GroupOpeningsByDayWithGapsTest extends TestCase
 {
-    public function test_it_groups_openings_and_gaps_by_day()
+    public function test_it_groups_openings_and_gaps_by_day(): void
     {
         $action = new GroupOpeningsByDayWithGaps;
         $openings = [
@@ -61,7 +61,7 @@ class GroupOpeningsByDayWithGapsTest extends TestCase
         $this->assertEquals($expected, $result);
     }
 
-    public function test_it_handles_multiple_openings_with_no_gaps()
+    public function test_it_handles_multiple_openings_with_no_gaps(): void
     {
         $action = new GroupOpeningsByDayWithGaps;
         $openings = [
@@ -93,7 +93,7 @@ class GroupOpeningsByDayWithGapsTest extends TestCase
         $this->assertEquals($expected, $result);
     }
 
-    public function test_it_handles_empty_openings_array()
+    public function test_it_handles_empty_openings_array(): void
     {
         $action = new GroupOpeningsByDayWithGaps;
         $openings = [];
@@ -105,7 +105,7 @@ class GroupOpeningsByDayWithGapsTest extends TestCase
         $this->assertEquals($expected, $result);
     }
 
-    public function test_it_handles_large_gap_between_openings()
+    public function test_it_handles_large_gap_between_openings(): void
     {
         $action = new GroupOpeningsByDayWithGaps;
         $openings = [
@@ -142,7 +142,7 @@ class GroupOpeningsByDayWithGapsTest extends TestCase
         $this->assertEquals($expected, $result);
     }
 
-    public function test_it_equalizes_all_days()
+    public function test_it_equalizes_all_days(): void
     {
         $action = new GroupOpeningsByDayWithGaps;
         $openings = [

@@ -8,7 +8,7 @@ use Tests\TestCase;
 
 class GroupOpeningsByDayTest extends TestCase
 {
-    public function test_it_groups_slots_by_day()
+    public function test_it_groups_slots_by_day(): void
     {
         $action = new GroupOpeningsByDay;
         $slots = [
@@ -38,7 +38,7 @@ class GroupOpeningsByDayTest extends TestCase
         $this->assertEquals($expected[0]['slots'][1], $result[0]['slots'][1]);
     }
 
-    public function test_it_handles_multiple_slots_on_same_day()
+    public function test_it_handles_multiple_slots_on_same_day(): void
     {
         $action = new GroupOpeningsByDay;
         $slots = [
@@ -63,7 +63,7 @@ class GroupOpeningsByDayTest extends TestCase
 
     }
 
-    public function test_it_handles_duplicate_day_scenario()
+    public function test_it_handles_duplicate_day_scenario(): void
     {
         $action = new GroupOpeningsByDay;
         $slots = [];
@@ -87,7 +87,7 @@ class GroupOpeningsByDayTest extends TestCase
 
     }
 
-    public function test_it_handles_dst_start_spring_forward()
+    public function test_it_handles_dst_start_spring_forward(): void
     {
         $action = new GroupOpeningsByDay;
         $slots = [
@@ -106,7 +106,7 @@ class GroupOpeningsByDayTest extends TestCase
         $this->assertEquals('2024-03-10T03:00:00-04:00', $result[1]['slots'][0]['end']);
     }
 
-    public function test_it_handles_timezone_without_dst()
+    public function test_it_handles_timezone_without_dst(): void
     {
         $action = new GroupOpeningsByDay;
         $slots = [
@@ -126,7 +126,7 @@ class GroupOpeningsByDayTest extends TestCase
         $this->assertEquals('2024-05-01T10:00:00-07:00', $result[1]['slots'][0]['end']);
     }
 
-    public function test_it_handles_leap_year_date()
+    public function test_it_handles_leap_year_date(): void
     {
         $action = new GroupOpeningsByDay;
         $slots = [
@@ -146,7 +146,7 @@ class GroupOpeningsByDayTest extends TestCase
         $this->assertEquals('2024-02-29T05:00:00-06:00', $result[1]['slots'][0]['end']);
     }
 
-    public function test_it_handles_empty_slot_array()
+    public function test_it_handles_empty_slot_array(): void
     {
         $action = new GroupOpeningsByDay;
         $slots = [];

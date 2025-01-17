@@ -21,7 +21,7 @@ class CombinePeriodCollectionsTest extends TestCase
         $this->combinePeriodCollections = new CombinePeriodCollections;
     }
 
-    public function test_combines_period_collections_without_key()
+    public function test_combines_period_collections_without_key(): void
     {
         // Arrange
         $period1 = new Period(
@@ -61,7 +61,7 @@ class CombinePeriodCollectionsTest extends TestCase
         $this->assertEquals('2023-07-30', $combinedCollection[1]->end()->format('Y-m-d'));
     }
 
-    public function test_combines_period_collections_with_key()
+    public function test_combines_period_collections_with_key(): void
     {
         // Arrange
         $period1 = new Period(
@@ -93,7 +93,7 @@ class CombinePeriodCollectionsTest extends TestCase
         $this->assertEquals('2023-07-15', $combinedCollection[0]->end()->format('Y-m-d'));
     }
 
-    public function test_empty_period_collections_returns_empty_collection()
+    public function test_empty_period_collections_returns_empty_collection(): void
     {
         // Arrange
         $periodCollections = new Collection;
@@ -106,7 +106,7 @@ class CombinePeriodCollectionsTest extends TestCase
         $this->assertCount(0, $combinedCollection);
     }
 
-    public function test_non_overlapping_periods_with_key()
+    public function test_non_overlapping_periods_with_key(): void
     {
         // Arrange
         $period1 = new Period(

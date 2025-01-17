@@ -21,7 +21,7 @@ class SplitPeriodIntoIntervalsTest extends TestCase
         $this->action = new SplitPeriodIntoIntervals;
     }
 
-    public function test_execute_splits_periods_into_15_minute_intervals()
+    public function test_execute_splits_periods_into_15_minute_intervals(): void
     {
         // Arrange: Define a 1-hour period and a service with a 15-minute interval
         $periodCollection = new PeriodCollection(
@@ -56,7 +56,7 @@ class SplitPeriodIntoIntervalsTest extends TestCase
         $this->assertEquals('2024-11-13 09:00:00', $result[3]['end']->format('Y-m-d H:i:s'));
     }
 
-    public function test_execute_handles_partial_intervals()
+    public function test_execute_handles_partial_intervals(): void
     {
         // Arrange: Define a 35-minute period and a service with a 15-minute interval
         $periodCollection = new PeriodCollection(

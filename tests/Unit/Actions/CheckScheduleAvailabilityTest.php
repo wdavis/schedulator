@@ -20,7 +20,7 @@ class CheckScheduleAvailabilityTest extends TestCase
         $this->action = new CheckScheduleAvailability;
     }
 
-    public function test_it_returns_true_when_request_falls_within_availability()
+    public function test_it_returns_true_when_request_falls_within_availability(): void
     {
         $availability = new PeriodCollection(
             Period::make(
@@ -36,7 +36,7 @@ class CheckScheduleAvailabilityTest extends TestCase
         $this->assertTrue($result);
     }
 
-    public function test_it_returns_false_when_request_is_outside_availability()
+    public function test_it_returns_false_when_request_is_outside_availability(): void
     {
         $availability = new PeriodCollection(
             Period::make(
@@ -52,7 +52,7 @@ class CheckScheduleAvailabilityTest extends TestCase
         $this->assertFalse($result);
     }
 
-    public function test_it_returns_false_when_request_partially_overlaps_availability()
+    public function test_it_returns_false_when_request_partially_overlaps_availability(): void
     {
         $availability = new PeriodCollection(
             Period::make(
@@ -68,7 +68,7 @@ class CheckScheduleAvailabilityTest extends TestCase
         $this->assertFalse($result);
     }
 
-    public function test_it_handles_buffer_before_correctly()
+    public function test_it_handles_buffer_before_correctly(): void
     {
         $availability = new PeriodCollection(
             Period::make(
@@ -84,7 +84,7 @@ class CheckScheduleAvailabilityTest extends TestCase
         $this->assertTrue($result);
     }
 
-    public function test_it_returns_true_for_15_minute_window_within_availability()
+    public function test_it_returns_true_for_15_minute_window_within_availability(): void
     {
         $availability = new PeriodCollection(
             Period::make(

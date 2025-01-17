@@ -13,7 +13,7 @@ use Tests\TestCase;
 class BuildBookingPeriodsTest extends TestCase
 {
     /** @test */
-    public function test_build_creates_period_collection_with_provided_bookings()
+    public function test_build_creates_period_collection_with_provided_bookings(): void
     {
         $booking1 = Booking::factory()->make([
             'starts_at' => CarbonImmutable::now()->setTime(10, 0),
@@ -33,7 +33,7 @@ class BuildBookingPeriodsTest extends TestCase
     }
 
     /** @test */
-    public function test_build_creates_periods_with_correct_boundaries()
+    public function test_build_creates_periods_with_correct_boundaries(): void
     {
         $booking = Booking::factory()->make([
             'starts_at' => CarbonImmutable::now()->setTime(10, 0),
@@ -47,7 +47,7 @@ class BuildBookingPeriodsTest extends TestCase
     }
 
     /** @test */
-    public function test_build_creates_periods_with_minute_precision()
+    public function test_build_creates_periods_with_minute_precision(): void
     {
         $booking = Booking::factory()->make([
             'starts_at' => CarbonImmutable::now()->setTime(10, 0),

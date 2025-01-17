@@ -33,7 +33,7 @@ class SyncRAOverridesCommand extends Command
     /**
      * Execute the console command.
      */
-    public function handle(BuildOverridesForDay $buildOverridesForDay, CreateOverride $createOverride)
+    public function handle(BuildOverridesForDay $buildOverridesForDay, CreateOverride $createOverride): int
     {
         $environmentId = $this->argument('environmentId');
 

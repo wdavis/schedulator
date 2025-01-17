@@ -2,6 +2,9 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -19,17 +22,17 @@ class Location extends Model
         'name',
     ];
 
-    public function resources()
+    public function resources(): BelongsToMany
     {
         return $this->belongsToMany(Resource::class);
     }
 
-    public function resource()
+    public function resource(): HasOne
     {
         return $this->hasOne(Resource::class)->latestOfMany();
     }
 
-    public function schedules()
+    public function schedules(): HasMany
     {
         return $this->hasMany(Schedule::class);
     }

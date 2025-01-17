@@ -26,7 +26,7 @@ class SyncRAProvidersCommand extends Command
     /**
      * Execute the console command.
      */
-    public function handle(CreateResource $createResource, UpdateSchedule $updateSchedule)
+    public function handle(CreateResource $createResource, UpdateSchedule $updateSchedule): void
     {
         $environmentId = $this->argument('environmentId');
 

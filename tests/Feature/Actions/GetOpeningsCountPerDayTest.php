@@ -13,7 +13,7 @@ use Tests\TestCase;
 
 class GetOpeningsCountPerDayTest extends TestCase
 {
-    public function test_can_get_openings_count_per_day()
+    public function test_can_get_openings_count_per_day(): void
     {
         // Using factories to generate models
         $resources = Resource::factory()->count(1)->make(); // You can add logic to generate a collection of resources using factories

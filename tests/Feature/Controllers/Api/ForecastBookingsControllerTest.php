@@ -12,7 +12,7 @@ class ForecastBookingsControllerTest extends TestCase
     use CreatesTestAccounts;
     use RefreshDatabase;
 
-    public function test_example()
+    public function test_example(): void
     {
         $date = CarbonImmutable::create(2024, 12, 1);
         $this->travelTo($date);

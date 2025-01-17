@@ -15,7 +15,7 @@ class ProcessScheduleOverridesTest extends TestCase
     use DatabaseTransactions;
 
     /** @test */
-    public function it_adds_multiple_overrides_per_day()
+    public function it_adds_multiple_overrides_per_day(): void
     {
         $location = Location::factory()->create();
         $resource = Resource::factory()->create();
@@ -50,7 +50,7 @@ class ProcessScheduleOverridesTest extends TestCase
     }
 
     /** @test */
-    public function it_updates_existing_overrides()
+    public function it_updates_existing_overrides(): void
     {
         $location = Location::factory()->create();
         $resource = Resource::factory()->create();
@@ -86,7 +86,7 @@ class ProcessScheduleOverridesTest extends TestCase
     }
 
     /** @test */
-    public function it_deletes_removed_overrides()
+    public function it_deletes_removed_overrides(): void
     {
         $location = Location::factory()->create();
         $resource = Resource::factory()->create();
@@ -121,7 +121,7 @@ class ProcessScheduleOverridesTest extends TestCase
     }
 
     /** @test */
-    public function it_creates_new_overrides()
+    public function it_creates_new_overrides(): void
     {
         $location = Location::factory()->create();
         $resource = Resource::factory()->create();
@@ -155,7 +155,7 @@ class ProcessScheduleOverridesTest extends TestCase
     }
 
     /** @test */
-    public function it_updates_a_mix_of_new_and_existing_records()
+    public function it_updates_a_mix_of_new_and_existing_records(): void
     {
         // Create location, resource, and an existing override using factories
         $location = Location::factory()->create();

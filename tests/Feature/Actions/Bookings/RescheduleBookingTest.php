@@ -31,7 +31,7 @@ class RescheduleBookingTest extends TestCase
     }
 
     /** @test */
-    public function it_reschedules_a_booking_successfully()
+    public function it_reschedules_a_booking_successfully(): void
     {
         $environment = Environment::factory()->create();
         $oldBooking = Booking::factory()->create([
@@ -71,7 +71,7 @@ class RescheduleBookingTest extends TestCase
     }
 
     /** @test */
-    public function it_rolls_back_if_rescheduling_fails()
+    public function it_rolls_back_if_rescheduling_fails(): void
     {
         $environment = Environment::factory()->create();
         $oldBooking = Booking::factory()->create([
@@ -98,7 +98,7 @@ class RescheduleBookingTest extends TestCase
     }
 
     /** @test */
-    public function it_merges_meta_data_correctly_during_rescheduling()
+    public function it_merges_meta_data_correctly_during_rescheduling(): void
     {
         $environment = Environment::factory()->create();
         $oldBooking = Booking::factory()->create([
@@ -136,7 +136,7 @@ class RescheduleBookingTest extends TestCase
     }
 
     /** @test */
-    public function it_reschedules_with_new_resource_and_service_ids()
+    public function it_reschedules_with_new_resource_and_service_ids(): void
     {
         $environment = Environment::factory()->create();
         $oldBooking = Booking::factory()->create([

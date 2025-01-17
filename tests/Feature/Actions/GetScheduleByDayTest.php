@@ -17,7 +17,7 @@ class GetScheduleByDayTest extends TestCase
         $this->action = new GetScheduleByDay;
     }
 
-    public function test_execute_with_single_opening_and_no_bookings()
+    public function test_execute_with_single_opening_and_no_bookings(): void
     {
         // Arrange
         $openings = [
@@ -40,7 +40,7 @@ class GetScheduleByDayTest extends TestCase
         $this->assertEquals('2024-11-15T12:00:00+00:00', $result[0]['slots'][0]['end']);
     }
 
-    public function test_execute_with_multiple_openings_and_bookings()
+    public function test_execute_with_multiple_openings_and_bookings(): void
     {
         // Arrange
         $openings = [
@@ -93,7 +93,7 @@ class GetScheduleByDayTest extends TestCase
         $this->assertEquals('2024-11-15T15:00:00+00:00', $result[0]['slots'][3]['end']);
     }
 
-    public function test_execute_with_multiple_bookings_in_same_slot()
+    public function test_execute_with_multiple_bookings_in_same_slot(): void
     {
         // Arrange
         $openings = [];
@@ -140,7 +140,7 @@ class GetScheduleByDayTest extends TestCase
         $this->assertEquals($bookings[1]['updated_at'], $result[0]['slots'][0]['bookings'][1]['record']['updated_at']);
     }
 
-    public function test_execute_with_gap_between_slots()
+    public function test_execute_with_gap_between_slots(): void
     {
         // Arrange
         $openings = [
@@ -173,7 +173,7 @@ class GetScheduleByDayTest extends TestCase
         $this->assertEquals('2024-11-15T12:00:00+00:00', $result[0]['slots'][2]['end']);
     }
 
-    public function test_execute_with_empty_openings_and_bookings()
+    public function test_execute_with_empty_openings_and_bookings(): void
     {
         // Arrange
         $openings = [];

@@ -20,7 +20,7 @@ class BuildScheduleOverridesTest extends \Tests\TestCase
         $this->action = new BuildScheduleOverrides;
     }
 
-    public function test_returns_empty_period_collections_when_no_overrides()
+    public function test_returns_empty_period_collections_when_no_overrides(): void
     {
         $overrides = new Collection;
         $result = $this->action->get($overrides);
@@ -33,7 +33,7 @@ class BuildScheduleOverridesTest extends \Tests\TestCase
         $this->assertTrue($result['block']->isEmpty());
     }
 
-    public function test_schedules_opening_override_periods_correctly()
+    public function test_schedules_opening_override_periods_correctly(): void
     {
         $overrides = collect([
             ScheduleOverride::factory()->make([
@@ -65,7 +65,7 @@ class BuildScheduleOverridesTest extends \Tests\TestCase
         )));
     }
 
-    public function test_schedules_block_override_periods_correctly()
+    public function test_schedules_block_override_periods_correctly(): void
     {
         $overrides = collect([
             ScheduleOverride::factory()->make([
@@ -97,7 +97,7 @@ class BuildScheduleOverridesTest extends \Tests\TestCase
         )));
     }
 
-    public function test_separates_opening_and_block_overrides_correctly()
+    public function test_separates_opening_and_block_overrides_correctly(): void
     {
         $overrides = collect([
             ScheduleOverride::factory()->make([

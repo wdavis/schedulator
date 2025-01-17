@@ -13,7 +13,7 @@ use Tests\TestCase;
 class GetBookingPeriodTest extends TestCase
 {
     /** @test */
-    public function test_get_booking_period_with_matching_service()
+    public function test_get_booking_period_with_matching_service(): void
     {
         // Arrange
         $serviceId = (string) Str::uuid();
@@ -40,7 +40,7 @@ class GetBookingPeriodTest extends TestCase
     }
 
     /** @test */
-    public function test_get_booking_period_with_non_matching_service()
+    public function test_get_booking_period_with_non_matching_service(): void
     {
         // Arrange
         $booking = Booking::factory()->make([

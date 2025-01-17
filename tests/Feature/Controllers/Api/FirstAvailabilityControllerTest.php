@@ -122,7 +122,7 @@ class FirstAvailabilityControllerTest extends TestCase
         $this->assertEquals($anotherResource->id, $response->json('id'));
     }
 
-    public function test_resource_lead_time_is_honored()
+    public function test_resource_lead_time_is_honored(): void
     {
         $date = CarbonImmutable::create(2024, 11, 11, 8, 59); // monday 9 am
         $this->travelTo($date);

@@ -13,7 +13,7 @@ use Tests\TestCase;
 
 class ScopeAvailabilityWithLeadTimeTest extends TestCase
 {
-    public function test_scope_method()
+    public function test_scope_method(): void
     {
         // Create an instance of ScopeAvailabilityWithLeadTime
         $scoper = new ScopeAvailabilityWithLeadTime(new AdjustTimeInterval);
@@ -48,7 +48,7 @@ class ScopeAvailabilityWithLeadTimeTest extends TestCase
      *
      * @return void
      */
-    public function test_scope_method_with_24_hour_lead_time()
+    public function test_scope_method_with_24_hour_lead_time(): void
     {
         // Create an instance of ScopeAvailabilityWithLeadTime
         $scoper = new ScopeAvailabilityWithLeadTime(new AdjustTimeInterval);

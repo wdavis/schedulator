@@ -20,7 +20,7 @@ class ScopeScheduleTest extends TestCase
         $this->action = new ScopeSchedule;
     }
 
-    public function test_scope_removes_periods_before_start_date()
+    public function test_scope_removes_periods_before_start_date(): void
     {
         // Arrange: Define 15-minute intervals for availability before start date
         $availability = new PeriodCollection(
@@ -49,7 +49,7 @@ class ScopeScheduleTest extends TestCase
         $this->assertTrue($result[0]->startsAfterOrAt($startDate));
     }
 
-    public function test_scope_removes_periods_after_end_date()
+    public function test_scope_removes_periods_after_end_date(): void
     {
         // Arrange: Define availability periods that cross the end date
         $availability = new PeriodCollection(
@@ -78,7 +78,7 @@ class ScopeScheduleTest extends TestCase
         $this->assertTrue($result[0]->endsBeforeOrAt($endDate));
     }
 
-    public function test_scope_keeps_periods_within_date_range()
+    public function test_scope_keeps_periods_within_date_range(): void
     {
         // Arrange: Define periods entirely within the date range
         $availability = new PeriodCollection(
@@ -106,7 +106,7 @@ class ScopeScheduleTest extends TestCase
         $this->assertCount(2, $result);
     }
 
-    public function test_scope_excludes_partial_periods_outside_range()
+    public function test_scope_excludes_partial_periods_outside_range(): void
     {
         // Arrange: Define overlapping periods at the edges of the range
         $availability = new PeriodCollection(

@@ -12,7 +12,7 @@ class UpdateResourceTest extends TestCase
     use RefreshDatabase;
 
     /** @test */
-    public function it_updates_the_name_of_the_resource()
+    public function it_updates_the_name_of_the_resource(): void
     {
         // Arrange
         $resource = Resource::factory()->create([
@@ -33,7 +33,7 @@ class UpdateResourceTest extends TestCase
     }
 
     /** @test */
-    public function it_updates_the_booking_window_overrides()
+    public function it_updates_the_booking_window_overrides(): void
     {
         // Arrange
         $resource = Resource::factory()->create([
@@ -65,7 +65,7 @@ class UpdateResourceTest extends TestCase
     }
 
     /** @test */
-    public function it_merges_the_meta_data()
+    public function it_merges_the_meta_data(): void
     {
         // Arrange
         $resource = Resource::factory()->create([
@@ -88,7 +88,7 @@ class UpdateResourceTest extends TestCase
     }
 
     /** @test */
-    public function it_does_not_update_name_if_not_provided()
+    public function it_does_not_update_name_if_not_provided(): void
     {
         // Arrange
         $resource = Resource::factory()->create([

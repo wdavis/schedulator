@@ -27,7 +27,7 @@ class GetSchedulesForDateTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_get_schedules_for_date()
+    public function test_get_schedules_for_date(): void
     {
         $getScheduleOverridesMock = $this->mock(GetScheduleOverrides::class);
         $buildScheduleOverridesMock = $this->mock(BuildScheduleOverrides::class);
@@ -193,7 +193,7 @@ class GetSchedulesForDateTest extends TestCase
 
     }
 
-    public function test_blocks_are_blocked()
+    public function test_blocks_are_blocked(): void
     {
         $getScheduleOverridesMock = $this->mock(GetScheduleOverrides::class);
         $buildScheduleOverridesMock = $this->mock(BuildScheduleOverrides::class);

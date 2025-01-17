@@ -14,7 +14,7 @@ class GetScheduleOverridesTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_get_schedule_overrides()
+    public function test_get_schedule_overrides(): void
     {
         //        $resources =
 
@@ -54,7 +54,7 @@ class GetScheduleOverridesTest extends TestCase
         }
     }
 
-    public function test_overlapping_schedule_overrides_are_included()
+    public function test_overlapping_schedule_overrides_are_included(): void
     {
         $resources = Resource::factory()->count(3)->create();
 
@@ -86,7 +86,7 @@ class GetScheduleOverridesTest extends TestCase
         }
     }
 
-    public function test_non_overlapping_schedule_overrides_are_excluded()
+    public function test_non_overlapping_schedule_overrides_are_excluded(): void
     {
         $resources = Resource::factory()->count(3)->create();
 

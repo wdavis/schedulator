@@ -13,7 +13,7 @@ class CancelBookingTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_booking_can_be_cancelled()
+    public function test_booking_can_be_cancelled(): void
     {
         $booking = Booking::factory()->create();
         $cancelBooking = new CancelBooking;
@@ -22,7 +22,7 @@ class CancelBookingTest extends TestCase
         $this->assertNotNull($cancelledBooking->cancelled_at);
     }
 
-    public function test_booking_cannot_be_cancelled_twice()
+    public function test_booking_cannot_be_cancelled_twice(): void
     {
         $booking = Booking::factory()->create(['cancelled_at' => now()]);
         $cancelBooking = new CancelBooking;
@@ -33,7 +33,7 @@ class CancelBookingTest extends TestCase
         $cancelBooking->cancel($booking);
     }
 
-    public function test_booking_cannot_be_cancelled_if_past_cancellation_lead_time()
+    public function test_booking_cannot_be_cancelled_if_past_cancellation_lead_time(): void
     {
         $service = Service::factory()->create(['cancellation_window_end' => 60]);
         $booking = Booking::factory()->create(['service_id' => $service->id, 'starts_at' => Carbon::now()->addMinutes(30)]);
@@ -46,7 +46,7 @@ class CancelBookingTest extends TestCase
         $cancelBooking->cancel($booking);
     }
 
-    public function test_booking_can_be_cancelled_forcefully_past_cancellation_lead_time()
+    public function test_booking_can_be_cancelled_forcefully_past_cancellation_lead_time(): void
     {
         $service = Service::factory()->create(['cancellation_window_end' => 60]);
         $booking = Booking::factory()->create(['service_id' => $service->id, 'starts_at' => Carbon::now()->addMinutes(30)]);

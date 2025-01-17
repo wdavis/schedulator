@@ -13,7 +13,7 @@ class HasMetaTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_it_can_use_a_custom_meta_column_name()
+    public function test_it_can_use_a_custom_meta_column_name(): void
     {
         $order = new TestOrder;
 
@@ -24,7 +24,7 @@ class HasMetaTest extends TestCase
         $this->assertEquals('value', Arr::get($order->getAttribute('custom_meta'), 'path.to.key'));
     }
 
-    public function test_it_can_set_meta_values()
+    public function test_it_can_set_meta_values(): void
     {
         $order = new Resource;
 
@@ -37,7 +37,7 @@ class HasMetaTest extends TestCase
         $this->assertEquals('value2', Arr::get($order->getAttribute('meta'), 'path.to.key2'));
     }
 
-    public function test_it_can_update_meta_values()
+    public function test_it_can_update_meta_values(): void
     {
         $order = Resource::factory()->create(); // Assuming you have a factory for Order
 
@@ -50,7 +50,7 @@ class HasMetaTest extends TestCase
         $this->assertEquals('updatedValue2', Arr::get($order->getAttribute('meta'), 'path.to.key2'));
     }
 
-    public function test_it_can_get_meta_values()
+    public function test_it_can_get_meta_values(): void
     {
         $order = new Resource;
 

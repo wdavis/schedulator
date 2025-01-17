@@ -33,7 +33,7 @@ class GetCombinedSchedulesForDateTest extends TestCase
         );
     }
 
-    public function test_get_returns_combined_schedule_for_given_date_range()
+    public function test_get_returns_combined_schedule_for_given_date_range(): void
     {
         // Arrange
         $resources = Collection::make([new Resource(['id' => 'resource1']), new Resource(['id' => 'resource2'])]);
@@ -80,7 +80,7 @@ class GetCombinedSchedulesForDateTest extends TestCase
         $this->assertSame($combinedPeriodCollection, $result);
     }
 
-    public function test_get_with_empty_resources_returns_empty_collection()
+    public function test_get_with_empty_resources_returns_empty_collection(): void
     {
         // Arrange
         $resources = Collection::make([]);
@@ -118,7 +118,7 @@ class GetCombinedSchedulesForDateTest extends TestCase
         $this->assertCount(0, $result); // Expecting an empty PeriodCollection
     }
 
-    public function test_get_combines_periods_correctly_for_multiple_resources()
+    public function test_get_combines_periods_correctly_for_multiple_resources(): void
     {
         // Arrange
         $resources = Collection::make([new Resource, new Resource]);
@@ -164,7 +164,7 @@ class GetCombinedSchedulesForDateTest extends TestCase
         $this->assertSame($combinedPeriods, $result);
     }
 
-    public function test_get_with_null_schedule_returns_empty_period_collection()
+    public function test_get_with_null_schedule_returns_empty_period_collection(): void
     {
         // Arrange
         $resources = Collection::make([new Resource]);

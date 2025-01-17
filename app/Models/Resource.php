@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\HasOneThrough;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Traits\HasMeta;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -39,12 +41,12 @@ class Resource extends Model
     }
 
     // get the first location
-    public function location()
+    public function location(): HasOneThrough
     {
         return $this->hasOneThrough(Location::class, LocationResource::class, 'resource_id', 'id', 'id', 'location_id');
     }
 
-    public function environment()
+    public function environment(): BelongsTo
     {
         return $this->belongsTo(Environment::class);
     }

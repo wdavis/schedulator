@@ -12,7 +12,7 @@ use Tests\TestCase;
 
 class BuildRecurringScheduleTest extends TestCase
 {
-    public function test_build_method()
+    public function test_build_method(): void
     {
         $startDate = CarbonImmutable::create(2021, 1, 1, 0, 0, 0);
 
@@ -56,7 +56,7 @@ class BuildRecurringScheduleTest extends TestCase
 
     }
 
-    public function test_resources_timezone_is_honored()
+    public function test_resources_timezone_is_honored(): void
     {
         $startDate = CarbonImmutable::create(2021, 1, 1, 0, 0, 0);
 

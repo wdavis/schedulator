@@ -15,7 +15,7 @@ use Illuminate\Support\Str;
 
 class BasicSetupSeeder extends Seeder
 {
-    public function run()
+    public function run(): void
     {
         $users = $this->createUsers(2);
         $environments = $this->createEnvironments($users);

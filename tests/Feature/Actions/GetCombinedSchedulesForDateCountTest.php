@@ -28,7 +28,7 @@ class GetCombinedSchedulesForDateCountTest extends TestCase
         $this->action = new GetCombinedSchedulesForDateCount($this->getSchedulesForDateMock);
     }
 
-    public function test_get_combined_schedules_for_single_resource_and_period()
+    public function test_get_combined_schedules_for_single_resource_and_period(): void
     {
         // Arrange: Create resources, service, and set up the schedule data
         $resource = Resource::factory()->create();
@@ -67,7 +67,7 @@ class GetCombinedSchedulesForDateCountTest extends TestCase
         $this->assertEquals($expectedSlots, $result);
     }
 
-    public function test_get_combined_schedules_for_multiple_resources()
+    public function test_get_combined_schedules_for_multiple_resources(): void
     {
         // Arrange: Create multiple resources, a service, and define their periods
         $resource1 = Resource::factory()->create();
@@ -118,7 +118,7 @@ class GetCombinedSchedulesForDateCountTest extends TestCase
         $this->assertEquals($expectedSlots, $result);
     }
 
-    public function test_no_schedules_returns_zero_slots()
+    public function test_no_schedules_returns_zero_slots(): void
     {
         // Arrange: Set up resources and service but no available periods
         $resource = Resource::factory()->create();
@@ -144,7 +144,7 @@ class GetCombinedSchedulesForDateCountTest extends TestCase
         $this->assertEquals(0, $result);
     }
 
-    public function test_partial_periods_count_correctly()
+    public function test_partial_periods_count_correctly(): void
     {
         // Arrange: Create resources, service, and set partial period times
         $resource = Resource::factory()->create();

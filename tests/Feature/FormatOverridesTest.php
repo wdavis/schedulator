@@ -14,7 +14,7 @@ class FormatOverridesTest extends TestCase
      *
      * @return void
      */
-    public function test_format_with_timezone_conversion()
+    public function test_format_with_timezone_conversion(): void
     {
         $formatOverrides = new FormatOverrides;
 
@@ -48,7 +48,7 @@ class FormatOverridesTest extends TestCase
         $this->assertEquals('2024-09-04T15:30:00-05:00', $day4['schedule'][0]['ends_at']);
     }
 
-    public function test_handles_timezone_change_days_without_repeating()
+    public function test_handles_timezone_change_days_without_repeating(): void
     {
         $formatOverrides = new FormatOverrides;
 

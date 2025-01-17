@@ -28,7 +28,7 @@ class SyncRAAppointmentsCommand extends Command
     /**
      * Execute the console command.
      */
-    public function handle(CreateBooking $createBooking)
+    public function handle(CreateBooking $createBooking): void
     {
         $environmentId = $this->argument('environmentId');
 
