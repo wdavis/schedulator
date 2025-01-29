@@ -35,7 +35,7 @@ return Application::configure(basePath: dirname(__DIR__))
             //
         });
 
-        $exceptions->renderable(function (Throwable $e, Request $request) {
+        $exceptions->renderable(function (Throwable $e, Request $request) use ($exceptions) {
             if ($request->is('v1/*')) {
 
                 $message = $e->getMessage();
@@ -68,6 +68,8 @@ return Application::configure(basePath: dirname(__DIR__))
                 ], $status);
             }
 
-            return parent::render($request, $e);
+            return response()->json([
+                'message' => $e->getMessage(),
+            ], 500);
         });
     })->create();
