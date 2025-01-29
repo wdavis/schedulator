@@ -44,7 +44,6 @@ class Location extends Model
         $itemsToAdd = [];
 
         foreach ($schedules as $schedule) {
-            //            ray($schedule);
             $currentDate = $startDate->copy();
 
             while ($currentDate->dayOfWeekIso !== $schedule->day_of_week) {
@@ -56,7 +55,6 @@ class Location extends Model
                 $end = $currentDate->setTimeFromTimeString($schedule->end_time);
 
                 $itemsToAdd[] = Period::make($start, $end, Precision::MINUTE());
-                ray('adding period', $start, $end);
 
                 $currentDate = $currentDate->addWeek();
             }

@@ -20,7 +20,6 @@ class BasicSetupSeeder extends Seeder
         $users = $this->createUsers(2);
         $environments = $this->createEnvironments($users);
         $resources = $this->createResources($environments);
-        ray($resources);
         $this->createSchedules($resources, $environments);
     }
 
@@ -133,9 +132,7 @@ class BasicSetupSeeder extends Seeder
         foreach ($environments as $environment) {
             foreach ($scheduleData as $data) {
                 foreach ($data['days'] as $day) {
-                    ray($environment);
                     foreach ($resources[$environment->id] as $resourceLocation) {
-                        ray($resourceLocation);
                         Schedule::create([
                             'resource_id' => $resourceLocation['resource']->id,
                             'location_id' => $resourceLocation['location']->id,
