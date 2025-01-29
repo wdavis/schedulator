@@ -127,7 +127,7 @@ class AvailabilityController
             //            );
 
             $action = new \App\Actions\GroupOpeningsByDay;
-            $slots = $action->execute($slots, $requestedDate, $requestedEndDate, $request->get('timezone'));
+            $slots = $action->execute($slots, $requestedDate, $requestedEndDate, $timezone);
 
             return response()->json($slots);
         }
