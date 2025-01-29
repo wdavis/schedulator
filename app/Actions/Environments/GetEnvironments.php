@@ -11,7 +11,7 @@ class GetEnvironments
     {
         $user->load('environments');
 
-        return $user->environments->map(function(Environment $environment) use ($currentEnvironmentId) {
+        return $user->environments->map(function (Environment $environment) use ($currentEnvironmentId) {
             return [
                 'id' => $environment->id,
                 'name' => $environment->name,

@@ -10,16 +10,16 @@ class CancelBooking
 {
     public function cancel(Booking $booking, bool $force = false): Booking
     {
-        if($booking->cancelled_at) {
+        if ($booking->cancelled_at) {
             throw new BookingAlreadyCancelledException('Booking has already been cancelled');
         }
 
         // todo check if resource is loaded
-        if(!$booking->relationLoaded('service')) {
+        if (! $booking->relationLoaded('service')) {
             $booking->load('service');
         }
 
-        if(!$booking->relationLoaded('resource')) {
+        if (! $booking->relationLoaded('resource')) {
             $booking->load('resource');
         }
 
@@ -30,7 +30,7 @@ class CancelBooking
         $startsAt = $booking->starts_at;
         $bookingWithCancellationLead = $startsAt->subMinutes($cancellationWindowEnd);
 
-        if($bookingWithCancellationLead->isPast() && !$force) {
+        if ($bookingWithCancellationLead->isPast() && ! $force) {
             $formattedDuration = $this->formatDuration($cancellationWindowEnd);
             throw new \Exception("Booking cannot be cancelled within {$formattedDuration} of the start time {$booking->starts_at->toIso8601String()}");
         }

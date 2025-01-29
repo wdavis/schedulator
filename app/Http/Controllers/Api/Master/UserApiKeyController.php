@@ -9,9 +9,6 @@ class UserApiKeyController
 {
     private GetUserApiKeys $getUserApiKeys;
 
-    /**
-     * @param GetUserApiKeys $getUserApiKeys
-     */
     public function __construct(GetUserApiKeys $getUserApiKeys)
     {
         $this->getUserApiKeys = $getUserApiKeys;

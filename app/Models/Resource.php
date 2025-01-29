@@ -6,15 +6,18 @@ use App\Traits\HasMeta;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Spatie\Period\Period;
 
 class Resource extends Model
 {
     use HasFactory;
-    use HasUuids;
     use HasMeta;
+    use HasUuids;
 
     public $incrementing = false;
+
     protected $keyType = 'string';
 
     protected $fillable = [
@@ -23,9 +26,12 @@ class Resource extends Model
         'environment_id',
     ];
 
-    protected $casts = [
-        'meta' => 'array',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'meta' => 'array',
+        ];
+    }
 
     public function locations(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
@@ -35,12 +41,12 @@ class Resource extends Model
     }
 
     // get the first location
-    public function location()
+    public function location(): HasOneThrough
     {
         return $this->hasOneThrough(Location::class, LocationResource::class, 'resource_id', 'id', 'id', 'location_id');
     }
 
-    public function environment()
+    public function environment(): BelongsTo
     {
         return $this->belongsTo(Environment::class);
     }
@@ -48,7 +54,6 @@ class Resource extends Model
     /**
      * The earliest time ahead a booking can be made for this resource.
      * Forcing this to a big number for now, not even sure we are honoring it.
-     * @return int|null
      */
     public function bookingWindowLeadOverride(): ?int
     {
@@ -57,8 +62,6 @@ class Resource extends Model
 
     /**
      * The latest time (in minutes) before a booking can be made for this resource.
-     *
-     * @return int|null
      */
     public function bookingWindowEndOverride(): ?int
     {
@@ -67,8 +70,6 @@ class Resource extends Model
 
     /**
      * The minutes before start time that a booking can be cancelled for this resource.
-     *
-     * @return int|null
      */
     public function cancellationWindowEndOverride(): ?int
     {
@@ -98,7 +99,7 @@ class Resource extends Model
                     return $booking->start_time->lt($requestedEndTime) && $booking->end_time->gt($requestedStartTime);
                 });
 
-                if (!$overlappingBooking) {
+                if (! $overlappingBooking) {
                     return true; // No overlapping booking found during the requested time slot
                 }
             }

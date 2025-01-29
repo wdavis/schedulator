@@ -2,8 +2,6 @@
 
 namespace App\Actions\Imports;
 
-use App\Actions\Imports\TimeRange;
-
 class DailyHours
 {
     public $overridden = false;

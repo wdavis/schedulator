@@ -20,7 +20,7 @@ class GroupOpeningsByDayWithGaps
             $date = $start->toDateString();
             $day = $start->format('D');
 
-            if (!isset($groupedOpenings[$date])) {
+            if (! isset($groupedOpenings[$date])) {
                 $groupedOpenings[$date] = [
                     'date' => $date,
                     'day' => $day,
@@ -51,19 +51,19 @@ class GroupOpeningsByDayWithGaps
         // get the earliest opening time across all days
 
         $openings = collect($values)
-            ->flatMap(fn($day) => $day['slots'])
-            ->filter(fn($slot) => $slot['type'] === 'opening');
+            ->flatMap(fn ($day) => $day['slots'])
+            ->filter(fn ($slot) => $slot['type'] === 'opening');
 
-        $earliestOpening = $openings->sortBy(function($slot) {
+        $earliestOpening = $openings->sortBy(function ($slot) {
             return $slot['start']->format('Hi');
         })->first()['start'];
 
-        $latestOpening = $openings->sortBy(function($slot) {
+        $latestOpening = $openings->sortBy(function ($slot) {
             return $slot['end']->format('Hi');
         })->last()['end'];
 
         // add gaps at the start and end of the day using the first slot and last slot of each day. splice the values in to the correct location of the slots
-        foreach($values as $index => $day) {
+        foreach ($values as $index => $day) {
             // get the first slot of each day using array syntax
             $firstSlot = $day['slots'][0];
 
@@ -71,7 +71,7 @@ class GroupOpeningsByDayWithGaps
             $values[$index]['latest'] = $latestOpening->toISO8601String();
 
             // if slot time is equal to earliest opening time, then we don't need to add a gap
-            if(intval($earliestOpening->format('Hi')) < intval($firstSlot['start']->format('Hi'))) {
+            if (intval($earliestOpening->format('Hi')) < intval($firstSlot['start']->format('Hi'))) {
                 // add a gap at the start of the day
                 array_unshift($values[$index]['slots'], [
                     'type' => 'gap',
@@ -83,7 +83,7 @@ class GroupOpeningsByDayWithGaps
             // get the last slot of each day using array syntax
             $lastSlot = end($day['slots']);
 
-            if(intval($latestOpening->format('Hi')) > intval($lastSlot['end']->format('Hi'))) {
+            if (intval($latestOpening->format('Hi')) > intval($lastSlot['end']->format('Hi'))) {
                 // add a gap at the start of the day
                 $values[$index]['slots'][] = [
                     'type' => 'gap',
@@ -93,7 +93,7 @@ class GroupOpeningsByDayWithGaps
             }
 
             // run ->toISO8601String() on all start and end times
-            foreach($values[$index]['slots'] as $slotIndex => $slot) {
+            foreach ($values[$index]['slots'] as $slotIndex => $slot) {
                 $values[$index]['slots'][$slotIndex]['start'] = $slot['start']->toISO8601String();
                 $values[$index]['slots'][$slotIndex]['end'] = $slot['end']->toISO8601String();
             }

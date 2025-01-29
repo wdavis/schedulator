@@ -5,8 +5,6 @@ namespace Tests\Feature\Actions;
 use App\Actions\AdjustTimeInterval;
 use App\Actions\ScopeAvailabilityWithLeadTime;
 use Carbon\CarbonImmutable;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Spatie\Period\Boundaries;
 use Spatie\Period\Period;
 use Spatie\Period\PeriodCollection;
@@ -15,10 +13,10 @@ use Tests\TestCase;
 
 class ScopeAvailabilityWithLeadTimeTest extends TestCase
 {
-    public function test_scope_method()
+    public function test_scope_method(): void
     {
         // Create an instance of ScopeAvailabilityWithLeadTime
-        $scoper = new ScopeAvailabilityWithLeadTime(new AdjustTimeInterval());
+        $scoper = new ScopeAvailabilityWithLeadTime(new AdjustTimeInterval);
 
         // Create a PeriodCollection for testing
         $start = CarbonImmutable::create(2022, 01, 01);
@@ -47,13 +45,11 @@ class ScopeAvailabilityWithLeadTimeTest extends TestCase
 
     /**
      * Test the scope method with a 24-hour lead time.
-     *
-     * @return void
      */
-    public function test_scope_method_with_24_hour_lead_time()
+    public function test_scope_method_with_24_hour_lead_time(): void
     {
         // Create an instance of ScopeAvailabilityWithLeadTime
-        $scoper = new ScopeAvailabilityWithLeadTime(new AdjustTimeInterval());
+        $scoper = new ScopeAvailabilityWithLeadTime(new AdjustTimeInterval);
 
         // Create a PeriodCollection for testing
         $start = CarbonImmutable::create(2022, 01, 01);

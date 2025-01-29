@@ -16,27 +16,27 @@ class CreateNewAccountEnvironments
 
         $environments = [];
 
-        if($user->environments->filter(fn($env) => $env->name === 'production')->count() === 0) {
+        if ($user->environments->filter(fn ($env) => $env->name === 'production')->count() === 0) {
             $prodEnv = Environment::create([
-                'name' => "production",
+                'name' => 'production',
                 'user_id' => $user->id,
             ]);
 
             $environments[] = $prodEnv;
         }
 
-        if($user->environments->filter(fn($env) => $env->name === 'staging')->count() === 0) {
-           $stagingEnv = Environment::create([
-                'name' => "staging",
+        if ($user->environments->filter(fn ($env) => $env->name === 'staging')->count() === 0) {
+            $stagingEnv = Environment::create([
+                'name' => 'staging',
                 'user_id' => $user->id,
             ]);
 
             $environments[] = $stagingEnv;
         }
 
-        if($user->environments->filter(fn($env) => $env->name === 'dev')->count() === 0) {
+        if ($user->environments->filter(fn ($env) => $env->name === 'dev')->count() === 0) {
             $devEnv = Environment::create([
-                'name' => "dev",
+                'name' => 'dev',
                 'user_id' => $user->id,
             ]);
 
@@ -59,9 +59,9 @@ class CreateNewAccountEnvironments
             $service = $environment->services()->create([
                 'name' => "Default Service for {$environment->name}",
                 'duration' => $defaultServiceDuration,
-//                'booking_window_lead' => 60, // use db column defaults
-//                'booking_window_end' => 60, // use db column defaults
-//                'cancellation_window_end' => 60, // use db column defaults
+                //                'booking_window_lead' => 60, // use db column defaults
+                //                'booking_window_end' => 60, // use db column defaults
+                //                'cancellation_window_end' => 60, // use db column defaults
             ]);
 
             $responseEnvs[$environment->name] = [

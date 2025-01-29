@@ -15,7 +15,9 @@ class ResourceController
     use InteractsWithEnvironment;
 
     private CreateResource $createResource;
+
     private UpdateResource $updateResource;
+
     private FormatValidationErrors $formatValidationErrors;
 
     public function __construct(CreateResource $createResource, \App\Actions\FormatValidationErrors $formatValidationErrors, \App\Actions\Resources\UpdateResource $updateResource)
@@ -30,7 +32,7 @@ class ResourceController
         $perPage = request('perPage', 20);
 
         return ResourceResource::collection(Resource::where('environment_id', $this->getApiEnvironmentId())
-            ->when(request()->has('active'), function($query) {
+            ->when(request()->has('active'), function ($query) {
                 $query->where('active', request('active') === 'true' ? 't' : 'f');
             })
             ->paginate($perPage)
@@ -53,7 +55,7 @@ class ResourceController
             'meta' => ['array', 'nullable'],
         ]);
 
-        if($validator->fails()) {
+        if ($validator->fails()) {
             return response()->json($validator->errors()->getMessages(), 422);
         }
 
@@ -82,7 +84,7 @@ class ResourceController
             'meta' => ['array', 'nullable'],
         ]);
 
-        if($validator->fails()) {
+        if ($validator->fails()) {
             return response()->json($validator->errors()->getMessages(), 422);
         }
 

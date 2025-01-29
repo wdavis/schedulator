@@ -2,33 +2,32 @@
 
 namespace Tests\Feature\Actions;
 
-use App\Actions\ScopeAvailabilityWithLeadTime;
-use App\Models\Service;
-use Illuminate\Database\Eloquent\Factories\Sequence;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Spatie\Period\Boundaries;
-use Spatie\Period\Period;
-use Spatie\Period\Precision;
-use Tests\TestCase;
-use App\Actions\GetSchedulesForDate;
 use App\Actions\Bookings\GetAllBookings;
 use App\Actions\BuildBookingPeriods;
 use App\Actions\BuildRecurringSchedule;
 use App\Actions\BuildScheduleOverrides;
 use App\Actions\GetScheduleOverrides;
+use App\Actions\GetSchedulesForDate;
+use App\Actions\ScopeAvailabilityWithLeadTime;
+use App\Models\Booking;
 use App\Models\Resource;
 use App\Models\ScheduleOverride;
-use App\Models\Booking;
+use App\Models\Service;
 use Carbon\CarbonImmutable;
+use Illuminate\Database\Eloquent\Factories\Sequence;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Collection;
+use Spatie\Period\Boundaries;
+use Spatie\Period\Period;
 use Spatie\Period\PeriodCollection;
+use Spatie\Period\Precision;
+use Tests\TestCase;
 
 class GetSchedulesForDateTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_get_schedules_for_date()
+    public function test_get_schedules_for_date(): void
     {
         $getScheduleOverridesMock = $this->mock(GetScheduleOverrides::class);
         $buildScheduleOverridesMock = $this->mock(BuildScheduleOverrides::class);
@@ -49,7 +48,7 @@ class GetSchedulesForDateTest extends TestCase
         $resources = Resource::factory()->count(2)->state(new Sequence(
             [
                 'active' => true,
-                'booking_window_end_override' => 60
+                'booking_window_end_override' => 60,
             ],
             ['active' => false]
         ))->create();
@@ -65,13 +64,14 @@ class GetSchedulesForDateTest extends TestCase
         // Filling in mock expectations and responses according to given return types.
         $getScheduleOverridesMock->shouldReceive('get')
             ->once()
-            ->withArgs(function($resourceIds, $startDate, $endDate) use ($resources) {
+            ->withArgs(function ($resourceIds, $startDate, $endDate) use ($resources) {
                 $this->assertTrue($resourceIds === [$resources[0]->id]);
                 $this->assertTrue($startDate->eq(CarbonImmutable::create(2000, 1, 1)));
                 $this->assertTrue($endDate->eq(CarbonImmutable::create(2000, 1, 1)));
+
                 return true;
             })
-            ->andReturnUsing(function($resourceIds, $startDate, $endDate) {
+            ->andReturnUsing(function ($resourceIds, $startDate, $endDate) {
                 return ScheduleOverride::factory()->count(2)->state(new Sequence(
                     [
                         'resource_id' => $resourceIds[0],
@@ -91,7 +91,7 @@ class GetSchedulesForDateTest extends TestCase
         // Bookings
         $getAllBookingsMock->shouldReceive('get')
             ->once()
-            ->andReturnUsing(function($resources, $startDate, $endDate) {
+            ->andReturnUsing(function ($resources, $startDate, $endDate) {
                 return Booking::factory()->count(2)->state(new Sequence(
                     [
                         'resource_id' => $resources[0]->id,
@@ -106,22 +106,22 @@ class GetSchedulesForDateTest extends TestCase
             ->andReturn([
                 // open 8am - 9am
                 'opening' => PeriodCollection::make(
-                        Period::make(
-                            $startDate->hour(8),
-                            $startDate->hour(8)->addHour(),
-                            Precision::MINUTE(),
-                            Boundaries::EXCLUDE_ALL(),
-                        )
-                    ),
+                    Period::make(
+                        $startDate->hour(8),
+                        $startDate->hour(8)->addHour(),
+                        Precision::MINUTE(),
+                        Boundaries::EXCLUDE_ALL(),
+                    )
+                ),
                 // block 8 - 8:15
                 'block' => PeriodCollection::make(
-                        Period::make(
-                            $startDate->hour(8),
-                            $startDate->hour(8)->addMinutes(15),
-                            Precision::MINUTE(),
-                            Boundaries::EXCLUDE_ALL(),
-                        )
+                    Period::make(
+                        $startDate->hour(8),
+                        $startDate->hour(8)->addMinutes(15),
+                        Precision::MINUTE(),
+                        Boundaries::EXCLUDE_ALL(),
                     )
+                ),
             ]);
 
         // recurring schedule 9 to 5
@@ -146,17 +146,17 @@ class GetSchedulesForDateTest extends TestCase
             ));
 
         $scopeAvailabilityMock->shouldReceive('scope')
-            ->withArgs(function(PeriodCollection $periods, int $leadTime, int $serviceDuration) {
+            ->withArgs(function (PeriodCollection $periods, int $leadTime, int $serviceDuration) {
                 $this->assertEquals(60, $leadTime);
                 $this->assertEquals(15, $serviceDuration);
-//                $this->assertTrue($startDate->eq(CarbonImmutable::create(2000, 1, 1)));
+                //                $this->assertTrue($startDate->eq(CarbonImmutable::create(2000, 1, 1)));
 
                 // make sure the periods are correct
-//                $this->assertTrue($periods[0]->start()->format('Y-m-d H:i:s') === $startDate->hour(8)->minute(15)->format('Y-m-d H:i:s'));
-//                $this->assertTrue($periods[0]->end()->format('Y-m-d H:i:s') === $startDate->hour(11)->format('Y-m-d H:i:s'));
+                //                $this->assertTrue($periods[0]->start()->format('Y-m-d H:i:s') === $startDate->hour(8)->minute(15)->format('Y-m-d H:i:s'));
+                //                $this->assertTrue($periods[0]->end()->format('Y-m-d H:i:s') === $startDate->hour(11)->format('Y-m-d H:i:s'));
 
-//                $this->assertTrue($periods[1]->start()->format('Y-m-d H:i:s') === $startDate->hour(11)->minute(15)->format('Y-m-d H:i:s'));
-//                $this->assertTrue($periods[1]->end()->format('Y-m-d H:i:s') === $startDate->hour(17)->format('Y-m-d H:i:s'));
+                //                $this->assertTrue($periods[1]->start()->format('Y-m-d H:i:s') === $startDate->hour(11)->minute(15)->format('Y-m-d H:i:s'));
+                //                $this->assertTrue($periods[1]->end()->format('Y-m-d H:i:s') === $startDate->hour(17)->format('Y-m-d H:i:s'));
 
                 return true;
             })
@@ -180,7 +180,7 @@ class GetSchedulesForDateTest extends TestCase
 
         $this->assertInstanceOf(Collection::class, $result);
 
-        $this->assertCount(1, $result, "Inactive resources should be filtered out");
+        $this->assertCount(1, $result, 'Inactive resources should be filtered out');
         $this->assertInstanceOf(Resource::class, $result->first()['resource']);
         $this->assertTrue($result->first()['resource']->id === $resources[0]->id);
 
@@ -191,10 +191,9 @@ class GetSchedulesForDateTest extends TestCase
         $this->assertTrue($firstResource['periods'][0]->start()->format('Y-m-d H:i:s') === $startDate->hour(11)->minute(0)->format('Y-m-d H:i:s'));
         $this->assertTrue($firstResource['periods'][0]->end()->format('Y-m-d H:i:s') === $startDate->hour(11)->minute(15)->format('Y-m-d H:i:s'));
 
-
     }
 
-    public function test_blocks_are_blocked()
+    public function test_blocks_are_blocked(): void
     {
         $getScheduleOverridesMock = $this->mock(GetScheduleOverrides::class);
         $buildScheduleOverridesMock = $this->mock(BuildScheduleOverrides::class);
@@ -228,13 +227,14 @@ class GetSchedulesForDateTest extends TestCase
         // Filling in mock expectations and responses according to given return types.
         $getScheduleOverridesMock->shouldReceive('get')
             ->once()
-            ->withArgs(function($resourceIds, $startDate, $endDate) use ($resources) {
+            ->withArgs(function ($resourceIds, $startDate, $endDate) use ($resources) {
                 $this->assertTrue($resourceIds === [$resources[0]->id]);
                 $this->assertTrue($startDate->eq(CarbonImmutable::create(2000, 1, 1)));
                 $this->assertTrue($endDate->eq(CarbonImmutable::create(2000, 1, 1)));
+
                 return true;
             })
-            ->andReturnUsing(function($resourceIds, $startDate, $endDate) {
+            ->andReturnUsing(function ($resourceIds, $startDate, $endDate) {
                 return ScheduleOverride::factory()->count(2)->state(new Sequence(
                     [
                         'resource_id' => $resourceIds[0],
@@ -254,7 +254,7 @@ class GetSchedulesForDateTest extends TestCase
         // Bookings
         $getAllBookingsMock->shouldReceive('get')
             ->once()
-            ->andReturnUsing(function($resources, $startDate, $endDate) {
+            ->andReturnUsing(function ($resources, $startDate, $endDate) {
                 return Booking::factory()->count(2)->make();
             });
 
@@ -277,7 +277,7 @@ class GetSchedulesForDateTest extends TestCase
                         Precision::MINUTE(),
                         Boundaries::EXCLUDE_ALL(),
                     )
-                )
+                ),
             ]);
 
         $buildRecurringScheduleMock->shouldReceive('build')
@@ -305,15 +305,13 @@ class GetSchedulesForDateTest extends TestCase
 
         $firstResource = $result->first();
 
-//        dd($firstResource);
+        //        dd($firstResource);
 
         // check that start time is 8:15 with a message if not
 
         // assert that the first resource has the correct periods
-        $this->assertTrue($firstResource['periods'][0]->start()->format('Y-m-d H:i:s') === $startDate->hour(8)->minute(15)->format('Y-m-d H:i:s'), "Start time is not 8:15. It is " . $firstResource['periods'][0]->start()->format('Y-m-d H:i:s'));
-        $this->assertTrue($firstResource['periods'][0]->end()->format('Y-m-d H:i:s') === $startDate->hour(9)->minute(00)->format('Y-m-d H:i:s'), "End time is not 9:00. It is ".$firstResource['periods'][0]->end()->format('Y-m-d H:i:s'));
-
-
+        $this->assertTrue($firstResource['periods'][0]->start()->format('Y-m-d H:i:s') === $startDate->hour(8)->minute(15)->format('Y-m-d H:i:s'), 'Start time is not 8:15. It is '.$firstResource['periods'][0]->start()->format('Y-m-d H:i:s'));
+        $this->assertTrue($firstResource['periods'][0]->end()->format('Y-m-d H:i:s') === $startDate->hour(9)->minute(00)->format('Y-m-d H:i:s'), 'End time is not 9:00. It is '.$firstResource['periods'][0]->end()->format('Y-m-d H:i:s'));
 
     }
 }

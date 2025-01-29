@@ -20,7 +20,8 @@ class CalendarController
     use InteractsWithEnvironment;
 
     private FormatValidationErrors $formatValidationErrors;
-//    private GetAllAvailabilityForDate $getAvailabilityForDate;
+
+    //    private GetAllAvailabilityForDate $getAvailabilityForDate;
     private GetCombinedSchedulesForDate $getCombinedSchedulesForDate;
 
     private ScopeAvailabilityWithLeadTime $scopeAvailabilityWithLeadTime;
@@ -28,7 +29,7 @@ class CalendarController
     public function __construct(FormatValidationErrors $formatValidationErrors, \App\Actions\ScopeAvailabilityWithLeadTime $scopeAvailabilityWithLeadTime, GetCombinedSchedulesForDate $getCombinedSchedulesForDate)
     {
         $this->formatValidationErrors = $formatValidationErrors;
-//        $this->getAvailabilityForDate = $getAvailabilityForDate;
+        //        $this->getAvailabilityForDate = $getAvailabilityForDate;
         $this->scopeAvailabilityWithLeadTime = $scopeAvailabilityWithLeadTime;
         $this->getCombinedSchedulesForDate = $getCombinedSchedulesForDate;
     }
@@ -38,8 +39,8 @@ class CalendarController
         dd('here');
 
         $validator = Validator::make($request->all(), [
-            'startDate' => ['required', new Iso8601Date()],
-            'endDate' => ['required', new Iso8601Date()],
+            'startDate' => ['required', new Iso8601Date],
+            'endDate' => ['required', new Iso8601Date],
             'serviceId' => 'required|exists:services,id',
             'resourceIds' => 'array|nullable',
         ]);
@@ -54,21 +55,20 @@ class CalendarController
 
         $service = Service::where('id', $serviceId)
             ->where('environment_id', $this->getApiEnvironmentId())
-            ->firstOrFail()
-        ;
+            ->firstOrFail();
 
         $requestedDate = CarbonImmutable::parse($start);
         $requestedEndDate = CarbonImmutable::parse($end);
 
-        if(!$end) {
+        if (! $end) {
             $endDate = $requestedDate->endOfDay();
         } else {
             $endDate = CarbonImmutable::parse($end)->endOfDay();
         }
 
-        if($requestedDate->isPast() && $requestedEndDate->isPast()) {
+        if ($requestedDate->isPast() && $requestedEndDate->isPast()) {
             return response()->json([
-                'message' => 'The requested range is in the past'
+                'message' => 'The requested range is in the past',
             ], 422);
         }
 
@@ -78,12 +78,11 @@ class CalendarController
 
         // todo split this into an action
         $resources = Resource::where('environment_id', $this->getApiEnvironmentId())
-            ->when($resourceIds, function($query) use ($resourceIds) {
+            ->when($resourceIds, function ($query) use ($resourceIds) {
                 $query->whereIn('id', $resourceIds);
             })
             ->where('active', true)
-            ->get()
-        ;
+            ->get();
 
         $availability = $this->getCombinedSchedulesForDate->get($resources, $service, $requestedDate, endDate: $endDate);
 
@@ -103,7 +102,7 @@ class CalendarController
         $availability = $availability->subtract($endScope);
 
         // todo inject?
-        $action = new \App\Actions\SplitPeriodIntoIntervals();
+        $action = new \App\Actions\SplitPeriodIntoIntervals;
         $slots = $action->execute($availability, $service);
 
         return response()->json($slots);

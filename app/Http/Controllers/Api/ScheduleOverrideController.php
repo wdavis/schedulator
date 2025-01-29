@@ -10,7 +10,6 @@ use App\Enums\ScheduleOverrideType;
 use App\Models\Resource;
 use App\Models\ScheduleOverride;
 use App\Rules\Iso8601Date;
-use App\Rules\NotFromPast;
 use App\Traits\InteractsWithEnvironment;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Validator;
@@ -20,16 +19,13 @@ class ScheduleOverrideController
     use InteractsWithEnvironment;
 
     private CreateOverride $createOverride;
+
     private FormatValidationErrors $formatValidationErrors;
+
     private FormatOverrides $formatOverrides;
+
     private ProcessScheduleOverrides $processScheduleOverrides;
 
-    /**
-     * @param CreateOverride $createOverride
-     * @param FormatValidationErrors $formatValidationErrors
-     * @param FormatOverrides $formatOverrides
-     * @param ProcessScheduleOverrides $processScheduleOverrides
-     */
     public function __construct(CreateOverride $createOverride, FormatValidationErrors $formatValidationErrors, FormatOverrides $formatOverrides, \App\Actions\ProcessScheduleOverrides $processScheduleOverrides)
     {
         $this->createOverride = $createOverride;
@@ -42,9 +38,9 @@ class ScheduleOverrideController
     {
         // validate the request
         $validator = Validator::make(request()->all(), [
-            'starts_at' => ['required', new Iso8601Date()],
-            'ends_at' => ['required', new Iso8601Date()],
-            'timezone' => ['required', 'timezone']
+            'starts_at' => ['required', new Iso8601Date],
+            'ends_at' => ['required', new Iso8601Date],
+            'timezone' => ['required', 'timezone'],
         ]);
 
         if ($validator->fails()) {
@@ -68,13 +64,13 @@ class ScheduleOverrideController
     {
         $validator = Validator::make(request()->toArray(), [
             'type' => ['required', 'in:'.ScheduleOverrideType::opening->value.','.ScheduleOverrideType::block->value],
-            'start_at' => ['required', new Iso8601Date()],
-            'end_at' => ['required', new Iso8601Date()]
+            'start_at' => ['required', new Iso8601Date],
+            'end_at' => ['required', new Iso8601Date],
         ], [
-            'type' => 'The type field must be one either '.ScheduleOverrideType::opening->value.' or '.ScheduleOverrideType::block->value
+            'type' => 'The type field must be one either '.ScheduleOverrideType::opening->value.' or '.ScheduleOverrideType::block->value,
         ]);
 
-        if($validator->fails()) {
+        if ($validator->fails()) {
             return $this->formatValidationErrors->validate($validator->errors()->getMessages());
         }
 
@@ -87,7 +83,7 @@ class ScheduleOverrideController
         $endDate = new CarbonImmutable(request('ends_at'));
 
         // convert type string to enum
-        $type = match(request('type')) {
+        $type = match (request('type')) {
             'block' => ScheduleOverrideType::block,
             'opening' => ScheduleOverrideType::opening
         };
@@ -101,7 +97,7 @@ class ScheduleOverrideController
             'month' => ['required', 'date_format:Y-m'],
         ]);
 
-        if($validator1->fails()) {
+        if ($validator1->fails()) {
             return response()->json($this->formatValidationErrors->validate($validator1->errors()->getMessages()), 422);
         }
 
@@ -110,13 +106,13 @@ class ScheduleOverrideController
             'timezone' => ['required', 'timezone'],
             'schedules.*.id' => ['nullable', 'uuid'],
             'schedules.*.type' => ['required', 'in:'.ScheduleOverrideType::opening->value.','.ScheduleOverrideType::block->value],
-            'schedules.*.starts_at' => ['required', new Iso8601Date()],
-            'schedules.*.ends_at' => ['required', new Iso8601Date()],
+            'schedules.*.starts_at' => ['required', new Iso8601Date],
+            'schedules.*.ends_at' => ['required', new Iso8601Date],
         ], [
-            'schedules.*.type' => 'The type field must be one either '.ScheduleOverrideType::opening->value.' or '.ScheduleOverrideType::block->value
+            'schedules.*.type' => 'The type field must be one either '.ScheduleOverrideType::opening->value.' or '.ScheduleOverrideType::block->value,
         ]);
 
-        if($validator->fails()) {
+        if ($validator->fails()) {
             return response()->json($this->formatValidationErrors->validate($validator->errors()->getMessages()), 422);
         }
 
@@ -149,7 +145,7 @@ class ScheduleOverrideController
     public function destroy(string $resourceId, string $overrideId)
     {
         $override = ScheduleOverride::where('id', $overrideId)
-            ->whereHas('resource', function($query) use ($resourceId) {
+            ->whereHas('resource', function ($query) use ($resourceId) {
                 $query->where('id', $resourceId);
                 $query->where('environment_id', $this->getApiEnvironmentId());
             })
@@ -158,7 +154,7 @@ class ScheduleOverrideController
         $override->delete();
 
         return response()->json([
-            'message' => 'Override deleted'
+            'message' => 'Override deleted',
         ]);
     }
 }

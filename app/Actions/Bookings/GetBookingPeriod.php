@@ -13,7 +13,7 @@ class GetBookingPeriod
 {
     public function get(Booking $booking, Service $service): array
     {
-        if($booking->service_id !== $service->id) {
+        if ($booking->service_id !== $service->id) {
             throw new \Exception('Booking does not match the service');
         }
 
@@ -28,7 +28,7 @@ class GetBookingPeriod
                     CarbonImmutable::parse($booking->ends_at),
                     precision: Precision::MINUTE(),
                     boundaries: Boundaries::EXCLUDE_ALL() // this allows the periods to be merged without an offset
-                )
+                ),
             ]
         );
 

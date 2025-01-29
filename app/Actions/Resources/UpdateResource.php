@@ -14,7 +14,7 @@ class UpdateResource
         ?int $cancellationWindowEndOverride = null,
         array $meta = []): Resource
     {
-        if($name) {
+        if ($name) {
             $resource->name = $name;
         }
 

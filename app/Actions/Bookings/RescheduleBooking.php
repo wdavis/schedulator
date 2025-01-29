@@ -3,24 +3,18 @@
 namespace App\Actions\Bookings;
 
 use App\Models\Booking;
-use Illuminate\Support\Facades\DB;
 
 class RescheduleBooking
 {
-
     private CreateBooking $createBooking;
+
     private CancelBooking $cancelBooking;
 
-    /**
-     * @param CreateBooking $createBooking
-     * @param CancelBooking $cancelBooking
-     */
     public function __construct(CreateBooking $createBooking, CancelBooking $cancelBooking)
     {
         $this->createBooking = $createBooking;
         $this->cancelBooking = $cancelBooking;
     }
-
 
     public function reschedule(string $bookingId, string $newTimeSlot, string $environmentId, ?string $newResourceId = null, ?string $newServiceId = null, array $meta = [], bool $force = false): Booking
     {
@@ -46,12 +40,11 @@ class RescheduleBooking
 
         } catch (\Exception $e) {
 
-            if(isset($newBooking)) {
+            if (isset($newBooking)) {
                 $newBooking->delete();
             }
 
             throw $e;
-
         }
 
     }

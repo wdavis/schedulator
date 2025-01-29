@@ -18,13 +18,14 @@ trait CreatesTestAccounts
 {
     public function createResource(string $name, string $environmentId, string $timezone = 'UTC', bool $active = true): Resource
     {
-        $createResource = new CreateResource();
+        $createResource = new CreateResource;
+
         return $createResource->create(
             name: $name,
             environmentId: $environmentId,
             active: $active,
             meta: [
-                'timezone' => $timezone
+                'timezone' => $timezone,
             ]
         );
     }
@@ -64,7 +65,7 @@ trait CreatesTestAccounts
             'stagingResource' => $stagingResource,
             'stagingService' => Service::find($this->getEnvServiceId('staging', $account)),
             'stagingEnvironmentId' => $this->getEnvEnvironmentId('staging', $account),
-            'stagingApiKey' => $this
+            'stagingApiKey' => $this,
         ];
     }
 
@@ -87,6 +88,7 @@ trait CreatesTestAccounts
     {
         /** @var UpdateSchedule $scheduler */
         $scheduler = app(UpdateSchedule::class);
+
         return $scheduler->execute(
             resource: $resource,
             scheduleData: [
@@ -94,7 +96,7 @@ trait CreatesTestAccounts
                     [
                         'start_time' => $startTime,
                         'end_time' => $endTime,
-                    ]
+                    ],
                 ],
             ]
         );
@@ -117,6 +119,7 @@ trait CreatesTestAccounts
     {
         /** @var CreateOverride $action */
         $action = app(CreateOverride::class);
+
         return $action->create(
             resource: $resource,
             type: $type,
@@ -128,14 +131,14 @@ trait CreatesTestAccounts
 
     private function countSlotsByType(array $slots, $type): int
     {
-        return count(array_filter($slots, fn($slot) => $slot['type'] === $type));
+        return count(array_filter($slots, fn ($slot) => $slot['type'] === $type));
 
     }
 
     private function createAuthHeader($apiKey): array
     {
         return [
-            'Authorization' => 'Bearer ' . $apiKey,
+            'Authorization' => 'Bearer '.$apiKey,
         ];
     }
 }

@@ -19,6 +19,7 @@ class FirstAvailabilityController
     use InteractsWithEnvironment;
 
     private GetFirstAvailableResource $getFirstAvailableResource;
+
     private FormatValidationErrors $formatValidationErrors;
 
     public function __construct(GetFirstAvailableResource $getFirstAvailableResource, FormatValidationErrors $formatValidationErrors)
@@ -32,10 +33,10 @@ class FirstAvailabilityController
         $validator = Validator::make(request()->only('resourceIds', 'serviceId', 'time'), [
             'resourceIds' => 'required|array',
             'serviceId' => 'required',
-            'time' => ['required', new Iso8601Date()],
+            'time' => ['required', new Iso8601Date],
         ]);
 
-        if($validator->fails()) {
+        if ($validator->fails()) {
             return response()->json($this->formatValidationErrors->validate($validator->errors()->getMessages()), 422);
         }
 
@@ -49,7 +50,7 @@ class FirstAvailabilityController
             ->with('locations.schedules')
             // keep the order of the resources as provided in the request, postgres specific
             ->orderByRaw(
-                "array_position(ARRAY[" . implode(',', array_map(fn($id) => "'{$id}'", $resourceIds)) . "]::uuid[], id)"
+                'array_position(ARRAY['.implode(',', array_map(fn ($id) => "'{$id}'", $resourceIds)).']::uuid[], id)'
             )->get();
 
         try {
@@ -57,7 +58,7 @@ class FirstAvailabilityController
                 $service = Service::where('id', $serviceId)->firstOrFail();
             } catch (ModelNotFoundException $e) {
                 return response()->json([
-                    'message' => 'Service not found'
+                    'message' => 'Service not found',
                 ], 404);
             }
             $requestedTime = CarbonImmutable::parse($time)->setTimezone('UTC');
@@ -75,14 +76,13 @@ class FirstAvailabilityController
             return ResourceResource::make($resources->firstWhere('id', $firstResourceId));
         } catch (NoResourceAvailabilityForRequestedTimeException $e) {
             return response()->json([
-                'message' => $e->getMessage()
+                'message' => $e->getMessage(),
             ], 404);
         } catch (\Exception $e) {
             return response()->json([
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ], 500);
         }
-
 
     }
 }

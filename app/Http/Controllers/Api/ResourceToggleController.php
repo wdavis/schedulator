@@ -15,7 +15,7 @@ class ResourceToggleController
         $description = $resource->active ? 'active' : 'inactive';
 
         return response()->json([
-            'message' => "Resource is now {$description}"
+            'message' => "Resource is now {$description}",
         ]);
     }
 }

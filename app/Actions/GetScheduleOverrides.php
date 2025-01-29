@@ -3,19 +3,13 @@
 namespace App\Actions;
 
 use App\Enums\ScheduleOverrideType;
-use App\Models\Resource;
 use App\Models\ScheduleOverride;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
 
 class GetScheduleOverrides
 {
     /**
-     * @param array $resourceIds
-     * @param CarbonImmutable $startDate
-     * @param CarbonImmutable $endDate
-     * @param string|null $environmentId
      * @return Collection<ScheduleOverride>
      */
     public function get(array $resourceIds, CarbonImmutable $startDate, CarbonImmutable $endDate, ?string $environmentId = null): Collection
@@ -25,7 +19,7 @@ class GetScheduleOverrides
         // so if the start date is 2021-01-01 and the end date is 2021-01-31
         // the query will return records where the date is 2021-01-01 or 2021-01-31
         // but we want to exclude those dates
-        $overrides = ScheduleOverride::whereRaw("(starts_at, ends_at) overlaps (?, ?)", [$startDate->format('Y-m-d H:i:s'), $endDate->format('Y-m-d H:i:s')])
+        $overrides = ScheduleOverride::whereRaw('(starts_at, ends_at) overlaps (?, ?)', [$startDate->format('Y-m-d H:i:s'), $endDate->format('Y-m-d H:i:s')])
             ->whereIn('type', [ScheduleOverrideType::opening, ScheduleOverrideType::block]) // todo allow passing in types
             ->whereIn('resource_id', $resourceIds)
             ->get();

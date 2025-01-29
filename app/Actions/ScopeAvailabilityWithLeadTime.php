@@ -22,9 +22,8 @@ class ScopeAvailabilityWithLeadTime
         int $leadTimeInMinutes,
         int $bookingDurationInMinutes,
         ?CarbonImmutable $requestedStartDate = null
-    ): PeriodCollection
-    {
-        if(!$requestedStartDate) {
+    ): PeriodCollection {
+        if (! $requestedStartDate) {
             $requestedStartDate = CarbonImmutable::now();
         }
 

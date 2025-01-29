@@ -7,18 +7,16 @@ use App\Enums\ScheduleOverrideType;
 use App\Models\Resource;
 use App\Models\ScheduleOverride;
 use Carbon\CarbonImmutable;
-use Illuminate\Database\Eloquent\Factories\Sequence;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class GetScheduleOverridesTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_get_schedule_overrides()
+    public function test_get_schedule_overrides(): void
     {
-//        $resources =
+        //        $resources =
 
         $resources = Resource::factory()->count(3)->create();
 
@@ -40,11 +38,11 @@ class GetScheduleOverridesTest extends TestCase
                 'starts_at' => $startDate->startOfDay()->format('Y-m-d H:i:s'),
                 'ends_at' => $endDate->endOfDay()->format('Y-m-d H:i:s'),
                 'type' => ScheduleOverrideType::block,
-                'resource_id' => $resourceId
+                'resource_id' => $resourceId,
             ]);
         }
 
-        $getScheduleOverrides = new GetScheduleOverrides();
+        $getScheduleOverrides = new GetScheduleOverrides;
         $result = $getScheduleOverrides->get($resourceIds, $startDate, $endDate, $environmentId);
 
         $this->assertCount(count($resourceIds) * 2, $result); // Assert we have correct number of overrides
@@ -56,7 +54,7 @@ class GetScheduleOverridesTest extends TestCase
         }
     }
 
-    public function test_overlapping_schedule_overrides_are_included()
+    public function test_overlapping_schedule_overrides_are_included(): void
     {
         $resources = Resource::factory()->count(3)->create();
 
@@ -76,7 +74,7 @@ class GetScheduleOverridesTest extends TestCase
             ]);
         }
 
-        $getScheduleOverrides = new GetScheduleOverrides();
+        $getScheduleOverrides = new GetScheduleOverrides;
         $result = $getScheduleOverrides->get($resourceIds, $startDate, $endDate);
 
         $this->assertCount(count($resourceIds), $result); // Assert we have correct number of overrides
@@ -88,7 +86,7 @@ class GetScheduleOverridesTest extends TestCase
         }
     }
 
-    public function test_non_overlapping_schedule_overrides_are_excluded()
+    public function test_non_overlapping_schedule_overrides_are_excluded(): void
     {
         $resources = Resource::factory()->count(3)->create();
 
@@ -108,7 +106,7 @@ class GetScheduleOverridesTest extends TestCase
             ]);
         }
 
-        $getScheduleOverrides = new GetScheduleOverrides();
+        $getScheduleOverrides = new GetScheduleOverrides;
         $result = $getScheduleOverrides->get($resourceIds, $startDate, $endDate);
 
         $this->assertCount(0, $result); // Assert no overrides were returned

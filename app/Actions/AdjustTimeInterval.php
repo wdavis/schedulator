@@ -13,7 +13,7 @@ class AdjustTimeInterval
         $newTime = $time->second(0)
             ->millis(0);
 
-        if(!$bumpToNextInterval && $newTime->minute % $interval === 0) {
+        if (! $bumpToNextInterval && $newTime->minute % $interval === 0) {
             return $newTime;
         }
 

@@ -9,6 +9,7 @@ use Illuminate\Contracts\Validation\ValidationRule;
 class ValidateLeadTime implements ValidationRule
 {
     private int $leadTimeInMinutes;
+
     private string $serviceName;
 
     public function __construct(string $serviceName, int $leadTimeInMinutes)
@@ -27,7 +28,7 @@ class ValidateLeadTime implements ValidationRule
         $currentDateTime = CarbonImmutable::now();
         $appointmentDateTime = CarbonImmutable::parse($value)->subMinutes($this->leadTimeInMinutes);
 
-        if(!$currentDateTime->greaterThan($appointmentDateTime)) {
+        if (! $currentDateTime->greaterThan($appointmentDateTime)) {
             $fail("Booking for {$this->serviceName} must have {$this->leadTimeInMinutes} minute lead time.");
         }
     }

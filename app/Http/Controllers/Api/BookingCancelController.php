@@ -10,9 +10,7 @@ class BookingCancelController
 {
     use InteractsWithEnvironment;
 
-    public function __construct(private CancelBooking $cancelBooking)
-    {
-    }
+    public function __construct(private CancelBooking $cancelBooking) {}
 
     public function update(string $id)
     {
@@ -20,13 +18,13 @@ class BookingCancelController
             $query->where('environment_id', $this->getApiEnvironmentId());
         })->with('service', 'resource')->where('id', $id)->firstOrFail();
 
-//        try {
+        //        try {
         $this->cancelBooking->cancel($booking, request('force', false));
 
         return response()->json([], 204);
-//        } catch () {
-//            return response()->json([], 204);
-//        }
+        //        } catch () {
+        //            return response()->json([], 204);
+        //        }
 
     }
 }

@@ -9,7 +9,7 @@ class CreateResource
 {
     public function create(string $name, string $environmentId, bool $active = false, array $meta = [])
     {
-        $resource = new Resource();
+        $resource = new Resource;
         $resource->name = $name;
         $resource->environment_id = $environmentId;
         $resource->active = $active;
@@ -18,7 +18,7 @@ class CreateResource
         $resource->save();
 
         // todo create primary location
-        $location = new Location();
+        $location = new Location;
         $location->name = 'Primary';
         // todo rerun migrations
         $location->primary = true;

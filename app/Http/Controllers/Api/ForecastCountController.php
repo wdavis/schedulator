@@ -17,12 +17,9 @@ class ForecastCountController
     use InteractsWithEnvironment;
 
     private GetCombinedSchedulesForDateCount $getCombinedSchedulesForDateCount;
+
     private FormatValidationErrors $formatValidationErrors;
 
-    /**
-     * @param GetCombinedSchedulesForDateCount $getCombinedSchedulesForDateCount
-     * @param FormatValidationErrors $formatValidationErrors
-     */
     public function __construct(GetCombinedSchedulesForDateCount $getCombinedSchedulesForDateCount, FormatValidationErrors $formatValidationErrors)
     {
         $this->getCombinedSchedulesForDateCount = $getCombinedSchedulesForDateCount;
@@ -32,8 +29,8 @@ class ForecastCountController
     public function index(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'startDate' => ['required', new Iso8601Date()],
-            'endDate' => ['required', new Iso8601Date()],
+            'startDate' => ['required', new Iso8601Date],
+            'endDate' => ['required', new Iso8601Date],
             'serviceId' => 'required',
             'resourceIds' => 'array|nullable',
         ]);
@@ -48,36 +45,34 @@ class ForecastCountController
 
         $service = Service::where('id', $serviceId)
             ->where('environment_id', $this->getApiEnvironmentId())
-            ->firstOrFail()
-        ;
+            ->firstOrFail();
 
         $requestedDate = CarbonImmutable::parse($start)->startOfDay()->setTimezone('UTC');
         $requestedEndDate = CarbonImmutable::parse($end)->endOfDay()->setTimezone('UTC');
 
-//        if($requestedDate->isPast() && $requestedEndDate->isPast()) {
-//            return response()->json([
-//                'message' => 'The requested range is in the past'
-//            ], 422);
-//        }
+        //        if($requestedDate->isPast() && $requestedEndDate->isPast()) {
+        //            return response()->json([
+        //                'message' => 'The requested range is in the past'
+        //            ], 422);
+        //        }
 
         // check if the request has an array of resource ids
 
         $resourceIds = $request->get('resourceIds');
 
         $resources = Resource::where('environment_id', $this->getApiEnvironmentId())
-            ->where(function($query) use ($resourceIds) {
-                if($resourceIds) {
+            ->where(function ($query) use ($resourceIds) {
+                if ($resourceIds) {
                     $query->whereIn('id', $resourceIds);
                 }
             })
             ->where('active', true)
-            ->get()
-        ;
+            ->get();
 
         $availability = $this->getCombinedSchedulesForDateCount->get($resources, $service, $requestedDate, endDate: $requestedEndDate);
 
         return response()->json([
-            'availability' => $availability
+            'availability' => $availability,
         ]);
 
     }

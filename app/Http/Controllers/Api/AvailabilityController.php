@@ -10,7 +10,6 @@ use App\Models\Service;
 use App\Rules\Iso8601Date;
 use App\Traits\InteractsWithEnvironment;
 use Carbon\CarbonImmutable;
-use DateInterval;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Spatie\Period\Boundaries;
@@ -22,7 +21,8 @@ class AvailabilityController
     use InteractsWithEnvironment;
 
     private FormatValidationErrors $formatValidationErrors;
-//    private GetAllAvailabilityForDate $getAvailabilityForDate;
+
+    //    private GetAllAvailabilityForDate $getAvailabilityForDate;
     private GetCombinedSchedulesForDate $getCombinedSchedulesForDate;
 
     private ScopeAvailabilityWithLeadTime $scopeAvailabilityWithLeadTime;
@@ -33,7 +33,7 @@ class AvailabilityController
         GetCombinedSchedulesForDate $getCombinedSchedulesForDate
     ) {
         $this->formatValidationErrors = $formatValidationErrors;
-//        $this->getAvailabilityForDate = $getAvailabilityForDate;
+        //        $this->getAvailabilityForDate = $getAvailabilityForDate;
         $this->scopeAvailabilityWithLeadTime = $scopeAvailabilityWithLeadTime;
         $this->getCombinedSchedulesForDate = $getCombinedSchedulesForDate;
     }
@@ -41,12 +41,12 @@ class AvailabilityController
     public function index(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'startDate' => ['required', new Iso8601Date()],
-            'endDate' => ['required', new Iso8601Date()],
+            'startDate' => ['required', new Iso8601Date],
+            'endDate' => ['required', new Iso8601Date],
             'serviceId' => 'required|exists:services,id',
             'resourceIds' => 'array|nullable',
             'format' => ['string', 'in:list,days', 'nullable'],
-            'timezone' => 'string|nullable'
+            'timezone' => 'string|nullable',
         ]);
 
         if ($validator->fails()) {
@@ -61,20 +61,19 @@ class AvailabilityController
         try {
             $service = Service::where('id', $serviceId)
                 ->where('environment_id', $this->getApiEnvironmentId())
-                ->firstOrFail()
-            ;
+                ->firstOrFail();
         } catch (\Throwable $e) {
             return response()->json([
-                'message' => 'Service not found'
+                'message' => 'Service not found',
             ], 404);
         }
 
         $requestedDate = CarbonImmutable::parse($start)->startOfDay()->setTimezone('UTC');
         $requestedEndDate = CarbonImmutable::parse($end)->endOfDay()->setTimezone('UTC');
 
-        if($requestedDate->isPast() && $requestedEndDate->isPast()) {
+        if ($requestedDate->isPast() && $requestedEndDate->isPast()) {
             return response()->json([
-                'message' => 'The requested range is in the past'
+                'message' => 'The requested range is in the past',
             ], 422);
         }
 
@@ -84,12 +83,11 @@ class AvailabilityController
 
         // todo split this into an action
         $resources = Resource::where('environment_id', $this->getApiEnvironmentId())
-            ->when($resourceIds, function($query) use ($resourceIds) {
+            ->when($resourceIds, function ($query) use ($resourceIds) {
                 $query->whereIn('id', $resourceIds);
             })
             ->where('active', true)
-            ->get()
-        ;
+            ->get();
         $availability = $this->getCombinedSchedulesForDate->get($resources, $service, $requestedDate, endDate: $requestedEndDate);
 
         $currentTimeOfDay = CarbonImmutable::now();
@@ -102,46 +100,46 @@ class AvailabilityController
             requestedStartDate: $currentTimeOfDay
         );
 
-//        // look at the end date
-//        $endScope = new Period(
-//            $requestedEndDate,
-//            $requestedEndDate,
-//            Precision::MINUTE(),
-//            Boundaries::EXCLUDE_ALL()
-//        );
-//        // strip off the extras
-//        $availability = $availability->subtract($endScope);
+        //        // look at the end date
+        //        $endScope = new Period(
+        //            $requestedEndDate,
+        //            $requestedEndDate,
+        //            Precision::MINUTE(),
+        //            Boundaries::EXCLUDE_ALL()
+        //        );
+        //        // strip off the extras
+        //        $availability = $availability->subtract($endScope);
 
         // todo inject?
-        $action = new \App\Actions\SplitPeriodIntoIntervals();
+        $action = new \App\Actions\SplitPeriodIntoIntervals;
         $slots = $action->execute($availability, $service);
 
         // date format
-        if($request->get('format') === 'days') {
+        if ($request->get('format') === 'days') {
 
-//            $getScheduleByDay = new \App\Actions\GetScheduleByDay();
-//            $slots = $getScheduleByDay->execute(
-//                $slots,
-//                bookings: collect(),
-//                startDate: $requestedDate,
-//                endDate: $requestedEndDate,
-//                timezone: $timezone
-//            );
+            //            $getScheduleByDay = new \App\Actions\GetScheduleByDay();
+            //            $slots = $getScheduleByDay->execute(
+            //                $slots,
+            //                bookings: collect(),
+            //                startDate: $requestedDate,
+            //                endDate: $requestedEndDate,
+            //                timezone: $timezone
+            //            );
 
-            $action = new \App\Actions\GroupOpeningsByDay();
-            $slots = $action->execute($slots, $requestedDate, $requestedEndDate, $request->get('timezone'));
+            $action = new \App\Actions\GroupOpeningsByDay;
+            $slots = $action->execute($slots, $requestedDate, $requestedEndDate, $timezone);
 
             return response()->json($slots);
         }
 
-        if($timezone !== 'UTC') {
+        if ($timezone !== 'UTC') {
             // format dates in the requested timezone
-            foreach($slots as &$slot) {
+            foreach ($slots as &$slot) {
                 $slot['start'] = $slot['start']->setTimezone($timezone)->toIso8601String();
                 $slot['end'] = $slot['end']->setTimezone($timezone)->toIso8601String();
             }
         } else {
-            foreach($slots as &$slot) {
+            foreach ($slots as &$slot) {
                 $slot['start'] = $slot['start']->toIso8601String();
                 $slot['end'] = $slot['end']->toIso8601String();
             }

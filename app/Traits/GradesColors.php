@@ -55,25 +55,22 @@ trait GradesColors
             }
         }
 
-
-//        foreach ($input as $date => &$dayData) {
-//            $dailyCount = array_sum(array_map(function ($hourData) {
-//                return $hourData['count'];
-//            }, $dayData['slotsByHour']));
-//
-//            // Normalize the count relative to the maximum
-//            $normalizedCount = $maxCount ? ($dailyCount / $maxCount) : 0;
-//
-//            // Interpolate the color based on the normalized count
-//            $dayData['color'] = $this->interpolateColor($startColor, $endColor, $normalizedCount);
-//
-//            // You can apply similar logic to the hourly slots if needed
-//        }
+        //        foreach ($input as $date => &$dayData) {
+        //            $dailyCount = array_sum(array_map(function ($hourData) {
+        //                return $hourData['count'];
+        //            }, $dayData['slotsByHour']));
+        //
+        //            // Normalize the count relative to the maximum
+        //            $normalizedCount = $maxCount ? ($dailyCount / $maxCount) : 0;
+        //
+        //            // Interpolate the color based on the normalized count
+        //            $dayData['color'] = $this->interpolateColor($startColor, $endColor, $normalizedCount);
+        //
+        //            // You can apply similar logic to the hourly slots if needed
+        //        }
 
         return $input;
     }
-
-
 
     protected function interpolateColor($color1, $color2, $factor): string
     {
@@ -89,6 +86,6 @@ trait GradesColors
         $g = $g1 + ($g2 - $g1) * $factor;
         $b = $b1 + ($b2 - $b1) * $factor;
 
-        return sprintf("#%02x%02x%02x", round($r), round($g), round($b));
+        return sprintf('#%02x%02x%02x', round($r), round($g), round($b));
     }
 }

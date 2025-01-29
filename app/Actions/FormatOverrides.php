@@ -4,23 +4,16 @@ namespace App\Actions;
 
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Collection;
-use App\Models\ScheduleOverride;
 
 class FormatOverrides
 {
     /**
      * Format the collection of ScheduleOverrides with placeholders for missing days.
-     *
-     * @param Collection $scheduleOverrides
-     * @param CarbonImmutable $startDate
-     * @param CarbonImmutable $endDate
-     * @param string $timezone
-     * @return Collection
      */
     public function format(Collection $scheduleOverrides, CarbonImmutable $startDate, CarbonImmutable $endDate, string $timezone = 'UTC'): Collection
     {
         // Step 1: Group the data by the date in the requested timezone (Y-m-d format)
-        $groupedByDate = $scheduleOverrides->groupBy(function($item) use ($timezone) {
+        $groupedByDate = $scheduleOverrides->groupBy(function ($item) use ($timezone) {
             return CarbonImmutable::parse($item->starts_at)->setTimezone($timezone)->format('Y-m-d');
         });
 

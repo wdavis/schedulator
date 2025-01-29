@@ -7,15 +7,15 @@ use App\Models\Booking;
 use App\Models\Location;
 use App\Models\Resource;
 use App\Models\Service;
+use Carbon\CarbonImmutable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
-use Carbon\CarbonImmutable;
 
 class GetAllBookingsTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_get_all_bookings_filters_by_resources_and_date_range()
+    public function test_get_all_bookings_filters_by_resources_and_date_range(): void
     {
         // Arrange: Create Resources
         $resources = Resource::factory()->count(3)->create();
@@ -47,7 +47,7 @@ class GetAllBookingsTest extends TestCase
         ]);
 
         // Act: Call the GetAllBookings action
-        $action = new GetAllBookings();
+        $action = new GetAllBookings;
         $results = $action->get($resources, $startDate, $endDate);
 
         // Assert: Verify the correct bookings are returned
@@ -57,7 +57,7 @@ class GetAllBookingsTest extends TestCase
         $this->assertFalse($results->contains($cancelledBooking));
     }
 
-    public function test_get_all_bookings_includes_cancelled_when_flag_is_true()
+    public function test_get_all_bookings_includes_cancelled_when_flag_is_true(): void
     {
         // Arrange: Create Resources
         $resources = Resource::factory()->count(2)->create();
@@ -74,7 +74,7 @@ class GetAllBookingsTest extends TestCase
         ]);
 
         // Act: Call the GetAllBookings action with includeCancelled = true
-        $action = new GetAllBookings();
+        $action = new GetAllBookings;
         $results = $action->get($resources, $startDate, $endDate, null, null, true);
 
         // Assert: Verify the cancelled booking is included
@@ -82,7 +82,7 @@ class GetAllBookingsTest extends TestCase
         $this->assertTrue($results->contains($cancelledBooking));
     }
 
-    public function test_get_all_bookings_filters_by_location_and_service()
+    public function test_get_all_bookings_filters_by_location_and_service(): void
     {
         // Arrange: Create Resources
         $resources = Resource::factory()->count(2)->create();
@@ -111,7 +111,7 @@ class GetAllBookingsTest extends TestCase
         ]);
 
         // Act: Call the GetAllBookings action with location and service filters
-        $action = new GetAllBookings();
+        $action = new GetAllBookings;
         $results = $action->get($resources, $startDate, $endDate, $location->id, $service->id);
 
         // Assert: Verify only matching bookings are returned
@@ -120,7 +120,7 @@ class GetAllBookingsTest extends TestCase
         $this->assertFalse($results->contains($nonMatchingBooking));
     }
 
-    public function test_get_all_bookings_includes_partial_overlaps_with_time_range()
+    public function test_get_all_bookings_includes_partial_overlaps_with_time_range(): void
     {
         // Arrange: Create Resources
         $resources = Resource::factory()->count(1)->create();
@@ -146,7 +146,7 @@ class GetAllBookingsTest extends TestCase
         ]);
 
         // Act: Call the GetAllBookings action
-        $action = new GetAllBookings();
+        $action = new GetAllBookings;
         $results = $action->get($resources, $startDate, $endDate);
 
         // Assert: Verify that the partially overlapping booking is included
@@ -155,7 +155,7 @@ class GetAllBookingsTest extends TestCase
         $this->assertFalse($results->contains($nonOverlappingBooking));
     }
 
-    public function test_get_all_bookings_includes_booking_with_exact_time_range()
+    public function test_get_all_bookings_includes_booking_with_exact_time_range(): void
     {
         // Arrange: Create Resources
         $resources = Resource::factory()->count(1)->create();
@@ -181,7 +181,7 @@ class GetAllBookingsTest extends TestCase
         ]);
 
         // Act: Call the GetAllBookings action
-        $action = new GetAllBookings();
+        $action = new GetAllBookings;
         $results = $action->get($resources, $startDate, $endDate);
 
         // Assert: Verify that the exact match booking is included
@@ -190,7 +190,7 @@ class GetAllBookingsTest extends TestCase
         $this->assertFalse($results->contains($nonMatchingBooking));
     }
 
-    public function test_get_all_bookings_includes_booking_that_fully_encloses_requested_range()
+    public function test_get_all_bookings_includes_booking_that_fully_encloses_requested_range(): void
     {
         // Arrange
         $resources = Resource::factory()->count(1)->create();
@@ -212,7 +212,7 @@ class GetAllBookingsTest extends TestCase
         ]);
 
         // Act
-        $action = new GetAllBookings();
+        $action = new GetAllBookings;
         $results = $action->get($resources, $startDate, $endDate);
 
         // Assert
@@ -221,7 +221,7 @@ class GetAllBookingsTest extends TestCase
         $this->assertFalse($results->contains($nonOverlappingBooking));
     }
 
-    public function test_get_all_bookings_includes_booking_fully_inside_requested_range()
+    public function test_get_all_bookings_includes_booking_fully_inside_requested_range(): void
     {
         // Arrange
         $resources = Resource::factory()->count(1)->create();
@@ -243,7 +243,7 @@ class GetAllBookingsTest extends TestCase
         ]);
 
         // Act
-        $action = new GetAllBookings();
+        $action = new GetAllBookings;
         $results = $action->get($resources, $startDate, $endDate);
 
         // Assert
@@ -252,7 +252,7 @@ class GetAllBookingsTest extends TestCase
         $this->assertFalse($results->contains($nonOverlappingBooking));
     }
 
-    public function test_get_all_bookings_excludes_booking_that_ends_when_range_starts()
+    public function test_get_all_bookings_excludes_booking_that_ends_when_range_starts(): void
     {
         // Arrange
         $resources = Resource::factory()->count(1)->create();
@@ -267,14 +267,14 @@ class GetAllBookingsTest extends TestCase
         ]);
 
         // Act
-        $action = new GetAllBookings();
+        $action = new GetAllBookings;
         $results = $action->get($resources, $startDate, $endDate);
 
         // Assert
         $this->assertCount(0, $results);
     }
 
-    public function test_get_all_bookings_excludes_booking_that_starts_when_range_ends()
+    public function test_get_all_bookings_excludes_booking_that_starts_when_range_ends(): void
     {
         // Arrange
         $resources = Resource::factory()->count(1)->create();
@@ -289,14 +289,14 @@ class GetAllBookingsTest extends TestCase
         ]);
 
         // Act
-        $action = new GetAllBookings();
+        $action = new GetAllBookings;
         $results = $action->get($resources, $startDate, $endDate);
 
         // Assert
         $this->assertCount(0, $results);
     }
 
-    public function test_get_all_bookings_includes_booking_that_exactly_matches_requested_range()
+    public function test_get_all_bookings_includes_booking_that_exactly_matches_requested_range(): void
     {
         // Arrange
         $resources = Resource::factory()->count(1)->create();
@@ -318,7 +318,7 @@ class GetAllBookingsTest extends TestCase
         ]);
 
         // Act
-        $action = new GetAllBookings();
+        $action = new GetAllBookings;
         $results = $action->get($resources, $startDate, $endDate);
 
         // Assert
@@ -327,7 +327,7 @@ class GetAllBookingsTest extends TestCase
         $this->assertFalse($results->contains($nonMatchingBooking));
     }
 
-    public function test_get_all_bookings_excludes_cancelled_bookings()
+    public function test_get_all_bookings_excludes_cancelled_bookings(): void
     {
         // Arrange
         $resources = Resource::factory()->count(1)->create();
@@ -351,7 +351,7 @@ class GetAllBookingsTest extends TestCase
         ]);
 
         // Act: Call the GetAllBookings action without including cancelled bookings
-        $action = new GetAllBookings();
+        $action = new GetAllBookings;
         $results = $action->get($resources, $startDate, $endDate);
 
         // Assert: Verify that only the active booking is included

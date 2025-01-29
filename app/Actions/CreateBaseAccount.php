@@ -28,21 +28,21 @@ class CreateBaseAccount
             ]);
 
             $prodEnv = Environment::create([
-                'name' => "prod",
+                'name' => 'prod',
                 'user_id' => $user->id,
             ]);
 
             $environments[] = $prodEnv;
 
             $stagingEnv = Environment::create([
-                'name' => "staging",
+                'name' => 'staging',
                 'user_id' => $user->id,
             ]);
 
             $environments[] = $stagingEnv;
 
             $devEnv = Environment::create([
-                'name' => "dev",
+                'name' => 'dev',
                 'user_id' => $user->id,
             ]);
 
@@ -64,9 +64,9 @@ class CreateBaseAccount
 
                 $apiKeys[] = "{$environment->name}-{$randomKey}";
 
-//            $environment->update([
-//                'default_service_id' => $service->id,
-//            ]);
+                //            $environment->update([
+                //                'default_service_id' => $service->id,
+                //            ]);
             }
 
             DB::commit();
@@ -78,7 +78,7 @@ class CreateBaseAccount
 
         return [
             'user_id' => $user->id,
-            'api_keys' => $apiKeys
+            'api_keys' => $apiKeys,
         ];
     }
 }

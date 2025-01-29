@@ -21,7 +21,7 @@ class ScheduleOverrideFactory extends Factory
             'location_id' => \App\Models\Location::factory(),
             'starts_at' => $this->faker->dateTimeBetween('now', '+1 week'),
             'ends_at' => $this->faker->dateTimeBetween('+1 week', '+2 week'),
-            'type' => 'block'
+            'type' => 'block',
             //
         ];
     }

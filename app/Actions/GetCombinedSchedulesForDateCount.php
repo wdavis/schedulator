@@ -6,27 +6,20 @@ use App\Models\Resource;
 use App\Models\Service;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Collection;
-use App\Actions\GetSchedulesForDate;
 
 class GetCombinedSchedulesForDateCount
 {
     private GetSchedulesForDate $getSchedulesForDate;
 
-    /**
-     * @param GetSchedulesForDate $getSchedulesForDate
-     */
-    public function __construct(GetSchedulesForDate $getSchedulesForDate){
+    public function __construct(GetSchedulesForDate $getSchedulesForDate)
+    {
         $this->getSchedulesForDate = $getSchedulesForDate;
     }
 
     /**
      * This will give you the total number of appointment slots available for a given date range
      *
-     * @param Collection<Resource> $resources
-     * @param Service $service
-     * @param CarbonImmutable $startDate
-     * @param CarbonImmutable $endDate
-     * @return int
+     * @param  Collection<resource>  $resources
      */
     public function get(Collection $resources, Service $service, CarbonImmutable $startDate, CarbonImmutable $endDate): int
     {
@@ -42,7 +35,7 @@ class GetCombinedSchedulesForDateCount
         foreach ($resources as $resource) {
 
             // get the availability for the resource
-            $foundResource = $allAvailability->firstWhere(function($item) use ($resource) {
+            $foundResource = $allAvailability->firstWhere(function ($item) use ($resource) {
                 return $item['resource']->id === $resource->id;
             });
 
@@ -53,8 +46,8 @@ class GetCombinedSchedulesForDateCount
                 $endTimeMinutes = ($period->end()->format('H') * 60) + $period->end()->format('i');
 
                 // Adjust start and end times to the next and last standard appointment time, respectively
-                $adjustedStartTimeMinutes = (int)ceil($startTimeMinutes / $service->duration) * $service->duration;
-                $adjustedEndTimeMinutes = (int)floor($endTimeMinutes / $service->duration) * $service->duration;
+                $adjustedStartTimeMinutes = (int) ceil($startTimeMinutes / $service->duration) * $service->duration;
+                $adjustedEndTimeMinutes = (int) floor($endTimeMinutes / $service->duration) * $service->duration;
 
                 // Calculate the length of the adjusted period
                 $adjustedLengthMinutes = max(0, $adjustedEndTimeMinutes - $adjustedStartTimeMinutes);
@@ -63,6 +56,7 @@ class GetCombinedSchedulesForDateCount
                 $totalAppointmentCount += intdiv($adjustedLengthMinutes, $service->duration); // appointment duration is fixed at 15 minutes
             }
         }
+
         return $totalAppointmentCount;
     }
 }

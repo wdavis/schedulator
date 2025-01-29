@@ -17,7 +17,7 @@ class DateController
             'todayEnd' => CarbonImmutable::now()->endOfDay()->toIso8601String(),
             'nowCt' => CarbonImmutable::now('America/Chicago')->toIso8601String(),
             'todayStartCt' => $first->setTimezone('UTC')->toIso8601String(),
-            'todayEndCt' => $last->setTimezone('UTC')->toIso8601String()
+            'todayEndCt' => $last->setTimezone('UTC')->toIso8601String(),
         ];
     }
 }

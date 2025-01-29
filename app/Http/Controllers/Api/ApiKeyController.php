@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Api;
 
 use App\Actions\ApiKeys\GetApiKeys;
-use App\Http\Resources\ApiKeyCollection;
 use App\Http\Resources\ApiKeyResource;
 use App\Traits\InteractsWithEnvironment;
 
@@ -13,9 +12,6 @@ class ApiKeyController
 
     private GetApiKeys $getApiKeys;
 
-    /**
-     * @param GetApiKeys $getApiKeys
-     */
     public function __construct(GetApiKeys $getApiKeys)
     {
         $this->getApiKeys = $getApiKeys;

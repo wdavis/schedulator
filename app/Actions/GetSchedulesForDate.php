@@ -13,20 +13,25 @@ use Spatie\Period\PeriodCollection;
 class GetSchedulesForDate
 {
     private GetScheduleOverrides $getScheduleOverrides;
+
     private BuildScheduleOverrides $buildScheduleOverrides;
+
     private BuildRecurringSchedule $buildRecurringSchedule;
+
     private GetAllBookings $getAllBookings;
+
     private BuildBookingPeriods $buildBookingPeriods;
+
     private ScopeAvailabilityWithLeadTime $scopeAvailabilityWithLeadTime;
 
     public function __construct(
-        GetScheduleOverrides   $getScheduleOverrides,
+        GetScheduleOverrides $getScheduleOverrides,
         BuildScheduleOverrides $buildScheduleOverrides,
         BuildRecurringSchedule $buildRecurringSchedule,
         GetAllBookings $getAllBookings,
         BuildBookingPeriods $buildBookingPeriods,
         ScopeAvailabilityWithLeadTime $scopeAvailabilityWithLeadTime
-    ){
+    ) {
         $this->getScheduleOverrides = $getScheduleOverrides;
         $this->buildScheduleOverrides = $buildScheduleOverrides;
         $this->buildRecurringSchedule = $buildRecurringSchedule;
@@ -36,15 +41,13 @@ class GetSchedulesForDate
     }
 
     /**
-     * @param Collection<Resource> $resources
-     * @param CarbonImmutable $startDate
-     * @param CarbonImmutable $endDate
+     * @param  Collection<resource>  $resources
      * @return Collection<PeriodCollection>
      */
     public function get(Collection $resources, Service $service, CarbonImmutable $startDate, CarbonImmutable $endDate, bool $scopeLeadTimes = true): \Illuminate\Support\Collection
     {
         // check if any of the resources are inactive and ignore them
-        $resources = $resources->filter(function($resource) {
+        $resources = $resources->filter(function ($resource) {
             return $resource->active;
         });
 
@@ -60,8 +63,8 @@ class GetSchedulesForDate
 
         $schedules = collect();
 
-        /** @var Resource $resource */
-        foreach($resources as $resource) {
+        /** @var resource $resource */
+        foreach ($resources as $resource) {
             $resourceSchedule = $resource->locations->pluck('schedules')->flatten();
 
             // build overrides for the date
@@ -70,9 +73,9 @@ class GetSchedulesForDate
             // Build the recurring schedule for the given date
             $recurring = $this->buildRecurringSchedule->build($resourceSchedule, $startDate, $endDate, timezone: $resource->getMeta('timezone'));
 
-//            if($bookings->isEmpty()) {
-//                return $schedule; // todo why are we doing this?
-//            }
+            //            if($bookings->isEmpty()) {
+            //                return $schedule; // todo why are we doing this?
+            //            }
 
             $bookingPeriods = $this->buildBookingPeriods->build($allBookings->where('resource_id', $resource->id));
 
@@ -81,19 +84,18 @@ class GetSchedulesForDate
                 ->subtract($overrides['block']) // subtract out the schedule blocks
                 ->subtract($bookingPeriods)
                 ->union()
-                ->filter(function(Period $period) { // filter out any periods that are 0 seconds long
+                ->filter(function (Period $period) { // filter out any periods that are 0 seconds long
                     return $period->start() != $period->end();
                 });
 
-            if($scopeLeadTimes) {
+            if ($scopeLeadTimes) {
                 $periods = $this->scopeAvailabilityWithLeadTime->scope(
                     availability: $periods,
                     leadTimeInMinutes: $resource->bookingWindowEndOverride() ?? $service->booking_window_end,
                     bookingDurationInMinutes: $service->duration,
-//                requestedStartDate: $startDate
+                    //                requestedStartDate: $startDate
                 );
             }
-
 
             $schedule = [
                 'resource' => $resource,

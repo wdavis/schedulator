@@ -48,8 +48,8 @@ class BuildRecurringSchedule
             while ($currentDate->lte($endDate)) {
 
                 // convert the start_time and end_time hours from the $timezone to UTC
-//                $currentDate->setTimezone($timezone);
-//                $currentDate->setTimezone('UTC');
+                //                $currentDate->setTimezone($timezone);
+                //                $currentDate->setTimezone('UTC');
 
                 $start = CarbonImmutable::createFromDate($currentDate->year, $currentDate->month, $currentDate->day, $timezone)
                     ->setTimeFromTimeString($schedule->start_time)
@@ -59,8 +59,8 @@ class BuildRecurringSchedule
                     ->setTimeFromTimeString($schedule->end_time)
                     ->setTimezone('UTC');
 
-//                $start = $currentDate->setTimeFromTimeString($schedule->start_time)->setTimezone($timezone)->setTimezone('UTC');
-//                $end = $currentDate->setTimeFromTimeString($schedule->end_time)->setTimezone($timezone)->setTimezone('UTC');
+                //                $start = $currentDate->setTimeFromTimeString($schedule->start_time)->setTimezone($timezone)->setTimezone('UTC');
+                //                $end = $currentDate->setTimeFromTimeString($schedule->end_time)->setTimezone($timezone)->setTimezone('UTC');
 
                 $itemsToAdd[] = Period::make($start, $end, Precision::MINUTE(), Boundaries::EXCLUDE_NONE());
 
@@ -70,5 +70,4 @@ class BuildRecurringSchedule
 
         return (new PeriodCollection(...$itemsToAdd))->union();
     }
-
 }

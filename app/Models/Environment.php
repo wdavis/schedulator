@@ -12,6 +12,7 @@ class Environment extends Model
     use HasUuids;
 
     public $incrementing = false;
+
     protected $keyType = 'string';
 
     protected $fillable = [
@@ -39,8 +40,8 @@ class Environment extends Model
         return $this->hasMany(ApiKey::class);
     }
 
-//    public function default_service(): \Illuminate\Database\Eloquent\Relations\HasOne
-//    {
-//        return $this->hasOne(Service::class)->where('default', 't');
-//    }
+    //    public function default_service(): \Illuminate\Database\Eloquent\Relations\HasOne
+    //    {
+    //        return $this->hasOne(Service::class)->where('default', 't');
+    //    }
 }

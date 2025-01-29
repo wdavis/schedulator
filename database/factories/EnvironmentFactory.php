@@ -17,9 +17,9 @@ class EnvironmentFactory extends Factory
     public function definition(): array
     {
         return [
-            'id' => $this->faker->uuid,
+            'id' => $this->faker->uuid(),
             'user_id' => \App\Models\User::factory(),
-            'name' => 'environment'
+            'name' => 'environment',
             //
         ];
     }
