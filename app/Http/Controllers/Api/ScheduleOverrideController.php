@@ -105,6 +105,7 @@ class ScheduleOverrideController
             return response()->json($this->formatValidationErrors->validate($validator1->errors()->getMessages()), 422);
         }
 
+        // todo deduplicate starts_at and ends_at dates
         $validator = Validator::make(request()->toArray(), [
             'timezone' => ['required', 'timezone'],
             'schedules.*.id' => ['nullable', 'uuid'],

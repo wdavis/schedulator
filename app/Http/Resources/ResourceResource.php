@@ -22,6 +22,8 @@ class ResourceResource extends JsonResource
             'booking_window_end_override' => $this->booking_window_end_override,
             'cancellation_window_end_override' => $this->cancellation_window_end_override,
             'meta' => $this->meta,
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
 //            'locations' => LocationResource::collection($this->whenLoaded('locations')),
         ];
     }
