@@ -47,7 +47,7 @@ class ForecastBookingLeadController
         // group by the difference in minutes
 
         $bookings->each(function ($booking) {
-            $leadTime = $booking->starts_at->diffInMinutes($booking->created_at);
+            $leadTime = (int) $booking->starts_at->diffInMinutes($booking->created_at);
             $booking->leadTime = $leadTime;
         });
 
