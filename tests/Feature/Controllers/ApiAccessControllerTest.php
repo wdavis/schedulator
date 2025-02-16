@@ -12,6 +12,18 @@ class ApiAccessControllerTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_route_prefix_has_v1()
+    {
+        $apiKey = ApiKey::factory()->create([
+            'key' => 'valid-key',
+            'user_id' => User::factory()->create(['api_active' => true])->id,
+        ]);
+
+        $this->withHeaders(['X-Api-Key' => $apiKey->key])
+            ->get('/v1/test-api-access')
+            ->assertStatus(200);
+    }
+
     public function test_it_returns_401_when_no_api_key_provided(): void
     {
         $response = $this->get(route('test-api-access')); // replace '/test-api-access' with a route protected by this middleware
