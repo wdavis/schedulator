@@ -5,14 +5,13 @@ namespace Tests\Feature\Controllers\Api;
 use App\Models\Booking;
 use Carbon\CarbonImmutable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\Helpers\CreatesTestAccounts;
 use Tests\TestCase;
 
 class FirstAvailabilityControllerTest extends TestCase
 {
-    use RefreshDatabase;
     use CreatesTestAccounts;
+    use RefreshDatabase;
 
     public function test_gets_first_available_resource(): void
     {
@@ -31,7 +30,7 @@ class FirstAvailabilityControllerTest extends TestCase
         $response = $this->postJson(route('first-availability'), [
             'serviceId' => $accountInfo['prodService']->id,
             'resourceIds' => [
-                $accountInfo['prodResource']->id
+                $accountInfo['prodResource']->id,
             ],
             'time' => $date->setTimeFromTimeString('10:00')->toIso8601String(),
         ], headers: $this->createAuthHeader($accountInfo['prodApiKey']));
@@ -45,7 +44,7 @@ class FirstAvailabilityControllerTest extends TestCase
             'booking_window_lead_override',
             'booking_window_end_override',
             'cancellation_window_end_override',
-            'meta'
+            'meta',
         ]);
 
         $this->assertEquals($accountInfo['prodResource']->id, $response->json('id'));
@@ -75,7 +74,7 @@ class FirstAvailabilityControllerTest extends TestCase
         $response = $this->postJson(route('first-availability'), [
             'serviceId' => $accountInfo['prodService']->id,
             'resourceIds' => [
-                $inactiveResource->id
+                $inactiveResource->id,
             ],
             'time' => $date->setTimeFromTimeString('13:00')->toIso8601String(),
         ], headers: $this->createAuthHeader($accountInfo['prodApiKey']));
@@ -115,7 +114,7 @@ class FirstAvailabilityControllerTest extends TestCase
             'serviceId' => $accountInfo['prodService']->id,
             'resourceIds' => [
                 $anotherResource->id,
-                $accountInfo['prodResource']->id
+                $accountInfo['prodResource']->id,
             ],
             'time' => $date->setTimeFromTimeString('10:00')->toIso8601String(),
         ], headers: $this->createAuthHeader($accountInfo['prodApiKey']));
@@ -123,7 +122,7 @@ class FirstAvailabilityControllerTest extends TestCase
         $this->assertEquals($anotherResource->id, $response->json('id'));
     }
 
-    public function test_resource_lead_time_is_honored()
+    public function test_resource_lead_time_is_honored(): void
     {
         $date = CarbonImmutable::create(2024, 11, 11, 8, 59); // monday 9 am
         $this->travelTo($date);
@@ -161,7 +160,7 @@ class FirstAvailabilityControllerTest extends TestCase
             'serviceId' => $accountInfo['prodService']->id,
             'resourceIds' => [
                 $accountInfo['prodResource']->id,
-                $winningResource->id
+                $winningResource->id,
             ],
             'time' => $date->setTimeFromTimeString('9:00')->toIso8601String(),
         ], headers: $this->createAuthHeader($accountInfo['prodApiKey']));
@@ -217,7 +216,7 @@ class FirstAvailabilityControllerTest extends TestCase
             'serviceId' => $accountInfo['prodService']->id,
             'resourceIds' => [
                 $accountInfo['prodResource']->id,
-                $winningResource->id
+                $winningResource->id,
             ],
             'time' => $date->setTimeFromTimeString('9:00')->toIso8601String(),
         ], headers: $this->createAuthHeader($accountInfo['prodApiKey']));
@@ -227,5 +226,4 @@ class FirstAvailabilityControllerTest extends TestCase
         // prodResource has a booking at the requested time, so winningResource should be first
         $this->assertEquals($winningResource->id, $response->json('id'));
     }
-
 }

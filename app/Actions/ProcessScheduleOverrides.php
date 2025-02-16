@@ -3,7 +3,6 @@
 namespace App\Actions;
 
 use App\Models\ScheduleOverride;
-use Carbon\Carbon;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\DB;
 
@@ -18,7 +17,7 @@ class ProcessScheduleOverrides
         return DB::transaction(function () use ($overrides, $resourceId, $locationId, $startOfMonth, $endOfMonth) {
             // Filter records only within the month
             $existingIds = collect($overrides)
-                ->filter(fn($o) => !is_null($o['id']))
+                ->filter(fn ($o) => ! is_null($o['id']))
                 ->pluck('id')
                 ->toArray();
 

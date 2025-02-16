@@ -15,9 +15,6 @@ class ForecastHeatmapController
 
     private GetOpeningsCountPerDay $getOpeningsCountPerDay;
 
-    /**
-     * @param GetOpeningsCountPerDay $getOpeningsCountPerDay
-     */
     public function __construct(GetOpeningsCountPerDay $getOpeningsCountPerDay)
     {
         $this->getOpeningsCountPerDay = $getOpeningsCountPerDay;
@@ -39,7 +36,7 @@ class ForecastHeatmapController
         $resourceIds = request('resourceIds', null);
 
         $resources = Resource::query()
-            ->when($resourceIds, fn($query) => $query->whereIn('id', $resourceIds))
+            ->when($resourceIds, fn ($query) => $query->whereIn('id', $resourceIds))
             ->where('environment_id', $this->getApiEnvironmentId())
             ->where('active', true)
             ->get();

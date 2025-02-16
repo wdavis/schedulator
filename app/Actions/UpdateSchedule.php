@@ -2,14 +2,13 @@
 
 namespace App\Actions;
 
-use Exception;
-use Carbon\CarbonImmutable;
-use App\Models\Schedule;
-use App\Models\Resource;
 use App\Models\Location;
+use App\Models\Resource;
+use App\Models\Schedule;
+use Carbon\CarbonImmutable;
+use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-
 
 class UpdateSchedule
 {
@@ -20,7 +19,7 @@ class UpdateSchedule
         $this->formatSchedules = $formatSchedules;
     }
 
-    public function execute(Resource $resource, array $scheduleData, Location $location = null): Collection
+    public function execute(Resource $resource, array $scheduleData, ?Location $location = null): Collection
     {
         // Define a map of weekday names to their corresponding numbers.
         $dayOfWeekMap = [
@@ -43,7 +42,7 @@ class UpdateSchedule
             $location = $resource->location; // You might need to adjust this according to your setup.
 
             if ($location === null) {
-                throw new Exception("No location provided and the resource does not have a primary location");
+                throw new Exception('No location provided and the resource does not have a primary location');
             }
         }
 
@@ -62,7 +61,7 @@ class UpdateSchedule
                 Schedule::whereIn('id', $existingScheduleIds)->delete();
 
                 // Check if the provided day name is valid.
-                if (!isset($dayOfWeekMap[$day])) {
+                if (! isset($dayOfWeekMap[$day])) {
                     throw new Exception("Invalid day provided: $day");
                 }
 
@@ -74,7 +73,7 @@ class UpdateSchedule
                 // Create new schedules
                 foreach ($schedules as $schedule) {
                     // Check if all required values are present.
-                    if (!isset($schedule['start_time'], $schedule['end_time'])) {
+                    if (! isset($schedule['start_time'], $schedule['end_time'])) {
                         throw new Exception('Start time and end time are required for each schedule');
                     }
 
@@ -86,19 +85,19 @@ class UpdateSchedule
                     $newSchedule->end_time = CarbonImmutable::parse($schedule['end_time'])->format('H:i:s');
                     $newSchedule->save();
 
-//                    Schedule::create([
-//                        'resource_id' => $resource->id,
-//                        'location_id' => $location->id,
-//                        'day_of_week' => $dayOfWeekMap[$day],
-//                        'start_time' => CarbonImmutable::parse($schedule['start_time'])->format('H:i:s'),
-//                        'end_time' => CarbonImmutable::parse($schedule['end_time'])->format('H:i:s'),
-//                    ]);
+                    //                    Schedule::create([
+                    //                        'resource_id' => $resource->id,
+                    //                        'location_id' => $location->id,
+                    //                        'day_of_week' => $dayOfWeekMap[$day],
+                    //                        'start_time' => CarbonImmutable::parse($schedule['start_time'])->format('H:i:s'),
+                    //                        'end_time' => CarbonImmutable::parse($schedule['end_time'])->format('H:i:s'),
+                    //                    ]);
                 }
             }
         });
 
-        $schedules = Schedule::where('resource_id', $resource->id)->where(function($query) use ($location) {
-            if($location !== null){
+        $schedules = Schedule::where('resource_id', $resource->id)->where(function ($query) use ($location) {
+            if ($location !== null) {
                 $query->where('location_id', $location->id);
             }
         })->get();

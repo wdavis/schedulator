@@ -3,7 +3,6 @@
 namespace App\Traits;
 
 use Illuminate\Support\Arr;
-use Illuminate\Database\Eloquent\Model;
 
 trait HasMeta
 {
@@ -21,7 +20,6 @@ trait HasMeta
      * Set meta values using dot notation
      * path.to.key => value
      *
-     * @param  array  $items
      * @return $this
      */
     public function setMeta(array $items)
@@ -40,7 +38,6 @@ trait HasMeta
     /**
      * Update meta values.
      *
-     * @param  array  $items
      * @return bool
      */
     public function updateMeta(array $items)

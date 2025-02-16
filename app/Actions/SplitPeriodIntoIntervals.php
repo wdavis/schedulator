@@ -18,14 +18,14 @@ class SplitPeriodIntoIntervals
 
         $interval = new DateInterval('PT'.$service->duration.'M');
 
-        foreach($collection as $period) {
+        foreach ($collection as $period) {
 
             $periods = $this->split($period, $interval);
 
             foreach ($periods as $p) {
                 $slots[] = [
                     'start' => CarbonImmutable::parse($p->start()),
-                    'end' => CarbonImmutable::parse($p->end())
+                    'end' => CarbonImmutable::parse($p->end()),
                 ];
             }
         }

@@ -12,14 +12,14 @@ class UpdateResourceTest extends TestCase
     use RefreshDatabase;
 
     /** @test */
-    public function it_updates_the_name_of_the_resource()
+    public function it_updates_the_name_of_the_resource(): void
     {
         // Arrange
         $resource = Resource::factory()->create([
             'name' => 'Old Resource Name',
         ]);
 
-        $action = new UpdateResource();
+        $action = new UpdateResource;
 
         // Act
         $updatedResource = $action->update($resource, 'New Resource Name');
@@ -33,7 +33,7 @@ class UpdateResourceTest extends TestCase
     }
 
     /** @test */
-    public function it_updates_the_booking_window_overrides()
+    public function it_updates_the_booking_window_overrides(): void
     {
         // Arrange
         $resource = Resource::factory()->create([
@@ -42,7 +42,7 @@ class UpdateResourceTest extends TestCase
             'cancellation_window_end_override' => 30,
         ]);
 
-        $action = new UpdateResource();
+        $action = new UpdateResource;
 
         // Act
         $updatedResource = $action->update(
@@ -65,14 +65,14 @@ class UpdateResourceTest extends TestCase
     }
 
     /** @test */
-    public function it_merges_the_meta_data()
+    public function it_merges_the_meta_data(): void
     {
         // Arrange
         $resource = Resource::factory()->create([
             'meta' => ['foo' => 'bar'],
         ]);
 
-        $action = new UpdateResource();
+        $action = new UpdateResource;
 
         // Act
         $updatedResource = $action->update(
@@ -88,14 +88,14 @@ class UpdateResourceTest extends TestCase
     }
 
     /** @test */
-    public function it_does_not_update_name_if_not_provided()
+    public function it_does_not_update_name_if_not_provided(): void
     {
         // Arrange
         $resource = Resource::factory()->create([
             'name' => 'Original Name',
         ]);
 
-        $action = new UpdateResource();
+        $action = new UpdateResource;
 
         // Act
         $updatedResource = $action->update($resource, null);

@@ -27,7 +27,7 @@ class BookingFactory extends Factory
             'name' => $this->faker->name(),
             'starts_at' => $this->faker->dateTimeBetween('now', '+1 week'),
             'ends_at' => $this->faker->dateTimeBetween('+1 week', '+2 week'),
-            'meta' => []
+            'meta' => [],
         ];
     }
 }

@@ -12,8 +12,8 @@ class RemoveEnvironment
             ->firstOrFail();
 
         // safeguard default account environments
-        if(in_array($environment->name, ['production', 'staging', 'dev'])) {
-            throw new \InvalidArgumentException("Cannot remove any base environments like production, staging or dev");
+        if (in_array($environment->name, ['production', 'staging', 'dev'])) {
+            throw new \InvalidArgumentException('Cannot remove any base environments like production, staging or dev');
         }
 
         $environment->delete();

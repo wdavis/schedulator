@@ -6,8 +6,6 @@ use App\Actions\Bookings\GetBookingPeriod;
 use App\Models\Booking;
 use App\Models\Service;
 use Carbon\CarbonImmutable;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Str;
 use Spatie\Period\Period;
 use Tests\TestCase;
@@ -15,7 +13,7 @@ use Tests\TestCase;
 class GetBookingPeriodTest extends TestCase
 {
     /** @test */
-    public function test_get_booking_period_with_matching_service()
+    public function test_get_booking_period_with_matching_service(): void
     {
         // Arrange
         $serviceId = (string) Str::uuid();
@@ -30,7 +28,7 @@ class GetBookingPeriodTest extends TestCase
             'id' => $serviceId,
         ]);
 
-        $action = new GetBookingPeriod();
+        $action = new GetBookingPeriod;
 
         // Act
         $period = $action->get($booking, $service);
@@ -42,7 +40,7 @@ class GetBookingPeriodTest extends TestCase
     }
 
     /** @test */
-    public function test_get_booking_period_with_non_matching_service()
+    public function test_get_booking_period_with_non_matching_service(): void
     {
         // Arrange
         $booking = Booking::factory()->make([
@@ -55,7 +53,7 @@ class GetBookingPeriodTest extends TestCase
             'id' => (string) Str::uuid(),
         ]);
 
-        $action = new GetBookingPeriod();
+        $action = new GetBookingPeriod;
 
         // Assert
         $this->expectException(\Exception::class);

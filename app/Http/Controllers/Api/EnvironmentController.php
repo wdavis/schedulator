@@ -12,7 +12,9 @@ class EnvironmentController
     use InteractsWithEnvironment;
 
     private GetEnvironments $getEnvironments;
+
     private CreateEnvironment $createEnvironment;
+
     private RemoveEnvironment $removeEnvironment;
 
     public function __construct(GetEnvironments $getEnvironments, \App\Actions\Environments\CreateEnvironment $createEnvironment, \App\Actions\Environments\RemoveEnvironment $removeEnvironment)

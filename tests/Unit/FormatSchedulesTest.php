@@ -2,10 +2,10 @@
 
 namespace Tests\Unit;
 
-use PHPUnit\Framework\TestCase;
 use App\Actions\FormatSchedules;
-use Illuminate\Support\Collection;
 use Carbon\Carbon;
+use Illuminate\Support\Collection;
+use PHPUnit\Framework\TestCase;
 
 class FormatSchedulesTest extends TestCase
 {
@@ -15,10 +15,10 @@ class FormatSchedulesTest extends TestCase
     {
         parent::setUp();
 
-        $this->formatSchedules = new FormatSchedules();
+        $this->formatSchedules = new FormatSchedules;
     }
 
-    public function test_formats_all_days_correctly_when_no_days_missing()
+    public function test_formats_all_days_correctly_when_no_days_missing(): void
     {
         $schedules = new Collection([
             $this->createSchedule(1, '09:00', '17:00'), // Monday
@@ -46,7 +46,7 @@ class FormatSchedulesTest extends TestCase
         $this->assertSame('17:00:00', $formatted['monday'][0]['end_time']);
     }
 
-    public function test_formats_days_with_missing_days()
+    public function test_formats_days_with_missing_days(): void
     {
         $schedules = new Collection([
             $this->createSchedule(1, '09:00', '17:00'), // Monday
@@ -69,7 +69,7 @@ class FormatSchedulesTest extends TestCase
         $this->assertSame('17:00:00', $formatted['friday'][0]['end_time']);
     }
 
-    public function test_formats_empty_schedules()
+    public function test_formats_empty_schedules(): void
     {
         $schedules = new Collection([]);
 

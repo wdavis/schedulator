@@ -2,21 +2,19 @@
 
 namespace Tests\Feature;
 
-use Tests\TestCase;
 use App\Actions\FormatOverrides;
 use App\Models\ScheduleOverride;
 use Carbon\CarbonImmutable;
+use Tests\TestCase;
 
 class FormatOverridesTest extends TestCase
 {
     /**
      * Test formatting with timezone conversion.
-     *
-     * @return void
      */
-    public function test_format_with_timezone_conversion()
+    public function test_format_with_timezone_conversion(): void
     {
-        $formatOverrides = new FormatOverrides();
+        $formatOverrides = new FormatOverrides;
 
         // Create a mock collection of ScheduleOverride entries
         // dates are stored in UTC, but we want to format them in America/Chicago timezone
@@ -48,9 +46,9 @@ class FormatOverridesTest extends TestCase
         $this->assertEquals('2024-09-04T15:30:00-05:00', $day4['schedule'][0]['ends_at']);
     }
 
-    public function test_handles_timezone_change_days_without_repeating()
+    public function test_handles_timezone_change_days_without_repeating(): void
     {
-        $formatOverrides = new FormatOverrides();
+        $formatOverrides = new FormatOverrides;
 
         // Create a mock collection of ScheduleOverride entries
         // dates are stored in UTC, but we want to format them in America/Chicago timezone
@@ -75,9 +73,9 @@ class FormatOverridesTest extends TestCase
     /**
      * Helper function to create a mock ScheduleOverride instance.
      *
-     * @param string $startsAt
-     * @param string $endsAt
-     * @param string $type
+     * @param  string  $startsAt
+     * @param  string  $endsAt
+     * @param  string  $type
      * @return ScheduleOverride
      */
     private function createScheduleOverride($startsAt, $endsAt, $type)

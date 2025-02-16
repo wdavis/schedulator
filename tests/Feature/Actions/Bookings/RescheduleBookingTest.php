@@ -2,13 +2,12 @@
 
 namespace Tests\Feature\Actions\Bookings;
 
-use App\Actions\Bookings\RescheduleBooking;
-use App\Actions\Bookings\CreateBooking;
 use App\Actions\Bookings\CancelBooking;
+use App\Actions\Bookings\CreateBooking;
+use App\Actions\Bookings\RescheduleBooking;
 use App\Models\Booking;
 use App\Models\Environment;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\DB;
 use Mockery;
 use Tests\TestCase;
 
@@ -17,7 +16,9 @@ class RescheduleBookingTest extends TestCase
     use RefreshDatabase;
 
     private $createBookingMock;
+
     private $cancelBookingMock;
+
     private $rescheduleBooking;
 
     protected function setUp(): void
@@ -30,7 +31,7 @@ class RescheduleBookingTest extends TestCase
     }
 
     /** @test */
-    public function it_reschedules_a_booking_successfully()
+    public function it_reschedules_a_booking_successfully(): void
     {
         $environment = Environment::factory()->create();
         $oldBooking = Booking::factory()->create([
@@ -70,7 +71,7 @@ class RescheduleBookingTest extends TestCase
     }
 
     /** @test */
-    public function it_rolls_back_if_rescheduling_fails()
+    public function it_rolls_back_if_rescheduling_fails(): void
     {
         $environment = Environment::factory()->create();
         $oldBooking = Booking::factory()->create([
@@ -97,7 +98,7 @@ class RescheduleBookingTest extends TestCase
     }
 
     /** @test */
-    public function it_merges_meta_data_correctly_during_rescheduling()
+    public function it_merges_meta_data_correctly_during_rescheduling(): void
     {
         $environment = Environment::factory()->create();
         $oldBooking = Booking::factory()->create([
@@ -135,7 +136,7 @@ class RescheduleBookingTest extends TestCase
     }
 
     /** @test */
-    public function it_reschedules_with_new_resource_and_service_ids()
+    public function it_reschedules_with_new_resource_and_service_ids(): void
     {
         $environment = Environment::factory()->create();
         $oldBooking = Booking::factory()->create([
@@ -149,7 +150,7 @@ class RescheduleBookingTest extends TestCase
         $this->createBookingMock
             ->shouldReceive('create')
             ->once()
-            ->withArgs(function($passedResourceId, $passedServiceId, $passedTimeSlot, $passedEnvironmentId, $passedName, $passedMeta, $passedBypassLeadTime, $passedBypassActive) use ($newBooking, $oldBooking, $environment) {
+            ->withArgs(function ($passedResourceId, $passedServiceId, $passedTimeSlot, $passedEnvironmentId, $passedName, $passedMeta, $passedBypassLeadTime, $passedBypassActive) use ($newBooking, $oldBooking, $environment) {
                 $this->assertEquals($newBooking->resource_id, $passedResourceId);
                 $this->assertEquals($newBooking->service_id, $passedServiceId);
                 $this->assertEquals($newBooking->starts_at->toIso8601String(), $passedTimeSlot);

@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Actions\Bookings\CancelBooking;
-use App\Actions\Bookings\CreateBooking;
 use App\Actions\Bookings\RescheduleBooking;
 use App\Actions\FormatValidationErrors;
 use App\Rules\Iso8601Date;
@@ -17,29 +15,25 @@ class BookingRescheduleController
     use InteractsWithEnvironment;
 
     private RescheduleBooking $rescheduleBooking;
+
     private FormatValidationErrors $formatValidationErrors;
 
-    /**
-     * @param RescheduleBooking $rescheduleBooking
-     * @param FormatValidationErrors $formatValidationErrors
-     */
     public function __construct(RescheduleBooking $rescheduleBooking, FormatValidationErrors $formatValidationErrors)
     {
         $this->rescheduleBooking = $rescheduleBooking;
         $this->formatValidationErrors = $formatValidationErrors;
     }
 
-
     public function store(Request $request, string $bookingId)
     {
         // validate the request
         $validator = Validator::make($request->all(), [
-            'timeSlot' => ['required', new Iso8601Date(), new NotFromPast()],
+            'timeSlot' => ['required', new Iso8601Date, new NotFromPast],
             'resourceId' => 'required',
             'force' => ['nullable', 'boolean'],
         ]);
 
-        if($validator->fails()) {
+        if ($validator->fails()) {
             return response()->json($this->formatValidationErrors->validate($validator->errors()->getMessages()), 422);
         }
 

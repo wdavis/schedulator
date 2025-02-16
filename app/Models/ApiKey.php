@@ -12,6 +12,7 @@ class ApiKey extends Model
     use HasUuids;
 
     public $incrementing = false;
+
     protected $keyType = 'string';
 
     protected $fillable = [
@@ -29,5 +30,4 @@ class ApiKey extends Model
     {
         return $this->belongsTo(Environment::class);
     }
-
 }

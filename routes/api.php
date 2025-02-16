@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Route;
 
 // routes/api.php
 
-Route::group(['middleware' => 'api-key:master'], function () {
+Route::middleware('api-key:master')->group(function () {
 
     Route::get('test-master-api-access', function () {
         return response('OK', 200);
@@ -35,7 +35,7 @@ Route::group(['middleware' => 'api-key:master'], function () {
         ->name('environments.reset');
 });
 
-Route::group(['middleware' => 'api-key'], function () {
+Route::middleware('api-key')->group(function () {
 
     Route::get('test-api-access', function () {
         return response('OK', 200);
@@ -86,7 +86,7 @@ Route::group(['middleware' => 'api-key'], function () {
     Route::post('bookings/external-lookup', [\App\Http\Controllers\Api\ExternalBookingController::class, 'index'])
         ->name('bookings.external-lookup.index');
 
-    # Resource Schedule
+    // Resource Schedule
     Route::get('resources/{resource}/schedule', [\App\Http\Controllers\Api\ScheduleController::class, 'index'])
         ->name('schedules.index');
 
@@ -124,9 +124,7 @@ Route::group(['middleware' => 'api-key'], function () {
     Route::post('reports/heat', [\App\Http\Controllers\Api\ForecastHeatmapController::class, 'index'])
         ->name('reports.heat.index');
 
-//    Route::post('reports/bookings', [\App\Http\Controllers\Api\ForecastBookingLeadController::class, 'index'])
-//        ->name('reports.bookings.index');
-
-
+    //    Route::post('reports/bookings', [\App\Http\Controllers\Api\ForecastBookingLeadController::class, 'index'])
+    //        ->name('reports.bookings.index');
 
 });

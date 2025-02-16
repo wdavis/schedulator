@@ -7,17 +7,16 @@ use App\Models\Service;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Collection;
 use Spatie\Period\PeriodCollection;
-use App\Actions\GetSchedulesForDate;
-use App\Actions\CombinePeriodCollections;
 
 class GetCombinedSchedulesForDate
 {
     private GetSchedulesForDate $getSchedulesForDate;
+
     private CombinePeriodCollections $combinePeriodCollections;
 
     public function __construct(
         GetSchedulesForDate $getSchedulesForDate, CombinePeriodCollections $combinePeriodCollections
-    ){
+    ) {
         $this->getSchedulesForDate = $getSchedulesForDate;
         $this->combinePeriodCollections = $combinePeriodCollections;
     }
@@ -29,10 +28,7 @@ class GetCombinedSchedulesForDate
      * wanted to show a list of available times that could be booked against
      * multiple resources
      *
-     * @param Collection<Resource> $resources
-     * @param CarbonImmutable $startDate
-     * @param CarbonImmutable $endDate
-     * @return PeriodCollection
+     * @param  Collection<resource>  $resources
      */
     public function get(Collection $resources, Service $service, CarbonImmutable $startDate, CarbonImmutable $endDate): PeriodCollection
     {
